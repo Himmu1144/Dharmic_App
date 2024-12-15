@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dharmic/models/quote.dart';
+import 'package:dharmic/pages/bookmarks_page.dart';
 import 'package:dharmic/pages/home_page.dart';
 import 'package:dharmic/pages/settings_page.dart';
 import 'package:dharmic/theme/theme_provider.dart';
@@ -78,6 +79,8 @@ class MyApp extends StatelessWidget {
       theme: Provider.of<ThemeProvider>(context).themeData,
       routes: {
         '/settings': (context) => const SettingsPage(), // Define the route here
+        '/bookmarks': (context) =>
+            const BookmarksPage(), // Define the route here
       },
     );
   }

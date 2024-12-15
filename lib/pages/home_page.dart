@@ -167,10 +167,32 @@ class _HomePageState extends State<HomePage> {
                           // Share content
                         },
                       ),
+                      // _CircleButton(
+                      //   icon: Icons.bookmark,
+                      //   onPressed: () {
+                      //     // Navigate to bookmarks
+                      //   },
+                      // ),
                       _CircleButton(
-                        icon: Icons.bookmark,
-                        onPressed: () {
-                          // Navigate to bookmarks
+                        icon: viewedQuotes[currentIndex].isBookmarked
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                        onPressed: () async {
+                          if (currentIndex >= 0) {
+                            final currentQuote = viewedQuotes[currentIndex];
+
+                            // Toggle the bookmark status
+                            final isarService = Provider.of<IsarService>(
+                                context,
+                                listen: false);
+                            await isarService.toggleBookmark(currentQuote);
+
+                            // Fetch updated data and refresh the state
+                            setState(() {
+                              viewedQuotes[currentIndex].isBookmarked =
+                                  currentQuote.isBookmarked;
+                            });
+                          }
                         },
                       ),
                     ],

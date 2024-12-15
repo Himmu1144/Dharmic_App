@@ -26,6 +26,18 @@ class MyDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
               }),
+
+          // Notes tile
+          DrawerTile(
+              title: 'Bookmarks',
+              leading: Icon(
+                Icons.bookmark,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/bookmarks');
+              }),
           // Notes tile
           DrawerTile(
               title: 'Settings',
