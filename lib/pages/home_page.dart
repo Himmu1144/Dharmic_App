@@ -4,6 +4,8 @@ import 'package:dharmic/services/isar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
+// import 'services/isar_service.dart';
+// import 'models/quote.dart'; // Ensure the Quote model is imported
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,15 +15,57 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<void> printQuotes() async {
+  List<Quote> unreadQuotes = []; // List to store unread quotes
+  List<Quote> viewedQuotes = []; // List to store previously viewed quotes
+  int currentIndex = -1; // Start with -1 to indicate no current quote
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUnreadQuotes();
+  }
+
+  // Fetch unread quotes from Isar
+  Future<void> _loadUnreadQuotes() async {
     final isarService = Provider.of<IsarService>(context, listen: false);
     final isar = await isarService.db;
 
-    final quotes = await isar.quotes.where().limit(5).findAll();
+    // Fetch unread quotes and shuffle them
+    final quotes = await isar.quotes.filter().isReadEqualTo(false).findAll();
+    setState(() {
+      unreadQuotes = quotes..shuffle(); // Shuffle the quotes for randomness
+    });
 
-    for (var quote in quotes) {
-      print(
-          'Quote: ${quote.quote}, Author: ${quote.author}, IsRead: ${quote.isRead}');
+    // If unreadQuotes is not empty, load the first quote
+    if (unreadQuotes.isNotEmpty) {
+      _loadNextQuote();
+    }
+  }
+
+  // Load the next unread quote
+  void _loadNextQuote() {
+    if (unreadQuotes.isNotEmpty) {
+      final nextQuote = unreadQuotes.removeAt(0);
+      setState(() {
+        viewedQuotes.add(nextQuote);
+        currentIndex = viewedQuotes.length - 1; // Update current index
+      });
+    }
+  }
+
+  // Mark the current quote as read
+  Future<void> _markAsRead() async {
+    if (currentIndex >= 0 && !viewedQuotes[currentIndex].isRead) {
+      final isarService = Provider.of<IsarService>(context, listen: false);
+      final isar = await isarService.db;
+
+      // Mark the current quote as read
+      final quote = viewedQuotes[currentIndex];
+      quote.isRead = true;
+
+      await isar.writeTxn(() async {
+        await isar.quotes.put(quote); // Update the quote in the database
+      });
     }
   }
 
@@ -32,15 +76,10 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           children: [
             const Expanded(child: Text('Home')),
-            // IconButton(
-            //   icon: const Icon(Icons.search),
-            //   onPressed: () {
-            //     // Navigate to search screen
-            //   }, ),
             IconButton(
-              icon: const Icon(Icons.bug_report), // Add a debug icon
+              icon: const Icon(Icons.search),
               onPressed: () {
-                printQuotes(); // Call the debug function on button press
+                // Navigate to search screen
               },
             ),
           ],
@@ -51,94 +90,96 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: const MyDrawer(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
+      body: PageView.builder(
+        controller:
+            PageController(initialPage: currentIndex >= 0 ? currentIndex : 0),
+        onPageChanged: (index) {
+          if (index > currentIndex) {
+            // Swiping right - load next quote
+            _markAsRead(); // Mark the current quote as read
+            _loadNextQuote(); // Load the next unread quote
+          } else if (index < currentIndex && index >= 0) {
+            // Swiping left - show previous quote
+            setState(() {
+              currentIndex = index; // Update current index
+            });
+          }
+        },
+        itemBuilder: (context, index) {
+          if (index < 0 || index >= viewedQuotes.length) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final quote = viewedQuotes[index];
+          return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(80.0),
                   child: Image.asset(
-                    'assets/images/marcus_aurelius.jpeg',
+                    quote.authorImg,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(width: 16.0),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 16.0),
+                Text(
+                  quote.quote,
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  '- ${quote.author}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+
+                // Adding the four bottom buttons here
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        'Marcus Aurelius',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      _CircleButton(
+                        icon: Icons.play_arrow,
+                        onPressed: () {
+                          // Play audio
+                        },
                       ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Roman Emperor',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.grey,
-                        ),
+                      _CircleButton(
+                        icon: Icons.language,
+                        onPressed: () {
+                          // Navigate to website
+                        },
                       ),
-                      Divider(), // Add this line to insert a divider
+                      _CircleButton(
+                        icon: Icons.share,
+                        onPressed: () {
+                          // Share content
+                        },
+                      ),
+                      _CircleButton(
+                        icon: Icons.bookmark,
+                        onPressed: () {
+                          // Navigate to bookmarks
+                        },
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              '"In no great while you will be no one and nowhere, nor will any of the things exist which you now see, nor any of those who are now living. For all things are formed by nature to change and be turned and to perish in order that other things in their turn may exist."',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _CircleButton(
-                  icon: Icons.play_arrow,
-                  onPressed: () {
-                    // Play audio
-                  },
-                ),
-                _CircleButton(
-                  icon: Icons.language,
-                  onPressed: () {
-                    // Navigate to website
-                  },
-                ),
-                _CircleButton(
-                  icon: Icons.share,
-                  onPressed: () {
-                    // Share content
-                  },
-                ),
-                _CircleButton(
-                  icon: Icons.bookmark,
-                  onPressed: () {
-                    // Navigate to bookmarks
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
