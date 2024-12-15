@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   isar: ^3.1.0 # Adjust the version based on the latest available.
+  isar_flutter_libs: ^3.0.0  # Ensure this package is added
 
 
 
@@ -52,6 +53,7 @@ dev_dependencies:
   google_fonts: ^6.2.1
   isar_generator: ^3.1.0
   build_runner: ^2.4.0
+  path_provider: ^2.0.11
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -68,7 +70,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-  
+    - assets/quotes.json
+    
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

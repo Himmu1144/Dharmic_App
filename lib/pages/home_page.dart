@@ -1,8 +1,29 @@
 import 'package:dharmic/components/my_drawer.dart';
+import 'package:dharmic/models/quote.dart';
+import 'package:dharmic/services/isar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Future<void> printQuotes() async {
+    final isarService = Provider.of<IsarService>(context, listen: false);
+    final isar = await isarService.db;
+
+    final quotes = await isar.quotes.where().limit(5).findAll();
+
+    for (var quote in quotes) {
+      print(
+          'Quote: ${quote.quote}, Author: ${quote.author}, IsRead: ${quote.isRead}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,10 +32,15 @@ class HomePage extends StatelessWidget {
         title: Row(
           children: [
             const Expanded(child: Text('Home')),
+            // IconButton(
+            //   icon: const Icon(Icons.search),
+            //   onPressed: () {
+            //     // Navigate to search screen
+            //   }, ),
             IconButton(
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.bug_report), // Add a debug icon
               onPressed: () {
-                // Navigate to search screen
+                printQuotes(); // Call the debug function on button press
               },
             ),
           ],
