@@ -1,76 +1,15 @@
 import 'package:dharmic/components/my_drawer.dart';
-import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-// import 'services/isar_service.dart';
-// import 'models/quote.dart'; // Ensure the Quote model is imported
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<Quote> unreadQuotes = []; // List to store unread quotes
-  List<Quote> viewedQuotes = []; // List to store previously viewed quotes
-  int currentIndex = -1; // Start with -1 to indicate no current quote
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUnreadQuotes();
-  }
-
-  // Fetch unread quotes from Isar
-  Future<void> _loadUnreadQuotes() async {
-    final isarService = Provider.of<IsarService>(context, listen: false);
-    final isar = await isarService.db;
-
-    // Fetch unread quotes and shuffle them
-    final quotes = await isar.quotes.filter().isReadEqualTo(false).findAll();
-    setState(() {
-      unreadQuotes = quotes..shuffle(); // Shuffle the quotes for randomness
-    });
-
-    // If unreadQuotes is not empty, load the first quote
-    if (unreadQuotes.isNotEmpty) {
-      _loadNextQuote();
-    }
-  }
-
-  // Load the next unread quote
-  void _loadNextQuote() {
-    if (unreadQuotes.isNotEmpty) {
-      final nextQuote = unreadQuotes.removeAt(0);
-      setState(() {
-        viewedQuotes.add(nextQuote);
-        currentIndex = viewedQuotes.length - 1; // Update current index
-      });
-    }
-  }
-
-  // Mark the current quote as read
-  Future<void> _markAsRead() async {
-    if (currentIndex >= 0 && !viewedQuotes[currentIndex].isRead) {
-      final isarService = Provider.of<IsarService>(context, listen: false);
-      final isar = await isarService.db;
-
-      // Mark the current quote as read
-      final quote = viewedQuotes[currentIndex];
-      quote.isRead = true;
-
-      await isar.writeTxn(() async {
-        await isar.quotes.put(quote); // Update the quote in the database
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final isarService = Provider.of<IsarService>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -90,116 +29,97 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: const MyDrawer(),
-      body: PageView.builder(
-        controller:
-            PageController(initialPage: currentIndex >= 0 ? currentIndex : 0),
-        onPageChanged: (index) {
-          if (index > currentIndex) {
-            // Swiping right - load next quote
-            _markAsRead(); // Mark the current quote as read
-            _loadNextQuote(); // Load the next unread quote
-          } else if (index < currentIndex && index >= 0) {
-            // Swiping left - show previous quote
-            setState(() {
-              currentIndex = index; // Update current index
-            });
-          }
-        },
-        itemBuilder: (context, index) {
-          if (index < 0 || index >= viewedQuotes.length) {
+      body: Consumer<IsarService>(
+        builder: (context, isarService, child) {
+          // Check if quotes are loaded
+          if (isarService.viewedQuotes.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final quote = viewedQuotes[index];
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(80.0),
-                  child: Image.asset(
-                    quote.authorImg,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  quote.quote,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  '- ${quote.author}',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-
-                // Adding the four bottom buttons here
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _CircleButton(
-                        icon: Icons.play_arrow,
-                        onPressed: () {
-                          // Play audio
-                        },
-                      ),
-                      _CircleButton(
-                        icon: Icons.language,
-                        onPressed: () {
-                          // Navigate to website
-                        },
-                      ),
-                      _CircleButton(
-                        icon: Icons.share,
-                        onPressed: () {
-                          // Share content
-                        },
-                      ),
-                      // _CircleButton(
-                      //   icon: Icons.bookmark,
-                      //   onPressed: () {
-                      //     // Navigate to bookmarks
-                      //   },
-                      // ),
-                      _CircleButton(
-                        icon: viewedQuotes[currentIndex].isBookmarked
-                            ? Icons.bookmark
-                            : Icons.bookmark_border,
-                        onPressed: () async {
-                          if (currentIndex >= 0) {
-                            final currentQuote = viewedQuotes[currentIndex];
-
-                            // Toggle the bookmark status
-                            final isarService = Provider.of<IsarService>(
-                                context,
-                                listen: false);
-                            await isarService.toggleBookmark(currentQuote);
-
-                            // Fetch updated data and refresh the state
-                            setState(() {
-                              viewedQuotes[currentIndex].isBookmarked =
-                                  currentQuote.isBookmarked;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          return PageView.builder(
+            controller: PageController(
+              initialPage: isarService.currentIndex,
             ),
+            onPageChanged: (index) {
+              if (index > isarService.currentIndex) {
+                isarService.markAsRead(); // Mark current as read
+                isarService.loadNextQuote(); // Load next unread
+              }
+            },
+            itemBuilder: (context, index) {
+              // Ensure the index is valid
+              if (index < 0 || index >= isarService.viewedQuotes.length) {
+                return const Center(child: Text("No more quotes available."));
+              }
+
+              final quote = isarService.viewedQuotes[index];
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(80.0),
+                      child: Image.asset(
+                        quote.authorImg,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      quote.quote,
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      '- ${quote.author}',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _CircleButton(
+                            icon: Icons.play_arrow,
+                            onPressed: () {
+                              // Play audio
+                            },
+                          ),
+                          _CircleButton(
+                            icon: Icons.language,
+                            onPressed: () {
+                              // Navigate to website
+                            },
+                          ),
+                          _CircleButton(
+                            icon: Icons.share,
+                            onPressed: () {
+                              // Share content
+                            },
+                          ),
+                          _CircleButton(
+                            icon: quote.isBookmarked
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
+                            onPressed: () => isarService.toggleBookmark(quote),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
