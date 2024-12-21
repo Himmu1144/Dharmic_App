@@ -37,6 +37,7 @@ Future<void> loadQuotesFromJson(IsarService isarService) async {
   // Check if the quotes are already in the database to avoid loading again
   final quoteCount = await isar.quotes.count();
   if (quoteCount > 0) {
+    print('Quotes Already Exists!');
     return; // Quotes already exist in the database
   }
 

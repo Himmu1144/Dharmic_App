@@ -4,8 +4,6 @@ import 'package:dharmic/services/isar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-// import 'services/isar_service.dart';
-// import 'models/quote.dart'; // Ensure the Quote model is imported
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,58 +13,178 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Quote> unreadQuotes = []; // List to store unread quotes
-  List<Quote> viewedQuotes = []; // List to store previously viewed quotes
-  int currentIndex = -1; // Start with -1 to indicate no current quote
+  late final PageController _pageController;
+  List<Quote> unreadQuotes = [];
+  List<Quote> viewedQuotes = [];
+  int currentIndex = -1;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: 0);
     _loadUnreadQuotes();
   }
 
-  // Fetch unread quotes from Isar
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadUnreadQuotes() async {
-    final isarService = Provider.of<IsarService>(context, listen: false);
-    final isar = await isarService.db;
+    if (isLoading) return;
 
-    // Fetch unread quotes and shuffle them
-    final quotes = await isar.quotes.filter().isReadEqualTo(false).findAll();
-    setState(() {
-      unreadQuotes = quotes..shuffle(); // Shuffle the quotes for randomness
-    });
+    setState(() => isLoading = true);
 
-    // If unreadQuotes is not empty, load the first quote
-    if (unreadQuotes.isNotEmpty) {
-      _loadNextQuote();
-    }
-  }
-
-  // Load the next unread quote
-  void _loadNextQuote() {
-    if (unreadQuotes.isNotEmpty) {
-      final nextQuote = unreadQuotes.removeAt(0);
-      setState(() {
-        viewedQuotes.add(nextQuote);
-        currentIndex = viewedQuotes.length - 1; // Update current index
-      });
-    }
-  }
-
-  // Mark the current quote as read
-  Future<void> _markAsRead() async {
-    if (currentIndex >= 0 && !viewedQuotes[currentIndex].isRead) {
+    try {
       final isarService = Provider.of<IsarService>(context, listen: false);
       final isar = await isarService.db;
 
-      // Mark the current quote as read
-      final quote = viewedQuotes[currentIndex];
-      quote.isRead = true;
+      final quotes = await isar.quotes.filter().isReadEqualTo(false).findAll();
+      print("Unread quotes found: ${quotes.length}");
 
-      await isar.writeTxn(() async {
-        await isar.quotes.put(quote); // Update the quote in the database
+      if (quotes.isEmpty) {
+        print("No unread quotes found. Resetting all quotes...");
+        await _resetAllQuotes(isar);
+        // Fetch quotes again after reset
+        quotes
+            .addAll(await isar.quotes.filter().isReadEqualTo(false).findAll());
+        print("After reset, unread quotes: ${quotes.length}");
+      }
+
+      if (mounted) {
+        setState(() {
+          unreadQuotes = quotes..shuffle();
+          if (unreadQuotes.isNotEmpty) {
+            _loadNextQuote();
+          }
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error loading unread quotes: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _resetAllQuotes(Isar isar) async {
+    await isar.writeTxn(() async {
+      final allQuotes = await isar.quotes.where().findAll();
+      for (var quote in allQuotes) {
+        quote.isRead = false;
+      }
+      await isar.quotes.putAll(allQuotes);
+    });
+  }
+
+  void _loadNextQuote() {
+    if (unreadQuotes.isNotEmpty) {
+      setState(() {
+        viewedQuotes.add(unreadQuotes.removeAt(0));
+        currentIndex = viewedQuotes.length - 1;
       });
     }
+  }
+
+  Future<void> _markAsRead(Quote quote) async {
+    if (!quote.isRead) {
+      print("Marking quote as read: ${quote.id}");
+      final isarService = Provider.of<IsarService>(context, listen: false);
+      final isar = await isarService.db;
+
+      quote.isRead = true;
+      await isar.writeTxn(() async {
+        await isar.quotes.put(quote);
+      });
+
+      isarService.updateQuotes();
+    }
+  }
+
+  Future<void> _toggleBookmark(Quote quote) async {
+    final isarService = Provider.of<IsarService>(context, listen: false);
+    final isar = await isarService.db;
+
+    quote.isBookmarked = !quote.isBookmarked;
+    await isar.writeTxn(() async {
+      await isar.quotes.put(quote);
+    });
+
+    setState(() {});
+    isarService.updateQuotes();
+  }
+
+  Widget _buildQuoteCard(Quote quote) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(80.0),
+            child: Image.asset(
+              quote.authorImg,
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Text(
+            quote.quote,
+            style: const TextStyle(
+              fontSize: 18.0,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            '- ${quote.author}',
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const Spacer(),
+          _buildActionButtons(quote),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(Quote quote) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _CircleButton(
+            icon: Icons.play_arrow,
+            onPressed: () {
+              // Play audio implementation
+            },
+          ),
+          _CircleButton(
+            icon: Icons.language,
+            onPressed: () {
+              // Website navigation implementation
+            },
+          ),
+          _CircleButton(
+            icon: Icons.share,
+            onPressed: () {
+              // Share implementation
+            },
+          ),
+          _CircleButton(
+            icon: Icons.bookmark,
+            isActive: quote.isBookmarked,
+            onPressed: () => _toggleBookmark(quote),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -79,7 +197,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                // Navigate to search screen
+                // Search implementation
               },
             ),
           ],
@@ -90,97 +208,33 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: const MyDrawer(),
-      body: PageView.builder(
-        controller:
-            PageController(initialPage: currentIndex >= 0 ? currentIndex : 0),
-        onPageChanged: (index) {
-          if (index > currentIndex) {
-            // Swiping right - load next quote
-            _markAsRead(); // Mark the current quote as read
-            _loadNextQuote(); // Load the next unread quote
-          } else if (index < currentIndex && index >= 0) {
-            // Swiping left - show previous quote
-            setState(() {
-              currentIndex = index; // Update current index
-            });
-          }
-        },
-        itemBuilder: (context, index) {
-          if (index < 0 || index >= viewedQuotes.length) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final quote = viewedQuotes[index];
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(80.0),
-                  child: Image.asset(
-                    quote.authorImg,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  quote.quote,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  '- ${quote.author}',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-
-                // Adding the four bottom buttons here
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _CircleButton(
-                        icon: Icons.play_arrow,
-                        onPressed: () {
-                          // Play audio
-                        },
-                      ),
-                      _CircleButton(
-                        icon: Icons.language,
-                        onPressed: () {
-                          // Navigate to website
-                        },
-                      ),
-                      _CircleButton(
-                        icon: Icons.share,
-                        onPressed: () {
-                          // Share content
-                        },
-                      ),
-                      _CircleButton(
-                        icon: Icons.bookmark,
-                        onPressed: () {
-                          // Navigate to bookmarks
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : PageView.builder(
+              controller: _pageController,
+              // Add page snapping for smooth transitions
+              pageSnapping: true,
+              onPageChanged: (index) {
+                print(
+                    "Page changed to index: $index, current index: $currentIndex");
+                if (index > currentIndex) {
+                  if (currentIndex >= 0) {
+                    _markAsRead(viewedQuotes[currentIndex]);
+                  }
+                  _loadNextQuote();
+                } else if (index < currentIndex && index >= 0) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                }
+              },
+              itemBuilder: (context, index) {
+                if (index < 0 || index >= viewedQuotes.length) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return _buildQuoteCard(viewedQuotes[index]);
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
@@ -188,11 +242,13 @@ class _HomePageState extends State<HomePage> {
 class _CircleButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
+  final bool isActive;
 
   const _CircleButton({
     Key? key,
     required this.icon,
     required this.onPressed,
+    this.isActive = false,
   }) : super(key: key);
 
   @override
@@ -206,7 +262,10 @@ class _CircleButton extends StatelessWidget {
           shape: BoxShape.circle,
           color: Colors.grey.shade800,
         ),
-        child: Icon(icon, color: Colors.white),
+        child: Icon(
+          icon,
+          color: isActive ? Colors.amber : Colors.white,
+        ),
       ),
     );
   }
