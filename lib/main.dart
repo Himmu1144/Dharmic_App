@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dharmic/models/quote.dart';
-import 'package:dharmic/pages/bookmarks_page.dart';
 import 'package:dharmic/pages/home_page.dart';
 import 'package:dharmic/pages/settings_page.dart';
 import 'package:dharmic/theme/theme_provider.dart';
@@ -12,10 +11,12 @@ import 'services/isar_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize the IsarService and load quotes from JSON into Isar if it's the first time
   final isarService = IsarService();
-  await isarService.db; // Initialize Isar
+  await isarService.db; // Ensure the Isar DB is initialized first
 
-  await loadQuotesFromJson(isarService); // Load quotes if needed
+  // Load quotes from JSON if they haven't been loaded before
+  await loadQuotesFromJson(isarService);
 
   runApp(
     MultiProvider(
@@ -23,9 +24,7 @@ void main() async {
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),
         ),
-        ChangeNotifierProvider<IsarService>(
-          create: (context) => isarService,
-        ),
+        ChangeNotifierProvider<IsarService>(create: (context) => isarService),
       ],
       child: const MyApp(),
     ),
@@ -35,24 +34,36 @@ void main() async {
 Future<void> loadQuotesFromJson(IsarService isarService) async {
   final isar = await isarService.db;
 
-  if ((await isar.quotes.count()) > 0) return; // Quotes already exist
+  // Check if the quotes are already in the database to avoid loading again
+  final quoteCount = await isar.quotes.count();
+  if (quoteCount > 0) {
+    return; // Quotes already exist in the database
+  }
 
   try {
+    // Load the quotes JSON data from the assets
     final String jsonData = await rootBundle.loadString('assets/quotes.json');
+
+    // Parse the JSON string into a list of dynamic objects
     final List<dynamic> quotesList = json.decode(jsonData);
 
+    // Map the parsed JSON data to a list of Quote objects
     final List<Quote> quotes = quotesList.map((data) {
       return Quote(
         quote: data['quote'] ?? '',
-        author: data['author'] ?? 'Unknown',
-        authorImg: data['author_img'] ?? 'assets/images/default_author.png',
+        author: data['author'] ?? '',
+        authorImg: data['author_img'] ?? '',
       );
     }).toList();
 
-    await isar.writeTxn(() => isar.quotes.putAll(quotes));
-    await isarService.refreshQuotes(); // Refresh unread quotes
+    // Write the quotes to the Isar database
+    await isar.writeTxn(() async {
+      await isar.quotes.putAll(quotes); // Insert all the quotes into Isar
+    });
+
+    print('Quotes imported successfully!');
   } catch (e) {
-    print('Error loading quotes: $e');
+    print('Failed to load quotes: $e');
   }
 }
 
@@ -66,8 +77,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       theme: Provider.of<ThemeProvider>(context).themeData,
       routes: {
-        '/settings': (context) => const SettingsPage(),
-        '/bookmarks': (context) => const BookmarksPage(),
+        '/settings': (context) => const SettingsPage(), // Define the route here
       },
     );
   }
