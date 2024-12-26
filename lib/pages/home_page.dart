@@ -4,6 +4,8 @@ import 'package:dharmic/services/isar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,21 +16,35 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final PageController _pageController;
+  late FlutterTts flutterTts;
+  IconData speakIcon = Icons.play_arrow; // New variable
   List<Quote> unreadQuotes = [];
   List<Quote> viewedQuotes = [];
   int currentIndex = -1;
   bool isLoading = false;
+  bool isSpeaking = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    flutterTts = FlutterTts();
+
+    // Set up TTS completion callback
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        isSpeaking = false;
+        speakIcon = Icons.play_arrow;
+      });
+    });
+
     _loadUnreadQuotes();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    flutterTts.stop();
     super.dispose();
   }
 
@@ -102,17 +118,48 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _toggleBookmark(Quote quote) async {
-    final isarService = Provider.of<IsarService>(context, listen: false);
-    final isar = await isarService.db;
-
-    quote.isBookmarked = !quote.isBookmarked;
-    await isar.writeTxn(() async {
-      await isar.quotes.put(quote);
+  Future<void> _speakQuote(String text) async {
+    setState(() {
+      isSpeaking = true;
     });
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setPitch(1.0);
+    await flutterTts.speak(text);
+  }
 
-    setState(() {});
-    isarService.updateQuotes();
+  Future<void> _shareQuote(Quote quote) async {
+    try {
+      final text = '${quote.quote}\n- ${quote.author}';
+      await Share.share(
+        text,
+        subject: 'Check out this quote!',
+      ).then((_) {
+        print('Shared successfully');
+      }).catchError((error) {
+        print('Share failed: $error');
+      });
+    } catch (e) {
+      print('Share error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to share quote')),
+      );
+    }
+  }
+
+  Future<void> _handleSpeech(String text) async {
+    if (isSpeaking) {
+      await flutterTts.stop();
+      setState(() {
+        isSpeaking = false;
+        speakIcon = Icons.play_arrow;
+      });
+    } else {
+      setState(() {
+        isSpeaking = true;
+        speakIcon = Icons.stop;
+      });
+      await flutterTts.speak(text);
+    }
   }
 
   Widget _buildQuoteCard(Quote quote) {
@@ -160,10 +207,9 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _CircleButton(
-            icon: Icons.play_arrow,
-            onPressed: () {
-              // Play audio implementation
-            },
+            icon: speakIcon,
+            isActive: isSpeaking,
+            onPressed: () => _handleSpeech(quote.quote),
           ),
           _CircleButton(
             icon: Icons.language,
@@ -174,13 +220,20 @@ class _HomePageState extends State<HomePage> {
           _CircleButton(
             icon: Icons.share,
             onPressed: () {
-              // Share implementation
+              _shareQuote(quote);
             },
           ),
-          _CircleButton(
-            icon: Icons.bookmark,
-            isActive: quote.isBookmarked,
-            onPressed: () => _toggleBookmark(quote),
+          Consumer<IsarService>(
+            builder: (context, isarService, child) {
+              return _CircleButton(
+                icon:
+                    quote.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                isActive: quote.isBookmarked,
+                onPressed: () async {
+                  await isarService.toggleBookmark(quote);
+                },
+              );
+            },
           ),
         ],
       ),

@@ -37,4 +37,19 @@ class IsarService extends ChangeNotifier {
       print('Error fetching quotes: $e');
     }
   }
+
+  Future<void> toggleBookmark(Quote quote) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      quote.isBookmarked = !quote.isBookmarked;
+      await isar.quotes.put(quote);
+    });
+    await _fetchQuotes(isar);
+    // Refresh quotes and notify listeners
+  }
+
+  Future<List<Quote>> fetchBookmarkedQuotes() async {
+    final isar = await db;
+    return await isar.quotes.filter().isBookmarkedEqualTo(true).findAll();
+  }
 }
