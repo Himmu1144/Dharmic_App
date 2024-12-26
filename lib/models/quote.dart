@@ -10,6 +10,8 @@ class Quote {
   late String authorImg; // Path to the author's image
   bool isRead = false; // Tracks if the quote has been read
   bool isBookmarked = false;
+  @Index() // Add this
+  DateTime? bookmarkedAt; // Add this
 
   // Constructor for convenience (optional)
   Quote({
@@ -18,5 +20,6 @@ class Quote {
     required this.authorImg,
     this.isRead = false,
     this.isBookmarked = false,
+    this.bookmarkedAt, // Add this
   });
 }

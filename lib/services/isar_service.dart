@@ -42,14 +42,19 @@ class IsarService extends ChangeNotifier {
     final isar = await db;
     await isar.writeTxn(() async {
       quote.isBookmarked = !quote.isBookmarked;
+      quote.bookmarkedAt =
+          quote.isBookmarked ? DateTime.now() : null; // Add this line
       await isar.quotes.put(quote);
     });
-    await _fetchQuotes(isar);
-    // Refresh quotes and notify listeners
+    notifyListeners();
   }
 
   Future<List<Quote>> fetchBookmarkedQuotes() async {
     final isar = await db;
-    return await isar.quotes.filter().isBookmarkedEqualTo(true).findAll();
+    return await isar.quotes
+        .filter()
+        .isBookmarkedEqualTo(true)
+        .sortByBookmarkedAtDesc() // Add this line
+        .findAll();
   }
 }

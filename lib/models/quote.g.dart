@@ -27,18 +27,23 @@ const QuoteSchema = CollectionSchema(
       name: r'authorImg',
       type: IsarType.string,
     ),
-    r'isBookmarked': PropertySchema(
+    r'bookmarkedAt': PropertySchema(
       id: 2,
+      name: r'bookmarkedAt',
+      type: IsarType.dateTime,
+    ),
+    r'isBookmarked': PropertySchema(
+      id: 3,
       name: r'isBookmarked',
       type: IsarType.bool,
     ),
     r'isRead': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'isRead',
       type: IsarType.bool,
     ),
     r'quote': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'quote',
       type: IsarType.string,
     )
@@ -48,7 +53,21 @@ const QuoteSchema = CollectionSchema(
   deserialize: _quoteDeserialize,
   deserializeProp: _quoteDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'bookmarkedAt': IndexSchema(
+      id: 5853294005280127171,
+      name: r'bookmarkedAt',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'bookmarkedAt',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _quoteGetId,
@@ -77,9 +96,10 @@ void _quoteSerialize(
 ) {
   writer.writeString(offsets[0], object.author);
   writer.writeString(offsets[1], object.authorImg);
-  writer.writeBool(offsets[2], object.isBookmarked);
-  writer.writeBool(offsets[3], object.isRead);
-  writer.writeString(offsets[4], object.quote);
+  writer.writeDateTime(offsets[2], object.bookmarkedAt);
+  writer.writeBool(offsets[3], object.isBookmarked);
+  writer.writeBool(offsets[4], object.isRead);
+  writer.writeString(offsets[5], object.quote);
 }
 
 Quote _quoteDeserialize(
@@ -91,9 +111,10 @@ Quote _quoteDeserialize(
   final object = Quote(
     author: reader.readString(offsets[0]),
     authorImg: reader.readString(offsets[1]),
-    isBookmarked: reader.readBoolOrNull(offsets[2]) ?? false,
-    isRead: reader.readBoolOrNull(offsets[3]) ?? false,
-    quote: reader.readString(offsets[4]),
+    bookmarkedAt: reader.readDateTimeOrNull(offsets[2]),
+    isBookmarked: reader.readBoolOrNull(offsets[3]) ?? false,
+    isRead: reader.readBoolOrNull(offsets[4]) ?? false,
+    quote: reader.readString(offsets[5]),
   );
   object.id = id;
   return object;
@@ -111,10 +132,12 @@ P _quoteDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 4:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -137,6 +160,14 @@ extension QuoteQueryWhereSort on QueryBuilder<Quote, Quote, QWhere> {
   QueryBuilder<Quote, Quote, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhere> anyBookmarkedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'bookmarkedAt'),
+      );
     });
   }
 }
@@ -202,6 +233,116 @@ extension QuoteQueryWhere on QueryBuilder<Quote, Quote, QWhereClause> {
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'bookmarkedAt',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'bookmarkedAt',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtEqualTo(
+      DateTime? bookmarkedAt) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'bookmarkedAt',
+        value: [bookmarkedAt],
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtNotEqualTo(
+      DateTime? bookmarkedAt) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bookmarkedAt',
+              lower: [],
+              upper: [bookmarkedAt],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bookmarkedAt',
+              lower: [bookmarkedAt],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bookmarkedAt',
+              lower: [bookmarkedAt],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bookmarkedAt',
+              lower: [],
+              upper: [bookmarkedAt],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtGreaterThan(
+    DateTime? bookmarkedAt, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'bookmarkedAt',
+        lower: [bookmarkedAt],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtLessThan(
+    DateTime? bookmarkedAt, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'bookmarkedAt',
+        lower: [],
+        upper: [bookmarkedAt],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> bookmarkedAtBetween(
+    DateTime? lowerBookmarkedAt,
+    DateTime? upperBookmarkedAt, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'bookmarkedAt',
+        lower: [lowerBookmarkedAt],
+        includeLower: includeLower,
+        upper: [upperBookmarkedAt],
         includeUpper: includeUpper,
       ));
     });
@@ -468,6 +609,75 @@ extension QuoteQueryFilter on QueryBuilder<Quote, Quote, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> bookmarkedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'bookmarkedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> bookmarkedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'bookmarkedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> bookmarkedAtEqualTo(
+      DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bookmarkedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> bookmarkedAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'bookmarkedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> bookmarkedAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'bookmarkedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> bookmarkedAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'bookmarkedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Quote, Quote, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -697,6 +907,18 @@ extension QuoteQuerySortBy on QueryBuilder<Quote, Quote, QSortBy> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QAfterSortBy> sortByBookmarkedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookmarkedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> sortByBookmarkedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookmarkedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Quote, Quote, QAfterSortBy> sortByIsBookmarked() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isBookmarked', Sort.asc);
@@ -756,6 +978,18 @@ extension QuoteQuerySortThenBy on QueryBuilder<Quote, Quote, QSortThenBy> {
   QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthorImgDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authorImg', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> thenByBookmarkedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookmarkedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> thenByBookmarkedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookmarkedAt', Sort.desc);
     });
   }
 
@@ -823,6 +1057,12 @@ extension QuoteQueryWhereDistinct on QueryBuilder<Quote, Quote, QDistinct> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QDistinct> distinctByBookmarkedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'bookmarkedAt');
+    });
+  }
+
   QueryBuilder<Quote, Quote, QDistinct> distinctByIsBookmarked() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isBookmarked');
@@ -859,6 +1099,12 @@ extension QuoteQueryProperty on QueryBuilder<Quote, Quote, QQueryProperty> {
   QueryBuilder<Quote, String, QQueryOperations> authorImgProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'authorImg');
+    });
+  }
+
+  QueryBuilder<Quote, DateTime?, QQueryOperations> bookmarkedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'bookmarkedAt');
     });
   }
 

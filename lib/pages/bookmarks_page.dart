@@ -1,3 +1,4 @@
+import 'package:dharmic/pages/bookmark_slider_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
@@ -36,7 +37,15 @@ class BookmarksPage extends StatelessWidget {
                   final quote = bookmarkedQuotes[index];
                   return GestureDetector(
                     onTap: () {
-                      print('Card tapped: ${quote.quote}');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookmarkSliderPage(
+                            bookmarkedQuotes: bookmarkedQuotes,
+                            initialIndex: index,
+                          ),
+                        ),
+                      );
                     },
                     child: Card(
                       margin: const EdgeInsets.all(10.0),
