@@ -15,7 +15,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late final PageController _pageController;
   late FlutterTts flutterTts;
   IconData speakIcon = Icons.play_arrow; // New variable
@@ -24,6 +25,10 @@ class _HomePageState extends State<HomePage> {
   int currentIndex = -1;
   bool isLoading = false;
   bool isSpeaking = false;
+
+  // Add opacity maps for both sections
+  Map<int, double> _authorOpacities = {};
+  Map<int, double> _quoteOpacities = {};
 
   @override
   void initState() {
@@ -40,6 +45,11 @@ class _HomePageState extends State<HomePage> {
     });
 
     _loadUnreadQuotes();
+
+    // Start fade-in after a brief delay
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _resetOpacityForPage(0);
+    });
   }
 
   @override
@@ -79,6 +89,8 @@ class _HomePageState extends State<HomePage> {
           isLoading = false;
         });
       }
+      // Initialize opacity for first quote
+      _resetOpacityForPage(0);
     } catch (e) {
       print("Error loading unread quotes: $e");
       setState(() => isLoading = false);
@@ -163,74 +175,103 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildQuoteCard(Quote quote) {
+  void _resetOpacityForPage(int pageIndex) {
+    setState(() {
+      _authorOpacities[pageIndex] = 0.0;
+      _quoteOpacities[pageIndex] = 0.0;
+    });
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        setState(() {
+          _authorOpacities[pageIndex] = 1.0;
+          _quoteOpacities[pageIndex] = 1.0;
+        });
+      }
+    });
+  }
+
+  Widget _buildQuoteCard(Quote quote, int index) {
+    // Initialize opacities for new pages
+    _authorOpacities.putIfAbsent(index, () => 0.0);
+    _quoteOpacities.putIfAbsent(index, () => 0.0);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Author info section
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(80.0),
-                child: Image.asset(
-                  quote.authorImg,
-                  width: 65,
-                  height: 65,
-                  fit: BoxFit.cover,
+          // Author section
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 500), // Reduced duration
+            opacity: _authorOpacities[index] ?? 0.0,
+            curve: Curves.easeIn,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(80.0),
+                  child: Image.asset(
+                    quote.authorImg,
+                    width: 65,
+                    height: 65,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    quote.author,
-                    style: GoogleFonts.notoSansJp(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
+                const SizedBox(width: 16.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      quote.author,
+                      style: GoogleFonts.notoSansJp(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    'Spiritual Leader',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: Colors.grey.shade300,
+                    const SizedBox(height: 4.0),
+                    Text(
+                      'Spiritual Leader',
+                      style: GoogleFonts.notoSansJp(
+                        fontSize: 13.0,
+                        color: Colors.grey.shade400,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8.0), // Reduced spacing
-                  Container(
-                    constraints: const BoxConstraints(
-                      minHeight: 2.0,
+                    const SizedBox(height: 8.0), // Reduced spacing
+                    Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 2.0,
+                      ),
+                      width: 200.0,
+                      child: Divider(
+                        color: Colors.grey.shade800,
+                        thickness: 2.0,
+                        height: 2.0,
+                      ),
                     ),
-                    width: 200.0,
-                    child: Divider(
-                      color: Colors.grey.shade800,
-                      thickness: 2.0,
-                      height: 2.0,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-
           const SizedBox(height: 16.0),
           // Quote section
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 25.0, left: 25, top: 10),
-              child: SingleChildScrollView(
-                child: Text(
-                  "\u201C${quote.quote}\u201D",
-                  style: GoogleFonts.notoSerif(
-                      fontSize: 20.0,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w300,
-                      height: 1.6),
-                  textAlign: TextAlign.center,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 500), // Reduced duration
+              opacity: _quoteOpacities[index] ?? 0.0,
+              curve: Curves.easeIn,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 25.0, left: 25, top: 10),
+                child: SingleChildScrollView(
+                  child: Text(
+                    "\u201C${quote.quote}\u201D",
+                    style: GoogleFonts.notoSerif(
+                        fontSize: 20.0,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w300,
+                        height: 1.6),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
@@ -288,7 +329,8 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Expanded(child: Text('Home')),
+            const Expanded(
+                child: Text('Home', style: TextStyle(fontSize: 18.0))),
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
@@ -310,6 +352,7 @@ class _HomePageState extends State<HomePage> {
               // Add page snapping for smooth transitions
               pageSnapping: true,
               onPageChanged: (index) {
+                _resetOpacityForPage(index);
                 print(
                     "Page changed to index: $index, current index: $currentIndex");
                 if (index > currentIndex) {
@@ -327,7 +370,7 @@ class _HomePageState extends State<HomePage> {
                 if (index < 0 || index >= viewedQuotes.length) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                return _buildQuoteCard(viewedQuotes[index]);
+                return _buildQuoteCard(viewedQuotes[index], index);
               },
             ),
     );
