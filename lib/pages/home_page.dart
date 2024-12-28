@@ -2,6 +2,7 @@ import 'package:dharmic/components/my_drawer.dart';
 import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -168,32 +169,73 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(80.0),
-            child: Image.asset(
-              quote.authorImg,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
+          // Author info section
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(80.0),
+                child: Image.asset(
+                  quote.authorImg,
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 16.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    quote.author,
+                    style: GoogleFonts.notoSansJp(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'Spiritual Leader',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0), // Reduced spacing
+                  Container(
+                    constraints: const BoxConstraints(
+                      minHeight: 2.0,
+                    ),
+                    width: 200.0,
+                    child: Divider(
+                      color: Colors.grey.shade800,
+                      thickness: 2.0,
+                      height: 2.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16.0),
+          // Quote section
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 25.0, left: 25, top: 10),
+              child: SingleChildScrollView(
+                child: Text(
+                  "\u201C${quote.quote}\u201D",
+                  style: GoogleFonts.notoSerif(
+                      fontSize: 20.0,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w300,
+                      height: 1.6),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16.0),
-          Text(
-            quote.quote,
-            style: const TextStyle(
-              fontSize: 18.0,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            '- ${quote.author}',
-            style: TextStyle(
-              fontSize: 16.0,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          const Spacer(),
           _buildActionButtons(quote),
         ],
       ),
@@ -255,7 +297,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        backgroundColor: Colors.grey.shade800,
+        backgroundColor: const Color(0xFF282828),
         elevation: 0,
         foregroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
@@ -292,32 +334,71 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class _CircleButton extends StatelessWidget {
+class _CircleButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback onPressed;
   final bool isActive;
 
   const _CircleButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
     this.isActive = false,
-  }) : super(key: key);
+  });
+
+  @override
+  State<_CircleButton> createState() => _CircleButtonState();
+}
+
+class _CircleButtonState extends State<_CircleButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _controller.reverse();
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 56.0,
-        height: 56.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey.shade800,
-        ),
-        child: Icon(
-          icon,
-          color: isActive ? Colors.amber : Colors.white,
+      onTap: () {
+        _controller.forward();
+        widget.onPressed();
+      },
+      child: ScaleTransition(
+        scale: Tween<double>(
+          begin: 0.9,
+          end: 1.0,
+        ).animate(CurvedAnimation(
+          parent: _controller,
+          curve: Curves.easeInOut,
+        )),
+        child: Container(
+          width: 56.0,
+          height: 56.0,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xFFfa5620), // Hex color with alpha channel
+          ),
+          child: Icon(
+            widget.icon,
+            color: widget.isActive ? Colors.white : Colors.white,
+          ),
         ),
       ),
     );

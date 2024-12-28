@@ -6,7 +6,7 @@ import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/components/my_drawer.dart';
 
 class BookmarksPage extends StatelessWidget {
-  const BookmarksPage({Key? key}) : super(key: key);
+  const BookmarksPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +110,11 @@ class _CircleButton extends StatelessWidget {
   final bool isActive;
 
   const _CircleButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
     this.isActive = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -11,10 +11,10 @@ class BookmarkSliderPage extends StatefulWidget {
   final int initialIndex;
 
   const BookmarkSliderPage({
-    Key? key,
+    super.key,
     required this.bookmarkedQuotes,
     required this.initialIndex,
-  }) : super(key: key);
+  });
 
   @override
   State<BookmarkSliderPage> createState() => _BookmarkSliderPageState();

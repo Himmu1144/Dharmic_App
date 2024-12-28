@@ -12,13 +12,13 @@ class ActionButtons extends StatelessWidget {
   final Function(Quote) onShare;
 
   const ActionButtons({
-    Key? key,
+    super.key,
     required this.quote,
     required this.speakIcon,
     required this.isSpeaking,
     required this.onSpeak,
     required this.onShare,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -6,11 +6,11 @@ class CircleButton extends StatelessWidget {
   final bool isActive;
 
   const CircleButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
     this.isActive = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +19,9 @@ class CircleButton extends StatelessWidget {
       child: Container(
         width: 56.0,
         height: 56.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.grey.shade800,
+          color: Color(0xFFfa5620),
         ),
         child: Icon(
           icon,
