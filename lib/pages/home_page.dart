@@ -1,12 +1,14 @@
 import 'package:dharmic/components/my_drawer.dart';
 import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/services/isar_service.dart';
+import 'package:dharmic/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:share_plus/share_plus.dart';
+import '../components/circle_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -289,18 +291,18 @@ class _HomePageState extends State<HomePage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _CircleButton(
+          CircleButton(
             icon: speakIcon,
             isActive: isSpeaking,
             onPressed: () => _handleSpeech(quote.quote),
           ),
-          _CircleButton(
+          CircleButton(
             icon: Icons.language,
             onPressed: () {
               // Website navigation implementation
             },
           ),
-          _CircleButton(
+          CircleButton(
             icon: Icons.share,
             onPressed: () {
               _shareQuote(quote);
@@ -308,7 +310,7 @@ class _HomePageState extends State<HomePage>
           ),
           Consumer<IsarService>(
             builder: (context, isarService, child) {
-              return _CircleButton(
+              return CircleButton(
                 icon:
                     quote.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                 isActive: quote.isBookmarked,
@@ -331,10 +333,14 @@ class _HomePageState extends State<HomePage>
           children: [
             const Expanded(
                 child: Text('Home', style: TextStyle(fontSize: 18.0))),
+            // Update the search button navigation
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                // Search implementation
+                Navigator.push(
+                  context,
+                  SlidePageRoute(page: const SearchPage()),
+                );
               },
             ),
           ],
@@ -377,73 +383,73 @@ class _HomePageState extends State<HomePage>
   }
 }
 
-class _CircleButton extends StatefulWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
-  final bool isActive;
+// class _CircleButton extends StatefulWidget {
+//   final IconData icon;
+//   final VoidCallback onPressed;
+//   final bool isActive;
 
-  const _CircleButton({
-    super.key,
-    required this.icon,
-    required this.onPressed,
-    this.isActive = false,
-  });
+//   const _CircleButton({
+//     super.key,
+//     required this.icon,
+//     required this.onPressed,
+//     this.isActive = false,
+//   });
 
-  @override
-  State<_CircleButton> createState() => _CircleButtonState();
-}
+//   @override
+//   State<_CircleButton> createState() => _CircleButtonState();
+// }
 
-class _CircleButtonState extends State<_CircleButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+// class _CircleButtonState extends State<_CircleButton>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _controller;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _controller.reverse();
-        }
-      });
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       duration: const Duration(milliseconds: 200),
+//       vsync: this,
+//     )..addStatusListener((status) {
+//         if (status == AnimationStatus.completed) {
+//           _controller.reverse();
+//         }
+//       });
+//   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _controller.forward();
-        widget.onPressed();
-      },
-      child: ScaleTransition(
-        scale: Tween<double>(
-          begin: 0.9,
-          end: 1.0,
-        ).animate(CurvedAnimation(
-          parent: _controller,
-          curve: Curves.easeInOut,
-        )),
-        child: Container(
-          width: 56.0,
-          height: 56.0,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color(0xFFfa5620), // Hex color with alpha channel
-          ),
-          child: Icon(
-            widget.icon,
-            color: widget.isActive ? Colors.white : Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         _controller.forward();
+//         widget.onPressed();
+//       },
+//       child: ScaleTransition(
+//         scale: Tween<double>(
+//           begin: 0.9,
+//           end: 1.0,
+//         ).animate(CurvedAnimation(
+//           parent: _controller,
+//           curve: Curves.easeInOut,
+//         )),
+//         child: Container(
+//           width: 62.0,
+//           height: 62.0,
+//           decoration: const BoxDecoration(
+//             shape: BoxShape.circle,
+//             color: Color(0xFFfa5620), // Hex color with alpha channel
+//           ),
+//           child: Icon(
+//             widget.icon,
+//             color: widget.isActive ? Colors.white : Colors.white,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
