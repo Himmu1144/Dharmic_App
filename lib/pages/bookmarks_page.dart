@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';
-import 'package:dharmic/components/my_drawer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BookmarksPage extends StatelessWidget {
   const BookmarksPage({super.key});
@@ -12,7 +12,13 @@ class BookmarksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bookmarks'),
+        backgroundColor: const Color(0xFF282828),
+        elevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Bookmarks',
+          style: TextStyle(fontSize: 18),
+        ),
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Consumer<IsarService>(
@@ -31,106 +37,115 @@ class BookmarksPage extends StatelessWidget {
               }
 
               final bookmarkedQuotes = snapshot.data!;
-              return ListView.builder(
-                itemCount: bookmarkedQuotes.length,
-                itemBuilder: (context, index) {
-                  final quote = bookmarkedQuotes[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BookmarkSliderPage(
-                            bookmarkedQuotes: bookmarkedQuotes,
-                            initialIndex: index,
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: ListView.builder(
+                  itemCount: bookmarkedQuotes.length,
+                  itemBuilder: (context, index) {
+                    final quote = bookmarkedQuotes[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookmarkSliderPage(
+                              bookmarkedQuotes: bookmarkedQuotes,
+                              initialIndex: index,
+                            ),
                           ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.grey.shade900,
+                              Colors.grey.shade800,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      );
-                    },
-                    child: Card(
-                      margin: const EdgeInsets.all(10.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              quote.quote.length > 500
-                                  ? '${quote.quote.substring(0, 500)}...'
-                                  : quote.quote,
-                              style: const TextStyle(fontSize: 16.0),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(
-                              '- ${quote.author}',
-                              style: const TextStyle(
-                                  fontSize: 14.0, fontStyle: FontStyle.italic),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.share),
-                                  onPressed: () {
-                                    print('Share pressed');
-                                  },
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(16),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: Image.asset(
+                                  quote.authorImg,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
                                 ),
-                                _CircleButton(
-                                  icon: quote.isBookmarked
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_border,
-                                  onPressed: () async {
-                                    final isarService =
-                                        Provider.of<IsarService>(context,
-                                            listen: false);
-                                    await isarService.toggleBookmark(quote);
-                                  },
+                              ),
+                              title: Text(
+                                quote.author,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
-                              ],
+                              ),
+                              subtitle: Text(
+                                'Spiritual Leader',
+                                style: TextStyle(
+                                  color: Colors.grey.shade400,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    quote.quote.length > 150
+                                        ? '${quote.quote.substring(0, 150)}...'
+                                        : quote.quote,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey.shade300,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.share),
+                                        onPressed: () =>
+                                            Share.share(quote.quote),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          quote.isBookmarked
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_border,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () =>
+                                            isarService.toggleBookmark(quote),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class _CircleButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
-  final bool isActive;
-
-  const _CircleButton({
-    super.key,
-    required this.icon,
-    required this.onPressed,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 56.0,
-        height: 56.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey.shade800,
-        ),
-        child: Icon(
-          icon,
-          color: isActive ? Colors.amber : Colors.white,
-        ),
       ),
     );
   }
