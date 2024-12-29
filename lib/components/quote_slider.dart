@@ -24,7 +24,8 @@ class QuoteSlider extends StatefulWidget {
   State<QuoteSlider> createState() => _QuoteSliderState();
 }
 
-class _QuoteSliderState extends State<QuoteSlider> {
+class _QuoteSliderState extends State<QuoteSlider>
+    with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late FlutterTts flutterTts;
   bool isSpeaking = false;
@@ -143,6 +144,7 @@ class _QuoteSliderState extends State<QuoteSlider> {
   }
 
   Widget _buildQuoteCard(Quote quote, int index) {
+    // Initialize opacities for new pages
     _authorOpacities.putIfAbsent(index, () => 0.0);
     _quoteOpacities.putIfAbsent(index, () => 0.0);
 
@@ -151,8 +153,9 @@ class _QuoteSliderState extends State<QuoteSlider> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Author section
           AnimatedOpacity(
-            duration: const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500), // Reduced duration
             opacity: _authorOpacities[index] ?? 0.0,
             curve: Curves.easeIn,
             child: Row(
@@ -185,32 +188,47 @@ class _QuoteSliderState extends State<QuoteSlider> {
                         color: Colors.grey.shade400,
                       ),
                     ),
+                    const SizedBox(height: 8.0), // Reduced spacing
+                    Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 2.0,
+                      ),
+                      width: 200.0,
+                      child: Divider(
+                        color: Colors.grey.shade800,
+                        thickness: 2.0,
+                        height: 2.0,
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 16.0),
+          // Quote section
           Expanded(
             child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500), // Reduced duration
               opacity: _quoteOpacities[index] ?? 0.0,
               curve: Curves.easeIn,
-              child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 25.0, left: 25, top: 10),
                 child: SingleChildScrollView(
                   child: Text(
                     "\u201C${quote.quote}\u201D",
                     style: GoogleFonts.notoSerif(
-                      fontSize: 20.0,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w300,
-                      height: 1.6,
-                    ),
+                        fontSize: 20.0,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w300,
+                        height: 1.6),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
             ),
           ),
+          const SizedBox(height: 16.0),
           _buildActionButtons(quote),
         ],
       ),

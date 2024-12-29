@@ -14,16 +14,33 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   List<Quote>? searchResults;
   bool isLoading = false;
+  bool isFabExpanded = false;
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    // Delay focus to after animation completes
+
+    // Initialize animation controller first
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+
+    // Then create the animation
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+
+    // Request focus after animation initialization
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
         _focusNode.requestFocus();
@@ -33,9 +50,21 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void dispose() {
+    _animationController.dispose();
     _searchController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _toggleFab() {
+    setState(() {
+      isFabExpanded = !isFabExpanded;
+      if (isFabExpanded) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    });
   }
 
   @override
@@ -164,6 +193,59 @@ class _SearchPageState extends State<SearchPage> {
                         },
                       ),
                     ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ScaleTransition(
+            scale: _animation,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isFabExpanded) ...[
+                  FloatingActionButton(
+                    heroTag: 'copy',
+                    mini: true,
+                    child: const Icon(Icons.copy),
+                    onPressed: () {
+                      // Copy quote action
+                      _toggleFab();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton(
+                    heroTag: 'share',
+                    mini: true,
+                    child: const Icon(Icons.share),
+                    onPressed: () {
+                      // Share quote action
+                      _toggleFab();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton(
+                    heroTag: 'favorite',
+                    mini: true,
+                    child: const Icon(Icons.favorite),
+                    onPressed: () {
+                      // Favorite quote action
+                      _toggleFab();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                FloatingActionButton(
+                  heroTag: 'main',
+                  child: AnimatedIcon(
+                    icon: AnimatedIcons.menu_close,
+                    progress: _animation,
+                  ),
+                  onPressed: _toggleFab,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
