@@ -55,6 +55,13 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
       curve: Curves.easeInOut,
     ),
   );
+  static const _maxVisibleDots = 7; // Increased for better visual balance
+
+  late final AnimationController _dotsAnimationController = AnimationController(
+    duration: const Duration(milliseconds: 300),
+    vsync: this,
+  );
+  late final Animation<double> _dotsSlideAnimation;
 
   @override
   void initState() {
@@ -74,6 +81,14 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+
+    _dotsSlideAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _dotsAnimationController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
@@ -85,6 +100,7 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
     _popController.dispose();
     _pageController.dispose();
     flutterTts.stop();
+    _dotsAnimationController.dispose();
     super.dispose();
   }
 
@@ -184,6 +200,13 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
               });
             },
           ),
+          // Add pagination dots
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 16,
+            child: _buildPaginationDots(),
+          ),
           // Dark overlay
           if (_isExpanded)
             GestureDetector(
@@ -259,6 +282,110 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
       ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.endFloat, // Add this
+    );
+  }
+
+  Widget _buildPaginationDots() {
+    final totalPages = widget.bookmarkedQuotes.length;
+    if (totalPages <= 1) {
+      return Center(
+        child: Container(
+          width: 10,
+          height: 10,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xFFfa5620),
+          ),
+        ),
+      );
+    }
+
+    // Special cases for 2-4 dots
+    if (totalPages < 5) {
+      return Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(totalPages, (index) {
+            final isActive = index == _currentPage;
+            final isEdge =
+                totalPages >= 3 && (index == 0 || index == totalPages - 1);
+
+            return AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: isActive ? 1.2 : 1.0,
+              child: Container(
+                width: isActive ? 10 : 8,
+                height: isActive ? 10 : 8,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive ? const Color(0xFFfa5620) : Colors.white,
+                ),
+              ),
+            );
+          }),
+        ),
+      );
+    }
+
+    // For 5 or more dots
+    return Center(
+      child: SizedBox(
+        height: 20, // Increased to accommodate scaling animation
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(5, (index) {
+            final isFirstDot = index == 0;
+            final isLastDot = index == 4;
+
+            // Calculate active position
+            int activeDotPosition;
+            if (_currentPage <= 2) {
+              activeDotPosition = _currentPage;
+            } else if (_currentPage >= totalPages - 2) {
+              activeDotPosition = 4 - (totalPages - _currentPage - 1);
+            } else {
+              activeDotPosition = 2;
+            }
+
+            final bool isActive = index == activeDotPosition;
+            final bool isSmall = (isFirstDot && _currentPage > 2) ||
+                (isLastDot && _currentPage < totalPages - 3);
+
+            return TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              tween: Tween(
+                begin: 0,
+                end: 1,
+              ),
+              builder: (context, value, child) {
+                return AnimatedSlide(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  offset: Offset(_currentPage > 2 ? -0.2 : 0, 0),
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 200),
+                    scale: isActive ? 1.2 : (isSmall ? 0.6 : 1.0),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: isActive ? 6 : 4,
+                      ),
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color:
+                            isActive ? const Color(0xFFfa5620) : Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
+        ),
+      ),
     );
   }
 
