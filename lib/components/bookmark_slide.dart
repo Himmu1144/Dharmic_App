@@ -8,25 +8,24 @@ import '../services/isar_service.dart';
 import 'package:share_plus/share_plus.dart';
 import 'circle_button.dart'; // Update import
 
-class QuoteSlider extends StatefulWidget {
+class BookmarkSlide extends StatefulWidget {
   final List<Quote> quotes;
   final int initialIndex;
-  final String? searchQuery; // Add this
+
   final Function(int)? onPageChanged; // Add this
 
-  const QuoteSlider({
+  const BookmarkSlide({
     Key? key,
     required this.quotes,
     required this.initialIndex,
-    this.searchQuery,
     this.onPageChanged, // Add this
   }) : super(key: key);
 
   @override
-  State<QuoteSlider> createState() => _QuoteSliderState();
+  State<BookmarkSlide> createState() => _BookmarkSlideState();
 }
 
-class _QuoteSliderState extends State<QuoteSlider>
+class _BookmarkSlideState extends State<BookmarkSlide>
     with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late FlutterTts flutterTts;
@@ -93,45 +92,6 @@ class _QuoteSliderState extends State<QuoteSlider>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF282828),
-        elevation: 0,
-        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: widget.searchQuery != null
-            ? Text('Search: ${widget.searchQuery}',
-                style: const TextStyle(fontSize: 18))
-            : const Text('Quotes'),
-        actions: [
-          Consumer<IsarService>(
-            builder: (context, isarService, child) {
-              return IconButton(
-                icon: Icon(widget
-                        .quotes[_pageController.page?.round() ??
-                            widget.initialIndex]
-                        .isBookmarked
-                    ? Icons.bookmark
-                    : Icons.bookmark_border),
-                onPressed: () async {
-                  final currentQuote = widget.quotes[
-                      _pageController.page?.round() ?? widget.initialIndex];
-                  await isarService.toggleBookmark(currentQuote);
-                },
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => Navigator.push(
-              context,
-              SlidePageRoute(page: const SearchPage()),
-            ),
-          ),
-        ],
-      ),
       body: PageView.builder(
         controller: _pageController,
         pageSnapping: true,
