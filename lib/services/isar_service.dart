@@ -100,6 +100,23 @@ class IsarService extends ChangeNotifier {
         .findAll();
   }
 
+  Future<List<Quote>> fetchBookmarkedQuotesSorted({String? sortBy}) async {
+    final isar = await db;
+    final quotes =
+        await isar.quotes.filter().isBookmarkedEqualTo(true).findAll();
+
+    switch (sortBy) {
+      case 'author':
+        quotes.sort((a, b) => a.author.compareTo(b.author));
+        return quotes;
+      case 'length':
+        quotes.sort((a, b) => a.quote.length.compareTo(b.quote.length));
+        return quotes;
+      default:
+        return quotes;
+    }
+  }
+
   Future<List<Quote>> searchAllQuotes(String query) async {
     final isar = await db;
     return isar.quotes
