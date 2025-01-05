@@ -1,3 +1,5 @@
+import 'package:dharmic/components/custom_page_indicator.dart';
+import 'package:dharmic/components/floating_buttons.dart';
 import 'package:dharmic/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -15,12 +17,12 @@ class QuoteSlider extends StatefulWidget {
   final Function(int)? onPageChanged; // Add this
 
   const QuoteSlider({
-    Key? key,
+    super.key,
     required this.quotes,
     required this.initialIndex,
     this.searchQuery,
     this.onPageChanged, // Add this
-  }) : super(key: key);
+  });
 
   @override
   State<QuoteSlider> createState() => _QuoteSliderState();
@@ -29,24 +31,14 @@ class QuoteSlider extends StatefulWidget {
 class _QuoteSliderState extends State<QuoteSlider>
     with SingleTickerProviderStateMixin {
   late PageController _pageController;
-  late FlutterTts flutterTts;
-  bool isSpeaking = false;
-  IconData speakIcon = Icons.play_arrow;
-  Map<int, double> _authorOpacities = {};
-  Map<int, double> _quoteOpacities = {};
+  final Map<int, double> _authorOpacities = {};
+  final Map<int, double> _quoteOpacities = {};
+  int _currentPage = 0; // Make sure this is here
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: widget.initialIndex);
-    flutterTts = FlutterTts();
-
-    flutterTts.setCompletionHandler(() {
-      setState(() {
-        isSpeaking = false;
-        speakIcon = Icons.play_arrow;
-      });
-    });
 
     _resetOpacityForPage(widget.initialIndex);
   }
@@ -54,24 +46,7 @@ class _QuoteSliderState extends State<QuoteSlider>
   @override
   void dispose() {
     _pageController.dispose();
-    flutterTts.stop();
     super.dispose();
-  }
-
-  Future<void> _handleSpeech(String text) async {
-    if (isSpeaking) {
-      await flutterTts.stop();
-      setState(() {
-        isSpeaking = false;
-        speakIcon = Icons.play_arrow;
-      });
-    } else {
-      setState(() {
-        isSpeaking = true;
-        speakIcon = Icons.stop;
-      });
-      await flutterTts.speak(text);
-    }
   }
 
   void _resetOpacityForPage(int pageIndex) {
@@ -132,19 +107,41 @@ class _QuoteSliderState extends State<QuoteSlider>
           ),
         ],
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        pageSnapping: true,
-        onPageChanged: (index) {
-          _resetOpacityForPage(index);
-          widget.onPageChanged?.call(index); // Add this line
-        },
-        itemCount: widget.quotes.length,
-        itemBuilder: (context, index) {
-          final quote = widget.quotes[index];
-          return _buildQuoteCard(quote, index);
-        },
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            pageSnapping: true,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+              _resetOpacityForPage(index);
+              widget.onPageChanged?.call(index);
+            },
+            itemCount: widget.quotes.length,
+            itemBuilder: (context, index) {
+              final quote = widget.quotes[index];
+              return _buildQuoteCard(quote, index);
+            },
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 16,
+            child: CustomPageIndicator(
+              totalPages: widget.quotes.length,
+              currentPage: _currentPage,
+              activeColor: const Color(0xFFfa5620),
+              inactiveColor: Colors.white,
+            ),
+          ),
+        ],
       ),
+      floatingActionButton: FloatingButtons(
+        quote: widget.quotes[_currentPage],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -239,40 +236,4 @@ class _QuoteSliderState extends State<QuoteSlider>
       ),
     );
   }
-
-  // Widget _buildActionButtons(Quote quote) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(16.0),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //       children: [
-  //         CircleButton(
-  //           icon: speakIcon,
-  //           isActive: isSpeaking,
-  //           onPressed: () => _handleSpeech(quote.quote),
-  //         ),
-  //         CircleButton(
-  //           icon: Icons.language,
-  //           onPressed: () {
-  //             // Website navigation implementation
-  //           },
-  //         ),
-  //         CircleButton(
-  //           icon: Icons.share,
-  //           onPressed: () => Share.share(quote.quote),
-  //         ),
-  //         Consumer<IsarService>(
-  //           builder: (context, isarService, child) {
-  //             return CircleButton(
-  //               icon:
-  //                   quote.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-  //               isActive: quote.isBookmarked,
-  //               onPressed: () => isarService.toggleBookmark(quote),
-  //             );
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

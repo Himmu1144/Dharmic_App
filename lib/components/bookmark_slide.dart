@@ -15,11 +15,11 @@ class BookmarkSlide extends StatefulWidget {
   final Function(int)? onPageChanged; // Add this
 
   const BookmarkSlide({
-    Key? key,
+    super.key,
     required this.quotes,
     required this.initialIndex,
     this.onPageChanged, // Add this
-  }) : super(key: key);
+  });
 
   @override
   State<BookmarkSlide> createState() => _BookmarkSlideState();
@@ -31,8 +31,8 @@ class _BookmarkSlideState extends State<BookmarkSlide>
   late FlutterTts flutterTts;
   bool isSpeaking = false;
   IconData speakIcon = Icons.play_arrow;
-  Map<int, double> _authorOpacities = {};
-  Map<int, double> _quoteOpacities = {};
+  final Map<int, double> _authorOpacities = {};
+  final Map<int, double> _quoteOpacities = {};
 
   @override
   void initState() {

@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 // import 'quote_slider_page.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  const SearchPage({super.key});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -235,11 +235,11 @@ class _SearchPageState extends State<SearchPage>
                 ],
                 FloatingActionButton(
                   heroTag: 'main',
+                  onPressed: _toggleFab,
                   child: AnimatedIcon(
                     icon: AnimatedIcons.menu_close,
                     progress: _animation,
                   ),
-                  onPressed: _toggleFab,
                 ),
               ],
             ),

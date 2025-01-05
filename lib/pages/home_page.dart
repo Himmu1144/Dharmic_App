@@ -29,8 +29,8 @@ class _HomePageState extends State<HomePage>
   bool isSpeaking = false;
 
   // Add opacity maps for both sections
-  Map<int, double> _authorOpacities = {};
-  Map<int, double> _quoteOpacities = {};
+  final Map<int, double> _authorOpacities = {};
+  final Map<int, double> _quoteOpacities = {};
 
   @override
   void initState() {
