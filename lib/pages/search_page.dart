@@ -5,10 +5,17 @@ import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'quote_slider_page.dart';
+import 'package:share_plus/share_plus.dart'; // Add this import
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  final bool searchBookmarksOnly;
+  final String? placeholder; // Add this
+
+  const SearchPage({
+    super.key,
+    this.searchBookmarksOnly = false,
+    this.placeholder, // Add this
+  });
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -67,6 +74,28 @@ class _SearchPageState extends State<SearchPage>
     });
   }
 
+  void _showUndoSnackbar(Quote quote, IsarService isarService) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    final bool isBookmarkPage = widget.searchBookmarksOnly;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.black87,
+        content: Text(
+          isBookmarkPage ? 'Bookmark removed' : 'Quote bookmarked',
+          style: const TextStyle(color: Colors.white),
+        ),
+        duration: const Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'Undo',
+          textColor: const Color(0xFFfa5620),
+          onPressed: () {
+            isarService.toggleBookmark(quote);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,9 +118,9 @@ class _SearchPageState extends State<SearchPage>
           focusNode: _focusNode, // Use focusNode instead of autofocus
           autofocus: false, // Disable autofocus
           style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: "What's on your mind today?",
-            hintStyle: TextStyle(color: Colors.grey),
+          decoration: InputDecoration(
+            hintText: widget.placeholder ?? "What's on your mind today?",
+            hintStyle: const TextStyle(color: Colors.grey),
             border: InputBorder.none,
           ),
           onSubmitted: (value) => _performSearch(value),
@@ -109,81 +138,123 @@ class _SearchPageState extends State<SearchPage>
                     )
                   : Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
+                          horizontal: 16.0,
+                          vertical: 16.0), // Increased vertical padding
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: searchResults!.length,
                         itemBuilder: (context, index) {
                           final quote = searchResults![index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => QuoteSlider(
-                                    quotes: searchResults!,
-                                    initialIndex: index,
-                                    searchQuery: _searchController
-                                        .text, // Pass the search query here
-                                  ),
-                                ),
-                              );
+                          return Dismissible(
+                            key: Key(quote.id.toString()),
+                            direction: DismissDirection.horizontal,
+                            confirmDismiss: (direction) async {
+                              if (direction == DismissDirection.endToStart) {
+                                final isarService = Provider.of<IsarService>(
+                                    context,
+                                    listen: false);
+                                await isarService.toggleBookmark(quote);
+                                _showUndoSnackbar(quote, isarService);
+                                return false;
+                              } else if (direction ==
+                                  DismissDirection.startToEnd) {
+                                await Share.share(
+                                  '"${quote.quote}"\n\n- ${quote.author}\n\nShared via Dharmic Quotes App',
+                                );
+                                return false;
+                              }
+                              return false;
                             },
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 16.0),
-                              child: Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Colors.grey.shade900,
-                                        Colors.grey.shade800,
-                                      ],
+                            background: Container(
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.only(left: 20),
+                              color: Colors.green,
+                              child:
+                                  const Icon(Icons.share, color: Colors.white),
+                            ),
+                            secondaryBackground: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 20),
+                              color: const Color(0xFFfa5620),
+                              child: Icon(
+                                  widget.searchBookmarksOnly
+                                      ? Icons.bookmark_remove
+                                      : Icons.bookmark_add,
+                                  color: Colors.white),
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => QuoteSlider(
+                                      quotes: searchResults!,
+                                      initialIndex: index,
+                                      searchQuery: _searchController.text,
                                     ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 25,
-                                              backgroundImage:
-                                                  AssetImage(quote.authorImg),
-                                            ),
-                                            const SizedBox(width: 12.0),
-                                            Text(
-                                              quote.author,
-                                              style: GoogleFonts.notoSansJp(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 10.0),
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.grey.shade900,
+                                          Colors.grey.shade800,
+                                        ],
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 30.0,
+                                          bottom: 30,
+                                          right: 25,
+                                          left: 25),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 25,
+                                                backgroundImage:
+                                                    AssetImage(quote.authorImg),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 16.0),
-                                        Text(
-                                          '"${quote.quote}"',
-                                          style: GoogleFonts.notoSerif(
-                                            fontSize: 16.0,
-                                            color: Colors.grey[300],
-                                            height: 1.5,
+                                              const SizedBox(width: 12.0),
+                                              Text(
+                                                quote.author,
+                                                style: GoogleFonts.notoSansJp(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                                          const SizedBox(height: 16.0),
+                                          Text(
+                                            '"${quote.quote}"',
+                                            style: GoogleFonts.notoSerif(
+                                              fontSize: 16.0,
+                                              color: Colors.grey[300],
+                                              height: 1.5,
+                                            ),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -256,16 +327,10 @@ class _SearchPageState extends State<SearchPage>
 
     try {
       final isarService = Provider.of<IsarService>(context, listen: false);
-      final isar = await isarService.db;
 
-      // Search for both author names and quote content
-      final results = await isar.quotes
-          .filter()
-          .group((q) => q
-              .authorContains(query, caseSensitive: false)
-              .or()
-              .quoteContains(query, caseSensitive: false))
-          .findAll();
+      final results = widget.searchBookmarksOnly
+          ? await isarService.searchBookmarkedQuotes(query)
+          : await isarService.searchAllQuotes(query);
 
       // Sort results to prioritize author matches
       results.sort((a, b) {

@@ -100,6 +100,29 @@ class IsarService extends ChangeNotifier {
         .findAll();
   }
 
+  Future<List<Quote>> searchAllQuotes(String query) async {
+    final isar = await db;
+    return isar.quotes
+        .filter()
+        .group((q) => q
+            .quoteContains(query, caseSensitive: false)
+            .or()
+            .authorContains(query, caseSensitive: false))
+        .findAll();
+  }
+
+  Future<List<Quote>> searchBookmarkedQuotes(String query) async {
+    final isar = await db;
+    return isar.quotes
+        .filter()
+        .isBookmarkedEqualTo(true)
+        .group((q) => q
+            .quoteContains(query, caseSensitive: false)
+            .or()
+            .authorContains(query, caseSensitive: false))
+        .findAll();
+  }
+
   @override
   void dispose() {
     flutterTts.stop();
