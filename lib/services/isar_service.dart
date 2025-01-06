@@ -140,6 +140,25 @@ class IsarService extends ChangeNotifier {
         .findAll();
   }
 
+  Future<List<Map<String, String>>> fetchUniqueAuthors() async {
+    final isar = await db;
+    final quotes = await isar.quotes.where().findAll();
+
+    // Use a map to track unique authors and their images
+    final authorMap = <String, String>{};
+    for (var quote in quotes) {
+      authorMap[quote.author] = quote.authorImg;
+    }
+
+    // Convert to list of maps with author and image
+    return authorMap.entries
+        .map((entry) => {
+              'name': entry.key,
+              'image': entry.value,
+            })
+        .toList();
+  }
+
   @override
   void dispose() {
     flutterTts.stop();

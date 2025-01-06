@@ -1,12 +1,12 @@
 [
     {
         "quote": "Truth is one; the wise call it by different names.",
-        "author": "Rigveda 1.164.46",
+        "author": "Rigveda",
         "author_img": "assets/images/rigveda.png"
     },
     {
         "quote": "Let noble thoughts come to us from every side.",
-        "author": "Rigveda 1.89.1",
+        "author": "Rigveda",
         "author_img": "assets/images/rigveda.png"
     },
     {
@@ -16,12 +16,12 @@
     },
     {
         "quote": "He who bestows all desires fulfills them too.",
-        "author": "Atharvaveda 10.8.29",
+        "author": "Atharvaveda",
         "author_img": "assets/images/atharvaveda.png"
     },
     {
         "quote": "May all beings look at us with the eye of a friend.",
-        "author": "Yajurveda 36.18",
+        "author": "Yajurveda",
         "author_img": "assets/images/yajurveda.png"
     },
 
@@ -501,7 +501,7 @@
     },
     {
         "quote": "In this world, whatever paths you take, if they lead to Me, they are true paths.",
-        "author": "Lord Krishna",
+        "author": "Lucius Annaeus Seneca",
         "author_img": "assets/images/krishna.png"
     },
     {

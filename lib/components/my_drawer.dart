@@ -27,6 +27,18 @@ class MyDrawer extends StatelessWidget {
                 Navigator.pop(context);
               }),
 
+          // Author Page
+          DrawerTile(
+              title: 'Author',
+              leading: Icon(
+                Icons.person,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/author');
+              }),
+
           // Notes tile
           DrawerTile(
               title: 'Bookmarks',
@@ -38,6 +50,7 @@ class MyDrawer extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/bookmarks');
               }),
+
           // Notes tile
           DrawerTile(
               title: 'Settings',
