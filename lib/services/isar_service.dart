@@ -142,13 +142,13 @@ class IsarService extends ChangeNotifier {
       }
     });
 
-    // Verify relationships
-    final quotes = await isar.quotes.where().findAll();
-    print('\nVerifying relationships:');
-    for (var quote in quotes) {
-      print('Quote: ${quote.quote.substring(0, 20)}...');
-      print('Author: ${quote.author.value?.name ?? 'NO AUTHOR'}\n');
-    }
+    //   // Verify relationships
+    //   final quotes = await isar.quotes.where().findAll();
+    //   print('\nVerifying relationships:');
+    //   for (var quote in quotes) {
+    //     print('Quote: ${quote.quote.substring(0, 20)}...');
+    //     print('Author: ${quote.author.value?.name ?? 'NO AUTHOR'}\n');
+    //   }
   }
 
   Future<void> _fetchQuotes(Isar isar) async {
@@ -267,11 +267,26 @@ class IsarService extends ChangeNotifier {
 
   Future<List<Quote>> getUnreadQuotes() async {
     final isar = await db;
-    return await isar.quotes
-        .filter()
-        .isReadEqualTo(
-            false) // This will work now because isRead is part of the model
-        .findAll();
+    final unreadQuotes =
+        await isar.quotes.filter().isReadEqualTo(false).findAll();
+
+    print("Unread Quotes: ${unreadQuotes.length}");
+
+    if (unreadQuotes.isEmpty) {
+      // Reset all quotes to unread
+      await isar.writeTxn(() async {
+        final allQuotes = await isar.quotes.where().findAll();
+        for (var quote in allQuotes) {
+          quote.isRead = false;
+        }
+        await isar.quotes.putAll(allQuotes);
+      });
+
+      // Fetch unread quotes again
+      return await isar.quotes.filter().isReadEqualTo(false).findAll();
+    }
+
+    return unreadQuotes;
   }
 
   Future<void> resetAllQuotesToUnread() async {
@@ -292,6 +307,37 @@ class IsarService extends ChangeNotifier {
         .author((q) => q.idEqualTo(author.id))
         .findAll();
     return quotes;
+  }
+
+  Future<void> loadNextQuotes(List<Quote> currentQuotes) async {
+    final isar = await db;
+
+    // Get more unread quotes
+    final newQuotes = await isar.quotes
+        .filter()
+        .isReadEqualTo(false)
+        .and()
+        .not()
+        .group((q) =>
+            q.anyOf(currentQuotes.map((q) => q.id), (q, id) => q.idEqualTo(id)))
+        .limit(5)
+        .findAll();
+
+    if (newQuotes.isNotEmpty) {
+      currentQuotes.addAll(newQuotes);
+      notifyListeners();
+    }
+  }
+
+  Future<void> markQuoteAsRead(Quote quote) async {
+    if (!quote.isRead) {
+      final isar = await db;
+      quote.isRead = true;
+      await isar.writeTxn(() async {
+        await isar.quotes.put(quote);
+      });
+      notifyListeners();
+    }
   }
 
   @override

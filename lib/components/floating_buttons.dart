@@ -1,3 +1,4 @@
+import 'package:dharmic/components/quotefullscreenpage.dart';
 import 'package:flutter/material.dart';
 import 'package:dharmic/components/circle_button.dart';
 import 'package:share_plus/share_plus.dart';
@@ -5,13 +6,20 @@ import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';
 import 'dart:ui' show lerpDouble;
+import 'package:dharmic/components/simple_fullscreen_page.dart';
 
 class FloatingButtons extends StatefulWidget {
   final Quote quote;
+  final List<Quote> quotes;
+  final int currentIndex;
+  final Function(int)? onPageChanged;
 
   const FloatingButtons({
     super.key,
     required this.quote,
+    required this.quotes,
+    required this.currentIndex,
+    this.onPageChanged,
   });
 
   @override
@@ -107,10 +115,20 @@ class _FloatingButtonsState extends State<FloatingButtons>
                       ),
                       _buildAnimatedButtonWithLabel(
                         controller: _buttonControllers[2],
-                        label: 'Language',
-                        icon: Icons.language,
+                        label: 'Fullscreen',
+                        icon: Icons.fullscreen,
                         offset: 210,
-                        onPressed: () {},
+                        onPressed: () {
+                          _hideOverlay();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SimpleFullscreenPage(
+                                quote: widget.quote,
+                              ),
+                            ),
+                          );
+                        },
                         index: 2,
                       ),
                       Consumer<IsarService>(
@@ -261,8 +279,22 @@ class _FloatingButtonsState extends State<FloatingButtons>
             child: Transform.scale(
               scale: 0.8,
               child: CircleButton(
-                icon: icon,
-                onPressed: onPressed,
+                icon: icon == Icons.language ? Icons.fullscreen : icon,
+                onPressed: icon == Icons.language
+                    ? () {
+                        _hideOverlay();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuoteFullscreenPage(
+                              quotes: widget.quotes,
+                              initialIndex: widget.currentIndex,
+                              onPageChanged: widget.onPageChanged ?? (_) {},
+                            ),
+                          ),
+                        );
+                      }
+                    : onPressed,
                 isActive: isActive,
               ),
             ),

@@ -222,6 +222,14 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
       ),
       floatingActionButton: FloatingButtons(
         quote: widget.bookmarkedQuotes[_currentPage],
+        quotes: widget.bookmarkedQuotes,
+        currentIndex: _currentPage,
+        onPageChanged: (index) {
+          setState(() {
+            _currentPage = index;
+            _pageController.jumpToPage(index);
+          });
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

@@ -131,6 +131,14 @@ class _AuthorQuoteSliderState extends State<AuthorQuoteSlider> {
       ),
       floatingActionButton: FloatingButtons(
         quote: widget.quotes[_currentPage],
+        quotes: widget.quotes,
+        currentIndex: _currentPage,
+        onPageChanged: (index) {
+          setState(() {
+            _currentPage = index;
+            _pageController.jumpToPage(index);
+          });
+        },
       ),
     );
   }

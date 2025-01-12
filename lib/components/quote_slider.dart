@@ -140,6 +140,8 @@ class _QuoteSliderState extends State<QuoteSlider>
       ),
       floatingActionButton: FloatingButtons(
         quote: widget.quotes[_currentPage],
+        quotes: widget.quotes,
+        currentIndex: _currentPage,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
