@@ -1,0 +1,44 @@
+[
+    {
+        "author": "Rigveda",
+        "author_img": "assets/images/rigveda.png", 
+        "author_title": "Ancient Hindu Scripture",
+        "author_description": "The Rigveda is an ancient Indian collection of Vedic Sanskrit hymns. It is one of the four sacred canonical texts of Hinduism known as the Vedas.",
+        "author_link": "https://en.wikipedia.org/wiki/Rigveda"
+    },
+    {
+        "author": "Yajurveda", 
+        "author_img": "assets/images/yajurveda.png",
+        "author_title": "Vedic Liturgical Text",
+        "author_description": "The Yajurveda is one of the four main texts of Hinduism's Vedic period, containing prose mantras for worship rituals.",
+        "author_link": "https://en.wikipedia.org/wiki/Yajurveda"
+    },
+    {
+        "author": "Atharvaveda",
+        "author_img": "assets/images/atharvaveda.png",
+        "author_title": "Sacred Knowledge Text",
+        "author_description": "The Atharvaveda is the fourth Veda, focusing on everyday life, healing practices and metaphysical knowledge.",
+        "author_link": "https://en.wikipedia.org/wiki/Atharvaveda"
+    },
+    {
+        "author": "Buddha",
+        "author_img": "assets/images/buddha.png",
+        "author_title": "The Enlightened One",
+        "author_description": "Siddhartha Gautama, known as the Buddha, was a spiritual teacher who founded Buddhism. His journey to enlightenment began in ancient India, around the 5th century BCE. Born into a royal family, Siddhartha lived a life of luxury until he encountered the harsh realities of life outside the palace. These encounters with old age, sickness, and death deeply troubled him and set him on a quest for understanding and inner peace. At the age of 29, Siddhartha renounced his royal privileges and embarked on a spiritual journey. He practiced severe asceticism, seeking spiritual awakening through extreme self-denial. However, he eventually realized that neither the indulgent life of the palace nor the severe ascetic practices were the path to enlightenment. Instead, he discovered the Middle Way—a path of moderation and balance.",
+        "author_link": "https://en.wikipedia.org/wiki/buddha.png"
+    },
+    {
+        "author": "Lord Krishna",
+        "author_img": "assets/images/krishna.png", 
+        "author_title": "Supreme Being",
+        "author_description": "Krishna is a major deity in Hinduism and the speaker of the Bhagavad Gita.",
+        "author_link": "https://en.wikipedia.org/wiki/Krishna"
+    },
+    {
+        "author": "Lucius Annaeus Seneca",
+        "author_img": "assets/images/marcus_aurelius.jpeg",
+        "author_title": "Roman Stoic Philosopher",
+        "author_description": "Seneca was a Roman Stoic philosopher, statesman, and dramatist. He was a tutor and advisor to emperor Nero, known for his writings on ethics and natural phenomena.",
+        "author_link": "https://en.wikipedia.org/wiki/Seneca_the_Younger"
+    }
+]

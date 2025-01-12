@@ -1,25 +1,36 @@
 import 'package:isar/isar.dart';
+import 'author.dart';
 
-part 'quote.g.dart'; // Required for code generation
+part 'quote.g.dart';
 
 @Collection()
 class Quote {
-  Id id = Isar.autoIncrement; // Automatically assigns an ID
-  late String quote; // The quote text
-  late String author; // Name of the author
-  late String authorImg; // Path to the author's image
-  bool isRead = false; // Tracks if the quote has been read
-  bool isBookmarked = false;
-  @Index() // Add this
-  DateTime? bookmarkedAt; // Add this
+  Id id = Isar.autoIncrement;
 
-  // Constructor for convenience (optional)
+  late String quote;
+
+  // Keep the read tracking
+  bool isRead = false;
+
+  @Index()
+  bool isBookmarked = false;
+
+  @Index()
+  DateTime? bookmarkedAt;
+
+  // Maintain author relationship
+  @Index()
+  final author = IsarLink<Author>();
+
+  // Add these getters for backward compatibility
+  String get authorName => author.value?.name ?? '';
+  String get authorImg => author.value?.image ?? 'assets/images/buddha.png';
+
+  // Constructor
   Quote({
-    required this.quote,
-    required this.author,
-    required this.authorImg,
+    this.quote = '',
     this.isRead = false,
     this.isBookmarked = false,
-    this.bookmarkedAt, // Add this
+    this.bookmarkedAt,
   });
 }

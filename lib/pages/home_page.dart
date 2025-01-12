@@ -68,23 +68,20 @@ class _HomePageState extends State<HomePage>
 
     try {
       final isarService = Provider.of<IsarService>(context, listen: false);
-      final isar = await isarService.db;
+      final unreadQuotes = await isarService.getUnreadQuotes();
+      print("Unread quotes found: ${unreadQuotes.length}");
 
-      final quotes = await isar.quotes.filter().isReadEqualTo(false).findAll();
-      print("Unread quotes found: ${quotes.length}");
-
-      if (quotes.isEmpty) {
+      if (unreadQuotes.isEmpty) {
         print("No unread quotes found. Resetting all quotes...");
-        await _resetAllQuotes(isar);
+        await isarService.resetAllQuotesToUnread();
         // Fetch quotes again after reset
-        quotes
-            .addAll(await isar.quotes.filter().isReadEqualTo(false).findAll());
-        print("After reset, unread quotes: ${quotes.length}");
+        unreadQuotes.addAll(await isarService.getUnreadQuotes());
+        print("After reset, unread quotes: ${unreadQuotes.length}");
       }
 
       if (mounted) {
         setState(() {
-          unreadQuotes = quotes..shuffle();
+          this.unreadQuotes = unreadQuotes..shuffle();
           if (unreadQuotes.isNotEmpty) {
             _loadNextQuote();
           }
@@ -144,7 +141,7 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _shareQuote(Quote quote) async {
     try {
-      final text = '${quote.quote}\n- ${quote.author}';
+      final text = '${quote.quote}\n- ${quote.author.value?.name ?? 'Unknown'}';
       await Share.share(
         text,
         subject: 'Check out this quote!',
@@ -213,7 +210,7 @@ class _HomePageState extends State<HomePage>
                 ClipRRect(
                   borderRadius: BorderRadius.circular(80.0),
                   child: Image.asset(
-                    quote.authorImg,
+                    quote.author.value?.image ?? 'assets/images/buddha.png',
                     width: 65,
                     height: 65,
                     fit: BoxFit.cover,
@@ -224,7 +221,7 @@ class _HomePageState extends State<HomePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      quote.author,
+                      quote.author.value?.name ?? 'Unnown',
                       style: GoogleFonts.notoSansJp(
                         fontSize: 17.0,
                         fontWeight: FontWeight.bold,
@@ -232,7 +229,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      'Spiritual Leader',
+                      quote.author.value?.title ?? 'Unnown',
                       style: GoogleFonts.notoSansJp(
                         fontSize: 13.0,
                         color: Colors.grey.shade400,

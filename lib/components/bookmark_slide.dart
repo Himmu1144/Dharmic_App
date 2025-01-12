@@ -128,7 +128,7 @@ class _BookmarkSlideState extends State<BookmarkSlide>
                 ClipRRect(
                   borderRadius: BorderRadius.circular(80.0),
                   child: Image.asset(
-                    quote.authorImg,
+                    quote.author.value?.image ?? 'assets/images/buddha.png',
                     width: 65,
                     height: 65,
                     fit: BoxFit.cover,
@@ -139,7 +139,7 @@ class _BookmarkSlideState extends State<BookmarkSlide>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      quote.author,
+                      quote.author.value?.name ?? 'Unknown',
                       style: GoogleFonts.notoSansJp(
                         fontSize: 17.0,
                         fontWeight: FontWeight.bold,

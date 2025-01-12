@@ -1,8 +1,12 @@
+import 'package:dharmic/pages/author_page.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // Add this
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../models/quote.dart';
+import '../models/author.dart';
 
 class IsarService extends ChangeNotifier {
   late Future<Isar> db;
@@ -65,11 +69,86 @@ class IsarService extends ChangeNotifier {
   Future<Isar> _initIsar() async {
     final dir = await getApplicationDocumentsDirectory();
     final isar = await Isar.open(
-      [QuoteSchema],
+      [AuthorSchema, QuoteSchema],
       directory: dir.path,
     );
     await _fetchQuotes(isar);
     return isar;
+  }
+
+  Future<void> loadAuthorsFromJson() async {
+    final isar = await db;
+
+    // Check if authors exist
+    if (await isar.authors.count() > 0) return;
+
+    final String jsonData = await rootBundle.loadString('assets/author.json');
+    final List<dynamic> authorsList = json.decode(jsonData);
+
+    await isar.writeTxn(() async {
+      for (var data in authorsList) {
+        final author = Author()
+          ..name = data['author']
+          ..image = data['author_img']
+          ..title = data['author_title']
+          ..description = data['author_description']
+          ..link = data['author_link'];
+        await isar.authors.put(author);
+      }
+    });
+  }
+
+  Future<void> loadQuotesWithAuthors() async {
+    final isar = await db;
+
+    // Debug print to check counts
+    print('Authors count: ${await isar.authors.count()}');
+    print('Quotes count: ${await isar.quotes.count()}');
+
+    if (await isar.quotes.count() > 0) {
+      print('Quotes already exist, skipping import');
+      return;
+    }
+
+    final String jsonData = await rootBundle.loadString('assets/quotes.json');
+    final List<dynamic> quotesList = json.decode(jsonData);
+    print('Loaded ${quotesList.length} quotes from JSON');
+
+    await isar.writeTxn(() async {
+      for (var data in quotesList) {
+        print('Looking for author: ${data['author']}');
+
+        // Find author with exact name match
+        final author =
+            await isar.authors.where().nameEqualTo(data['author']).findFirst();
+
+        if (author != null) {
+          print('Found author: ${author.name}');
+
+          final quote = Quote()
+            ..quote = data['quote']
+            ..author.value = author
+            ..isRead = false
+            ..isBookmarked = false;
+
+          // Save quote
+          await isar.quotes.put(quote);
+
+          // Establish bidirectional link
+          await quote.author.save();
+        } else {
+          print('Author not found: ${data['author']}');
+        }
+      }
+    });
+
+    // Verify relationships
+    final quotes = await isar.quotes.where().findAll();
+    print('\nVerifying relationships:');
+    for (var quote in quotes) {
+      print('Quote: ${quote.quote.substring(0, 20)}...');
+      print('Author: ${quote.author.value?.name ?? 'NO AUTHOR'}\n');
+    }
   }
 
   Future<void> _fetchQuotes(Isar isar) async {
@@ -107,7 +186,8 @@ class IsarService extends ChangeNotifier {
 
     switch (sortBy) {
       case 'author':
-        quotes.sort((a, b) => a.author.compareTo(b.author));
+        quotes.sort((a, b) =>
+            a.author.value?.name.compareTo(b.author.value?.name ?? '') ?? 0);
         return quotes;
       case 'length':
         quotes.sort((a, b) => a.quote.length.compareTo(b.quote.length));
@@ -124,7 +204,7 @@ class IsarService extends ChangeNotifier {
         .group((q) => q
             .quoteContains(query, caseSensitive: false)
             .or()
-            .authorContains(query, caseSensitive: false))
+            .author((q) => q.nameContains(query, caseSensitive: false)))
         .findAll();
   }
 
@@ -136,7 +216,7 @@ class IsarService extends ChangeNotifier {
         .group((q) => q
             .quoteContains(query, caseSensitive: false)
             .or()
-            .authorContains(query, caseSensitive: false))
+            .author((q) => q.nameContains(query, caseSensitive: false)))
         .findAll();
   }
 
@@ -147,7 +227,9 @@ class IsarService extends ChangeNotifier {
     // Use a map to track unique authors and their images
     final authorMap = <String, String>{};
     for (var quote in quotes) {
-      authorMap[quote.author] = quote.authorImg;
+      if (quote.author.value != null) {
+        authorMap[quote.author.value!.name] = quote.author.value!.image;
+      }
     }
 
     // Convert to list of maps with author and image
@@ -157,6 +239,59 @@ class IsarService extends ChangeNotifier {
               'image': entry.value,
             })
         .toList();
+  }
+
+  Future<List<Author>> fetchAllAuthors(
+      {AuthorSort sort = AuthorSort.default_order}) async {
+    final isar = await db;
+    List<Author> authors;
+
+    switch (sort) {
+      case AuthorSort.alphabetical:
+        authors = await isar.authors.where().sortByName().findAll();
+        break;
+      case AuthorSort.quote_count:
+        authors = await isar.authors.where().findAll();
+        // Load quote counts for each author
+        for (var author in authors) {
+          author.quotes.load();
+        }
+        // Sort by quote count descending
+        authors.sort((a, b) => b.quotes.length.compareTo(a.quotes.length));
+        break;
+      default:
+        authors = await isar.authors.where().findAll();
+    }
+    return authors;
+  }
+
+  Future<List<Quote>> getUnreadQuotes() async {
+    final isar = await db;
+    return await isar.quotes
+        .filter()
+        .isReadEqualTo(
+            false) // This will work now because isRead is part of the model
+        .findAll();
+  }
+
+  Future<void> resetAllQuotesToUnread() async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      final allQuotes = await isar.quotes.where().findAll();
+      for (var quote in allQuotes) {
+        quote.isRead = false;
+        await isar.quotes.put(quote);
+      }
+    });
+  }
+
+  Future<List<Quote>> fetchQuotesByAuthor(Author author) async {
+    final isar = await db;
+    final quotes = await isar.quotes
+        .filter()
+        .author((q) => q.idEqualTo(author.id))
+        .findAll();
+    return quotes;
   }
 
   @override

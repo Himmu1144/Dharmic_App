@@ -367,14 +367,14 @@ class _BookmarksPageState extends State<BookmarksPage>
                                     leading: ClipRRect(
                                       borderRadius: BorderRadius.circular(25),
                                       child: Image.asset(
-                                        quote.authorImg,
+                                        quote.author.value?.image ?? "",
                                         width: 50,
                                         height: 50,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                     title: Text(
-                                      quote.author,
+                                      quote.author.value?.name ?? "",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,

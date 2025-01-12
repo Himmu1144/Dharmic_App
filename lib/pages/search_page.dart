@@ -76,18 +76,13 @@ class _SearchPageState extends State<SearchPage>
 
   void _showUndoSnackbar(Quote quote, IsarService isarService) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    final bool isBookmarkPage = widget.searchBookmarksOnly;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.black87,
-        content: Text(
-          isBookmarkPage ? 'Bookmark removed' : 'Quote bookmarked',
-          style: const TextStyle(color: Colors.white),
-        ),
+        content:
+            Text(quote.isBookmarked ? 'Quote bookmarked' : 'Bookmark removed'),
         duration: const Duration(seconds: 2),
         action: SnackBarAction(
           label: 'Undo',
-          textColor: const Color(0xFFfa5620),
           onPressed: () {
             isarService.toggleBookmark(quote);
           },
@@ -139,7 +134,7 @@ class _SearchPageState extends State<SearchPage>
                   : Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
-                          vertical: 16.0), // Increased vertical padding
+                          vertical: 4.0), // Reduced vertical padding
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: searchResults!.length,
@@ -175,86 +170,67 @@ class _SearchPageState extends State<SearchPage>
                             secondaryBackground: Container(
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 20),
-                              color: const Color(0xFFfa5620),
-                              child: Icon(
-                                  widget.searchBookmarksOnly
-                                      ? Icons.bookmark_remove
-                                      : Icons.bookmark_add,
+                              color: Colors.orange,
+                              child: const Icon(Icons.bookmark_add,
                                   color: Colors.white),
                             ),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => QuoteSlider(
-                                      quotes: searchResults!,
-                                      initialIndex: index,
-                                      searchQuery: _searchController.text,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 10.0),
-                                child: Card(
-                                  elevation: 4,
-                                  shape: RoundedRectangleBorder(
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  bottom: 8.0), // Reduced margin
+                              child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Colors.grey.shade900,
-                                          Colors.grey.shade800,
-                                        ],
-                                      ),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colors.grey.shade900,
+                                        Colors.grey.shade800,
+                                      ],
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 30.0,
-                                          bottom: 30,
-                                          right: 25,
-                                          left: 25),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 25,
-                                                backgroundImage:
-                                                    AssetImage(quote.authorImg),
-                                              ),
-                                              const SizedBox(width: 12.0),
-                                              Text(
-                                                quote.author,
-                                                style: GoogleFonts.notoSansJp(
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16.0),
-                                          Text(
-                                            '"${quote.quote}"',
-                                            style: GoogleFonts.notoSerif(
-                                              fontSize: 16.0,
-                                              color: Colors.grey[300],
-                                              height: 1.5,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 25,
+                                              backgroundImage:
+                                                  AssetImage(quote.authorImg),
                                             ),
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
+                                            const SizedBox(width: 12.0),
+                                            Text(
+                                              quote.author.value?.name ??
+                                                  'Unknown',
+                                              style: GoogleFonts.notoSansJp(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                        Text(
+                                          '"${quote.quote}"',
+                                          style: GoogleFonts.notoSerif(
+                                            fontSize: 16.0,
+                                            color: Colors.grey[300],
+                                            height: 1.5,
                                           ),
-                                        ],
-                                      ),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -334,10 +310,12 @@ class _SearchPageState extends State<SearchPage>
 
       // Sort results to prioritize author matches
       results.sort((a, b) {
-        final aIsAuthorMatch =
-            a.author.toLowerCase().contains(query.toLowerCase());
-        final bIsAuthorMatch =
-            b.author.toLowerCase().contains(query.toLowerCase());
+        final aIsAuthorMatch = (a.author.value?.name ?? '')
+            .toLowerCase()
+            .contains(query.toLowerCase());
+        final bIsAuthorMatch = (b.author.value?.name ?? '')
+            .toLowerCase()
+            .contains(query.toLowerCase());
 
         if (aIsAuthorMatch && !bIsAuthorMatch) return -1;
         if (!aIsAuthorMatch && bIsAuthorMatch) return 1;

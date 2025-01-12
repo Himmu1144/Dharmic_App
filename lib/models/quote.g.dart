@@ -17,14 +17,14 @@ const QuoteSchema = CollectionSchema(
   name: r'Quote',
   id: 1459993770030070654,
   properties: {
-    r'author': PropertySchema(
+    r'authorImg': PropertySchema(
       id: 0,
-      name: r'author',
+      name: r'authorImg',
       type: IsarType.string,
     ),
-    r'authorImg': PropertySchema(
+    r'authorName': PropertySchema(
       id: 1,
-      name: r'authorImg',
+      name: r'authorName',
       type: IsarType.string,
     ),
     r'bookmarkedAt': PropertySchema(
@@ -54,6 +54,19 @@ const QuoteSchema = CollectionSchema(
   deserializeProp: _quoteDeserializeProp,
   idName: r'id',
   indexes: {
+    r'isBookmarked': IndexSchema(
+      id: -5205273177397984230,
+      name: r'isBookmarked',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isBookmarked',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'bookmarkedAt': IndexSchema(
       id: 5853294005280127171,
       name: r'bookmarkedAt',
@@ -68,7 +81,14 @@ const QuoteSchema = CollectionSchema(
       ],
     )
   },
-  links: {},
+  links: {
+    r'author': LinkSchema(
+      id: 8804674871060558035,
+      name: r'author',
+      target: r'Author',
+      single: true,
+    )
+  },
   embeddedSchemas: {},
   getId: _quoteGetId,
   getLinks: _quoteGetLinks,
@@ -82,8 +102,8 @@ int _quoteEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.author.length * 3;
   bytesCount += 3 + object.authorImg.length * 3;
+  bytesCount += 3 + object.authorName.length * 3;
   bytesCount += 3 + object.quote.length * 3;
   return bytesCount;
 }
@@ -94,8 +114,8 @@ void _quoteSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.author);
-  writer.writeString(offsets[1], object.authorImg);
+  writer.writeString(offsets[0], object.authorImg);
+  writer.writeString(offsets[1], object.authorName);
   writer.writeDateTime(offsets[2], object.bookmarkedAt);
   writer.writeBool(offsets[3], object.isBookmarked);
   writer.writeBool(offsets[4], object.isRead);
@@ -109,12 +129,10 @@ Quote _quoteDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Quote(
-    author: reader.readString(offsets[0]),
-    authorImg: reader.readString(offsets[1]),
     bookmarkedAt: reader.readDateTimeOrNull(offsets[2]),
     isBookmarked: reader.readBoolOrNull(offsets[3]) ?? false,
     isRead: reader.readBoolOrNull(offsets[4]) ?? false,
-    quote: reader.readString(offsets[5]),
+    quote: reader.readStringOrNull(offsets[5]) ?? '',
   );
   object.id = id;
   return object;
@@ -138,7 +156,7 @@ P _quoteDeserializeProp<P>(
     case 4:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -149,17 +167,26 @@ Id _quoteGetId(Quote object) {
 }
 
 List<IsarLinkBase<dynamic>> _quoteGetLinks(Quote object) {
-  return [];
+  return [object.author];
 }
 
 void _quoteAttach(IsarCollection<dynamic> col, Id id, Quote object) {
   object.id = id;
+  object.author.attach(col, col.isar.collection<Author>(), r'author', id);
 }
 
 extension QuoteQueryWhereSort on QueryBuilder<Quote, Quote, QWhere> {
   QueryBuilder<Quote, Quote, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhere> anyIsBookmarked() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isBookmarked'),
+      );
     });
   }
 
@@ -235,6 +262,51 @@ extension QuoteQueryWhere on QueryBuilder<Quote, Quote, QWhereClause> {
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> isBookmarkedEqualTo(
+      bool isBookmarked) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isBookmarked',
+        value: [isBookmarked],
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> isBookmarkedNotEqualTo(
+      bool isBookmarked) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isBookmarked',
+              lower: [],
+              upper: [isBookmarked],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isBookmarked',
+              lower: [isBookmarked],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isBookmarked',
+              lower: [isBookmarked],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isBookmarked',
+              lower: [],
+              upper: [isBookmarked],
+              includeUpper: false,
+            ));
+      }
     });
   }
 
@@ -350,135 +422,6 @@ extension QuoteQueryWhere on QueryBuilder<Quote, Quote, QWhereClause> {
 }
 
 extension QuoteQueryFilter on QueryBuilder<Quote, Quote, QFilterCondition> {
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'author',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'author',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'author',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'author',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'author',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'author',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorContains(String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'author',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'author',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'author',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'author',
-        value: '',
-      ));
-    });
-  }
-
   QueryBuilder<Quote, Quote, QAfterFilterCondition> authorImgEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -604,6 +547,136 @@ extension QuoteQueryFilter on QueryBuilder<Quote, Quote, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'authorImg',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'authorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'authorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'authorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'authorName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'authorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'authorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'authorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'authorName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'authorName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'authorName',
         value: '',
       ));
     });
@@ -880,21 +953,22 @@ extension QuoteQueryFilter on QueryBuilder<Quote, Quote, QFilterCondition> {
 
 extension QuoteQueryObject on QueryBuilder<Quote, Quote, QFilterCondition> {}
 
-extension QuoteQueryLinks on QueryBuilder<Quote, Quote, QFilterCondition> {}
+extension QuoteQueryLinks on QueryBuilder<Quote, Quote, QFilterCondition> {
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> author(
+      FilterQuery<Author> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'author');
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> authorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'author', 0, true, 0, true);
+    });
+  }
+}
 
 extension QuoteQuerySortBy on QueryBuilder<Quote, Quote, QSortBy> {
-  QueryBuilder<Quote, Quote, QAfterSortBy> sortByAuthor() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'author', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterSortBy> sortByAuthorDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'author', Sort.desc);
-    });
-  }
-
   QueryBuilder<Quote, Quote, QAfterSortBy> sortByAuthorImg() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authorImg', Sort.asc);
@@ -904,6 +978,18 @@ extension QuoteQuerySortBy on QueryBuilder<Quote, Quote, QSortBy> {
   QueryBuilder<Quote, Quote, QAfterSortBy> sortByAuthorImgDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authorImg', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> sortByAuthorName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'authorName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> sortByAuthorNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'authorName', Sort.desc);
     });
   }
 
@@ -957,18 +1043,6 @@ extension QuoteQuerySortBy on QueryBuilder<Quote, Quote, QSortBy> {
 }
 
 extension QuoteQuerySortThenBy on QueryBuilder<Quote, Quote, QSortThenBy> {
-  QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthor() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'author', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthorDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'author', Sort.desc);
-    });
-  }
-
   QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthorImg() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authorImg', Sort.asc);
@@ -978,6 +1052,18 @@ extension QuoteQuerySortThenBy on QueryBuilder<Quote, Quote, QSortThenBy> {
   QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthorImgDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authorImg', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthorName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'authorName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> thenByAuthorNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'authorName', Sort.desc);
     });
   }
 
@@ -1043,17 +1129,17 @@ extension QuoteQuerySortThenBy on QueryBuilder<Quote, Quote, QSortThenBy> {
 }
 
 extension QuoteQueryWhereDistinct on QueryBuilder<Quote, Quote, QDistinct> {
-  QueryBuilder<Quote, Quote, QDistinct> distinctByAuthor(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'author', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<Quote, Quote, QDistinct> distinctByAuthorImg(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'authorImg', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QDistinct> distinctByAuthorName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'authorName', caseSensitive: caseSensitive);
     });
   }
 
@@ -1090,15 +1176,15 @@ extension QuoteQueryProperty on QueryBuilder<Quote, Quote, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Quote, String, QQueryOperations> authorProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'author');
-    });
-  }
-
   QueryBuilder<Quote, String, QQueryOperations> authorImgProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'authorImg');
+    });
+  }
+
+  QueryBuilder<Quote, String, QQueryOperations> authorNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'authorName');
     });
   }
 

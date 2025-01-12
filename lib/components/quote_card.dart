@@ -28,7 +28,7 @@ class QuoteCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(80.0),
             child: Image.asset(
-              quote.authorImg,
+              quote.author.value?.image ?? 'assets/images/buddha.png',
               width: 80,
               height: 80,
               fit: BoxFit.cover,

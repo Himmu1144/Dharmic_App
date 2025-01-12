@@ -1,51 +1,49 @@
-import 'package:dharmic/components/custom_page_indicator.dart';
-import 'package:dharmic/components/floating_buttons.dart';
 import 'package:dharmic/pages/search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:dharmic/models/quote.dart';
+import 'package:dharmic/models/author.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../models/quote.dart';
 import 'package:provider/provider.dart';
-import '../services/isar_service.dart';
-import 'package:share_plus/share_plus.dart';
-import 'circle_button.dart'; // Update import
+import 'package:dharmic/services/isar_service.dart';
+import 'package:dharmic/components/custom_page_indicator.dart';
+import 'package:dharmic/components/floating_buttons.dart';
 
-class QuoteSlider extends StatefulWidget {
+class AuthorQuoteSlider extends StatefulWidget {
   final List<Quote> quotes;
+  final Author author;
   final int initialIndex;
-  final String? searchQuery; // Add this
-  final Function(int)? onPageChanged; // Add this
 
-  const QuoteSlider({
-    super.key,
+  const AuthorQuoteSlider({
+    Key? key,
     required this.quotes,
+    required this.author,
     required this.initialIndex,
-    this.searchQuery,
-    this.onPageChanged, // Add this
-  });
+  }) : super(key: key);
 
   @override
-  State<QuoteSlider> createState() => _QuoteSliderState();
+  State<AuthorQuoteSlider> createState() => _AuthorQuoteSliderState();
 }
 
-class _QuoteSliderState extends State<QuoteSlider>
-    with SingleTickerProviderStateMixin {
+class _AuthorQuoteSliderState extends State<AuthorQuoteSlider> {
   late PageController _pageController;
+  late FlutterTts flutterTts;
+  int _currentPage = 0;
   final Map<int, double> _authorOpacities = {};
   final Map<int, double> _quoteOpacities = {};
-  int _currentPage = 0; // Make sure this is here
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: widget.initialIndex);
-
+    flutterTts = FlutterTts();
     _resetOpacityForPage(widget.initialIndex);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    flutterTts.stop();
     super.dispose();
   }
 
@@ -71,39 +69,36 @@ class _QuoteSliderState extends State<QuoteSlider>
       appBar: AppBar(
         backgroundColor: const Color(0xFF282828),
         elevation: 0,
-        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: widget.searchQuery != null
-            ? Text('Search: ${widget.searchQuery}',
-                style: const TextStyle(fontSize: 18))
-            : const Text('Quotes'),
+        title: Text(
+          widget.author.name,
+          style: const TextStyle(fontSize: 18),
+        ),
         actions: [
           Consumer<IsarService>(
             builder: (context, isarService, child) {
+              final currentQuote = widget.quotes[_currentPage];
               return IconButton(
-                icon: Icon(widget
-                        .quotes[_pageController.page?.round() ??
-                            widget.initialIndex]
-                        .isBookmarked
-                    ? Icons.bookmark
-                    : Icons.bookmark_border),
-                onPressed: () async {
-                  final currentQuote = widget.quotes[
-                      _pageController.page?.round() ?? widget.initialIndex];
-                  await isarService.toggleBookmark(currentQuote);
-                },
+                icon: Icon(
+                  currentQuote.isBookmarked
+                      ? Icons.bookmark
+                      : Icons.bookmark_border,
+                ),
+                onPressed: () => isarService.toggleBookmark(currentQuote),
               );
             },
           ),
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () => Navigator.push(
-              context,
-              SlidePageRoute(page: const SearchPage()),
-            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                SlidePageRoute(page: const SearchPage()),
+              );
+            },
           ),
         ],
       ),
@@ -117,12 +112,10 @@ class _QuoteSliderState extends State<QuoteSlider>
                 _currentPage = index;
               });
               _resetOpacityForPage(index);
-              widget.onPageChanged?.call(index);
             },
             itemCount: widget.quotes.length,
             itemBuilder: (context, index) {
-              final quote = widget.quotes[index];
-              return _buildQuoteCard(quote, index);
+              return _buildQuoteCard(widget.quotes[index], index);
             },
           ),
           Positioned(
@@ -132,8 +125,6 @@ class _QuoteSliderState extends State<QuoteSlider>
             child: CustomPageIndicator(
               totalPages: widget.quotes.length,
               currentPage: _currentPage,
-              activeColor: const Color(0xFFfa5620),
-              inactiveColor: Colors.white,
             ),
           ),
         ],
@@ -141,7 +132,6 @@ class _QuoteSliderState extends State<QuoteSlider>
       floatingActionButton: FloatingButtons(
         quote: widget.quotes[_currentPage],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -157,7 +147,7 @@ class _QuoteSliderState extends State<QuoteSlider>
         children: [
           // Author section
           AnimatedOpacity(
-            duration: const Duration(milliseconds: 500), // Reduced duration
+            duration: const Duration(milliseconds: 500),
             opacity: _authorOpacities[index] ?? 0.0,
             curve: Curves.easeIn,
             child: Row(
@@ -176,7 +166,7 @@ class _QuoteSliderState extends State<QuoteSlider>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      quote.author.value?.name ?? 'Buddha',
+                      quote.author.value?.name ?? 'Unknown',
                       style: GoogleFonts.notoSansJp(
                         fontSize: 17.0,
                         fontWeight: FontWeight.bold,
@@ -190,7 +180,7 @@ class _QuoteSliderState extends State<QuoteSlider>
                         color: Colors.grey.shade400,
                       ),
                     ),
-                    const SizedBox(height: 8.0), // Reduced spacing
+                    const SizedBox(height: 8.0),
                     Container(
                       constraints: const BoxConstraints(
                         minHeight: 2.0,
@@ -211,7 +201,7 @@ class _QuoteSliderState extends State<QuoteSlider>
           // Quote section
           Expanded(
             child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 500), // Reduced duration
+              duration: const Duration(milliseconds: 500),
               opacity: _quoteOpacities[index] ?? 0.0,
               curve: Curves.easeIn,
               child: Padding(
@@ -220,18 +210,17 @@ class _QuoteSliderState extends State<QuoteSlider>
                   child: Text(
                     "\u201C${quote.quote}\u201D",
                     style: GoogleFonts.notoSerif(
-                        fontSize: 20.0,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w300,
-                        height: 1.6),
+                      fontSize: 20.0,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w300,
+                      height: 1.6,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16.0),
-          // _buildActionButtons(quote),
         ],
       ),
     );
