@@ -186,6 +186,7 @@ class _HomePageState extends State<HomePage>
                   child: Text(
                     "\u201C${quote.quote}\u201D",
                     style: GoogleFonts.notoSerif(
+                        color: const Color.fromARGB(225, 255, 255, 255),
                         fontSize: 20.0,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w300,

@@ -1,8 +1,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+         <!-- Add these permissions -->
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+<!-- For apps targeting Android 13 or higher -->
+<queries>
+    <!-- <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="upi" />
+    </intent> -->
+
+</queries>
+
     <application
         android:label="dharmic"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+              android:name="com.razorpay.ApiKey"
+              android:value="rzp_test_fkqY6PGR2AqU7z"
+              
+              />
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -19,7 +39,11 @@
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
+              
               />
+            
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
