@@ -14,12 +14,12 @@ class QuoteFullscreenPage extends StatefulWidget {
   final bool isFromHomePage; // Add this
 
   const QuoteFullscreenPage({
-    Key? key,
+    super.key,
     required this.quotes,
     required this.initialIndex,
     required this.onPageChanged,
     this.isFromHomePage = false, // Default to false
-  }) : super(key: key);
+  });
 
   @override
   State<QuoteFullscreenPage> createState() => _QuoteFullscreenPageState();
@@ -63,7 +63,7 @@ class _QuoteFullscreenPageState extends State<QuoteFullscreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
+      backgroundColor: const Color(0xFF121212),
       body: Stack(
         children: [
           PageView.builder(

@@ -322,7 +322,7 @@ class _BookmarksPageState extends State<BookmarksPage>
                           // Delete background (slide left)
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.only(right: 20),
-                          color: Color(0xFFfa5620),
+                          color: const Color(0xFFfa5620),
                           child: const Icon(Icons.bookmark_remove,
                               color: Colors.white),
                         ),
@@ -477,11 +477,11 @@ class HoverableFilterButton extends StatefulWidget {
   final VoidCallback onTap;
 
   const HoverableFilterButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<HoverableFilterButton> createState() => _HoverableFilterButtonState();

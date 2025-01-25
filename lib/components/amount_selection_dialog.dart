@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AmountSelectionDialog extends StatefulWidget {
-  const AmountSelectionDialog({Key? key}) : super(key: key);
+  const AmountSelectionDialog({super.key});
 
   @override
   State<AmountSelectionDialog> createState() => _AmountSelectionDialogState();

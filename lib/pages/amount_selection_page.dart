@@ -5,7 +5,7 @@ import 'package:dharmic/pages/upi_payment_page.dart';
 import 'package:dharmic/pages/razorpay_payment_page.dart';
 
 class AmountSelectionPage extends StatefulWidget {
-  const AmountSelectionPage({Key? key}) : super(key: key);
+  const AmountSelectionPage({super.key});
 
   @override
   State<AmountSelectionPage> createState() => _AmountSelectionPageState();

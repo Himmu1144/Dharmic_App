@@ -7,9 +7,9 @@ class SimpleFullscreenPage extends StatelessWidget {
   final Quote quote;
 
   const SimpleFullscreenPage({
-    Key? key,
+    super.key,
     required this.quote,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

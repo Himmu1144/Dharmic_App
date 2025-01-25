@@ -5,7 +5,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';
-import 'dart:ui' show lerpDouble;
 import 'package:dharmic/components/simple_fullscreen_page.dart';
 
 class FloatingButtons extends StatefulWidget {

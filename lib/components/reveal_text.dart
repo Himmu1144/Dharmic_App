@@ -7,10 +7,10 @@ class RevealText extends StatefulWidget {
   final TextStyle style;
 
   const RevealText({
-    Key? key,
+    super.key,
     required this.text,
     required this.style,
-  }) : super(key: key);
+  });
 
   @override
   State<RevealText> createState() => _RevealTextState();

@@ -4,12 +4,10 @@ import 'package:dharmic/models/quote.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
-import 'package:dharmic/components/circle_button.dart'; // Add this import
-import 'dart:ui' show lerpDouble;
-import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart'; // Add this import
-import 'package:dharmic/components/quote_card.dart'; // Add this import
-import 'package:dharmic/components/quote_slider.dart'; // Add this import
+// Add this import
+// Add this import
+// Add this import
+// Add this import
 import 'package:dharmic/components/custom_page_indicator.dart';
 import 'package:dharmic/components/floating_buttons.dart';
 import 'package:dharmic/pages/search_page.dart';

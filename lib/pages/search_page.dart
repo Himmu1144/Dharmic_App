@@ -1,6 +1,4 @@
-import 'package:dharmic/components/quote_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';

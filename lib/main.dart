@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/pages/author_page.dart';
 import 'package:dharmic/pages/bookmarks_page.dart';
 import 'package:dharmic/pages/home_page.dart';
@@ -7,7 +5,6 @@ import 'package:dharmic/pages/search_page.dart';
 import 'package:dharmic/pages/settings_page.dart';
 import 'package:dharmic/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'services/isar_service.dart';
 

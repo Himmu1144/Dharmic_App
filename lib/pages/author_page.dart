@@ -263,7 +263,7 @@ class _AuthorPageState extends State<AuthorPage> {
                               onTap: () => _showAuthorQuotes(context, author),
                               child: Container(
                                 width: double.infinity,
-                                color: Color(0xFF434343),
+                                color: const Color(0xFF434343),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

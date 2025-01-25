@@ -1,12 +1,8 @@
-import 'package:dharmic/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/quote.dart';
-import 'package:provider/provider.dart';
-import '../services/isar_service.dart';
-import 'package:share_plus/share_plus.dart';
-import 'circle_button.dart'; // Update import
+// Update import
 
 class BookmarkSlide extends StatefulWidget {
   final List<Quote> quotes;

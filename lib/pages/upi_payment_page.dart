@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class UpiPaymentPage extends StatefulWidget {
   final double amount;
-  const UpiPaymentPage({Key? key, required this.amount}) : super(key: key);
+  const UpiPaymentPage({super.key, required this.amount});
 
   @override
   State<UpiPaymentPage> createState() => _UpiPaymentPageState();
@@ -45,7 +45,7 @@ class _UpiPaymentPageState extends State<UpiPaymentPage> {
     return _upiIndia.startTransaction(
       app: app,
       receiverUpiId: "9540722521@ybl", // Your UPI ID
-      receiverName: '(Sanatan App Developer)',
+      receiverName: '(The Sanatan App Developer)',
       transactionRefId: 'TXN${DateTime.now().millisecondsSinceEpoch}',
       transactionNote: 'Support The Sanatan App',
       amount: widget.amount,
@@ -375,9 +375,9 @@ class FullscreenImage extends StatelessWidget {
   final ImageProvider imageProvider;
 
   const FullscreenImage({
-    Key? key,
+    super.key,
     required this.imageProvider,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

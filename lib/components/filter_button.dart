@@ -7,12 +7,12 @@ class HoverableFilterButton extends StatefulWidget {
   final bool isActive;
 
   const HoverableFilterButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,
     this.isActive = false,
-  }) : super(key: key);
+  });
 
   @override
   _HoverableFilterButtonState createState() => _HoverableFilterButtonState();

@@ -15,11 +15,11 @@ class AuthorQuoteSlider extends StatefulWidget {
   final int initialIndex;
 
   const AuthorQuoteSlider({
-    Key? key,
+    super.key,
     required this.quotes,
     required this.author,
     required this.initialIndex,
-  }) : super(key: key);
+  });
 
   @override
   State<AuthorQuoteSlider> createState() => _AuthorQuoteSliderState();

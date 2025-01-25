@@ -3,6 +3,9 @@
          <!-- Add these permissions -->
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+<!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+<uses-permission android:name="android.permission.USE_EXACT_ALARM"/> -->
 <!-- For apps targeting Android 13 or higher -->
 <queries>
     <!-- <intent>
@@ -61,9 +64,16 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
-        <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT"/>
-            <data android:mimeType="text/plain"/>
-        </intent>
+         <!-- For text processing -->
+    <intent>
+        <action android:name="android.intent.action.PROCESS_TEXT"/>
+        <data android:mimeType="text/plain"/>
+    </intent>
+    
+    <!-- For email -->
+    <intent>
+        <action android:name="android.intent.action.SENDTO" />
+        <data android:scheme="mailto" />
+    </intent>
     </queries>
 </manifest>
