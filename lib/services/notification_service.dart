@@ -1,6 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+// import 'package:get/get.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,7 +77,7 @@ class NotificationService {
     );
 
     // Initialize settings for both platforms
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
@@ -118,7 +117,7 @@ class NotificationService {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    morningHour ??= prefs.getInt(morningTimeKey) ?? 9;
+    morningHour ??= prefs.getInt(morningTimeKey) ?? 6;
     eveningHour ??= prefs.getInt(eveningTimeKey) ?? 18;
 
     await scheduleNotification(
@@ -254,7 +253,7 @@ class NotificationService {
       999, // Test notification ID
       'Test Notification',
       'This is a test notification from Dharmic Quotes',
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           quoteChannelId,
           quoteChannelName,
@@ -262,7 +261,7 @@ class NotificationService {
           importance: Importance.max,
           priority: Priority.high,
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
