@@ -1,4 +1,3 @@
-import 'package:dharmic/components/filter_button.dart';
 import 'package:dharmic/pages/bookmark_slider_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -6,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shimmer/shimmer.dart'; // Add this import
+// Add this import
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:dharmic/components/circle_button.dart';
 import 'package:dharmic/pages/search_page.dart';

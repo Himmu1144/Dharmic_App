@@ -1,8 +1,10 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:dharmic/pages/author_page.dart';
 import 'package:dharmic/pages/bookmarks_page.dart';
 import 'package:dharmic/pages/home_page.dart';
 import 'package:dharmic/pages/search_page.dart';
 import 'package:dharmic/pages/settings_page.dart';
+import 'package:dharmic/services/notification_service.dart';
 import 'package:dharmic/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,8 @@ void main() async {
   // Initialize data
   await isarService.loadAuthorsFromJson();
   await isarService.loadQuotesWithAuthors();
+
+  await AndroidAlarmManager.initialize();
 
   runApp(
     MultiProvider(

@@ -1,205 +1,273 @@
-// import 'package:dharmic/services/isar_service.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:timezone/data/latest.dart' as tz;
-// import 'package:timezone/timezone.dart' as tz;
-// import 'package:isar/isar.dart';
-// import 'dart:math';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import '../models/quote.dart';
 
-// class NotificationService {
-//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-//   final IsarService isarService = IsarService(); // Instance of IsarService
+class NotificationService {
+  final FlutterLocalNotificationsPlugin notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  static const String morningTimeKey = 'morning_notification_time';
+  static const String eveningTimeKey = 'evening_notification_time';
+  BuildContext? context;
 
-//   // Singleton pattern
-//   static final NotificationService _instance = NotificationService._();
-//   factory NotificationService() => _instance;
-//   NotificationService._() {
-//     _initializeNotifications();
-//   }
+  // Constructor to receive context
+  NotificationService({this.context});
 
-//   Future<void> _initializeNotifications() async {
-//     tz.initializeTimeZones();
+  // Notification channels
+  static const String quoteChannelId = 'quote_notifications';
+  static const String quoteChannelName = 'Daily Quotes';
+  static const String quoteChannelDescription = 'Daily inspirational quotes';
 
-//     const AndroidInitializationSettings initializationSettingsAndroid =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
+  // Notification IDs
+  static const int morningNotificationId = 1;
+  static const int eveningNotificationId = 2;
 
-//     final InitializationSettings initializationSettings =
-//         InitializationSettings(
-//       android: initializationSettingsAndroid,
-//     );
+  Future<bool> requestPermissions() async {
+    if (context == null) return false;
 
-//     await flutterLocalNotificationsPlugin.initialize(
-//       initializationSettings,
-//       onDidReceiveNotificationResponse: (details) {
-//         // Handle notification tap
-//       },
-//     );
-//   }
+    if (Theme.of(context!).platform == TargetPlatform.android) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          notificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
-//   Future<void> scheduleQuoteNotification({
-//     required TimeOfDay time,
-//     required bool enabled,
-//   }) async {
-//     if (!enabled) {
-//       await cancelNotifications();
-//       return;
-//     }
+      if (androidImplementation != null) {
+        final bool? granted =
+            await androidImplementation.requestNotificationsPermission();
+        if (granted != true) return false;
 
-//     // Get a random unread quote
-//     final quotes = await isarService.getUnreadQuotes();
-//     if (quotes.isEmpty) return;
+        if (await _requiresExactAlarmPermission()) {
+          await androidImplementation.requestExactAlarmsPermission();
+          return await androidImplementation.canScheduleExactNotifications() ??
+              false;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
 
-//     final randomQuote = quotes[DateTime.now().millisecond % quotes.length];
+  Future<bool> _requiresExactAlarmPermission() async {
+    if (context == null ||
+        Theme.of(context!).platform != TargetPlatform.android) {
+      return false;
+    }
 
-//     const AndroidNotificationDetails androidDetails =
-//         AndroidNotificationDetails(
-//       'daily_quotes',
-//       'Daily Quotes',
-//       channelDescription: 'Daily spiritual quotes notifications',
-//       importance: Importance.high,
-//       priority: Priority.high,
-//     );
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    return androidInfo.version.sdkInt >= 31; // Android 12 or higher
+  }
 
-//     const NotificationDetails details = NotificationDetails(
-//       android: androidDetails,
-//     );
+  Future<void> initNotification() async {
+    // Initialize timezone database
+    tz.initializeTimeZones();
 
-//     await flutterLocalNotificationsPlugin.zonedSchedule(
-//       0,
-//       'Daily Quote',
-//       randomQuote.quote,
-//       _nextInstanceOfTime(time),
-//       details,
-//       androidAllowWhileIdle: true,
-//       uiLocalNotificationDateInterpretation:
-//           UILocalNotificationDateInterpretation.absoluteTime,
-//       matchDateTimeComponents: DateTimeComponents.time,
-//     );
-//   }
+    // Android initialization settings
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-//   Future<void> showQuoteNotification() async {
-//     // Get a random unread quote
-//     final quotes = await isarService.getUnreadQuotes();
-//     if (quotes.isEmpty) return;
+    // iOS initialization settings
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
 
-//     // Fix random quote selection
-//     final random = Random();
-//     final randomQuote = quotes[random.nextInt(quotes.length)];
+    // Initialize settings for both platforms
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
 
-//     const AndroidNotificationDetails androidDetails =
-//         AndroidNotificationDetails(
-//       'daily_quotes',
-//       'Daily Quotes',
-//       channelDescription: 'Daily spiritual quotes notifications',
-//       importance: Importance.high,
-//       priority: Priority.high,
-//     );
+    // Initialize the plugin
+    await notificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: onNotificationTap,
+    );
 
-//     const NotificationDetails details =
-//         NotificationDetails(android: androidDetails);
+    // Request permissions
+    final hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      debugPrint('Notification permissions not granted');
+    }
+  }
 
-//     await flutterLocalNotificationsPlugin.show(
-//       0,
-//       'Daily Quote',
-//       randomQuote.quote,
-//       details,
-//     );
-//   }
+  void onNotificationTap(NotificationResponse response) {
+    // Parse the notification payload and navigate to the quote
+    try {
+      if (response.payload != null) {
+        // Handle the navigation in your app
+        debugPrint('Notification tapped with payload: ${response.payload}');
+      }
+    } catch (e) {
+      debugPrint('Error handling notification tap: $e');
+    }
+  }
 
-//   tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
-//     final now = tz.TZDateTime.now(tz.local);
-//     var scheduledDate = tz.TZDateTime(
-//       tz.local,
-//       now.year,
-//       now.month,
-//       now.day,
-//       time.hour,
-//       time.minute,
-//     );
-//     if (scheduledDate.isBefore(now)) {
-//       scheduledDate = scheduledDate.add(const Duration(days: 1));
-//     }
-//     return scheduledDate;
-//   }
+  Future<void> scheduleQuoteNotifications(Quote quote,
+      {int? morningHour, int? eveningHour}) async {
+    final hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      debugPrint('Notifications permission not granted');
+      return;
+    }
 
-//   Future<void> cancelNotifications() async {
-//     await flutterLocalNotificationsPlugin.cancelAll();
-//   }
-// }
+    final prefs = await SharedPreferences.getInstance();
+    morningHour ??= prefs.getInt(morningTimeKey) ?? 9;
+    eveningHour ??= prefs.getInt(eveningTimeKey) ?? 18;
 
-// // Add to your settings page or a new notifications settings page
-// class NotificationSettingsSection extends StatefulWidget {
-//   final NotificationService notificationService;
+    await scheduleNotification(
+      id: 1,
+      title: "Daily Wisdom",
+      body: quote.quote,
+      payload: quote.id.toString(),
+      hour: morningHour,
+      minute: 0,
+    );
 
-//   const NotificationSettingsSection(
-//       {Key? key, required this.notificationService})
-//       : super(key: key);
+    await scheduleNotification(
+      id: 2,
+      title: "Evening Reflection",
+      body: quote.quote,
+      payload: quote.id.toString(),
+      hour: eveningHour,
+      minute: 0,
+    );
+  }
 
-//   @override
-//   _NotificationSettingsState createState() => _NotificationSettingsState();
-// }
+  Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required String payload,
+    required int hour,
+    required int minute,
+  }) async {
+    // ...existing scheduling code...
+    final now = DateTime.now();
+    var scheduledDate = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
 
-// class _NotificationSettingsState extends State<NotificationSettingsSection> {
-//   bool _isNotificationEnabled = false;
-//   TimeOfDay _selectedTime1 = const TimeOfDay(hour: 6, minute: 0);
-//   TimeOfDay _selectedTime2 = const TimeOfDay(hour: 18, minute: 0);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         SwitchListTile(
-//           title: const Text('Enable Daily Quotes'),
-//           value: _isNotificationEnabled,
-//           onChanged: (bool value) {
-//             setState(() {
-//               _isNotificationEnabled = value;
-//               _updateNotificationSchedule();
-//             });
-//           },
-//         ),
-//         if (_isNotificationEnabled) ...[
-//           _buildTimePicker('First Notification Time', _selectedTime1,
-//               (TimeOfDay newTime) {
-//             setState(() {
-//               _selectedTime1 = newTime;
-//               _updateNotificationSchedule();
-//             });
-//           }),
-//           _buildTimePicker('Second Notification Time', _selectedTime2,
-//               (TimeOfDay newTime) {
-//             setState(() {
-//               _selectedTime2 = newTime;
-//               _updateNotificationSchedule();
-//             });
-//           }),
-//         ]
-//       ],
-//     );
-//   }
+    try {
+      await notificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(scheduledDate, tz.local),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'quote_channel',
+            'Daily Quotes',
+            channelDescription: 'Daily inspirational quotes',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: payload,
+      );
+    } catch (e) {
+      debugPrint('Error scheduling notification: $e');
+      await _scheduleInexactNotification(id, title, body, payload);
+    }
+  }
 
-//   Widget _buildTimePicker(String title, TimeOfDay currentTime,
-//       void Function(TimeOfDay) onTimeChanged) {
-//     return ListTile(
-//       title: Text(title),
-//       subtitle: Text(currentTime.format(context)),
-//       onTap: () async {
-//         final pickedTime = await showTimePicker(
-//           context: context,
-//           initialTime: currentTime,
-//         );
-//         if (pickedTime != null) {
-//           onTimeChanged(pickedTime);
-//         }
-//       },
-//     );
-//   }
+  Future<void> _scheduleInexactNotification(
+    int id,
+    String title,
+    String body,
+    String payload,
+  ) async {
+    await notificationsPlugin.periodicallyShow(
+      id,
+      title,
+      body,
+      RepeatInterval.daily,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'quote_channel',
+          'Daily Quotes',
+          channelDescription: 'Daily inspirational quotes',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      payload: payload,
+    );
+  }
 
-//   void _updateNotificationSchedule() {
-//     widget.notificationService.scheduleQuoteNotification(
-//         time: _selectedTime1, enabled: _isNotificationEnabled);
-//     widget.notificationService.scheduleQuoteNotification(
-//         time: _selectedTime2, enabled: _isNotificationEnabled);
-//   }
-// }
+  Future<void> updateNotificationTimes(int morningHour, int eveningHour) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(morningTimeKey, morningHour);
+    await prefs.setInt(eveningTimeKey, eveningHour);
+
+    // Cancel existing notifications and reschedule with new times
+    await cancelAllNotifications();
+    // You'll need to reschedule notifications with a new quote here
+  }
+
+  Future<void> cancelAllNotifications() async {
+    await notificationsPlugin.cancelAll();
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await notificationsPlugin.cancel(id);
+  }
+
+  // Add this test method
+  Future<void> showTestNotification() async {
+    final hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      debugPrint('Notifications permission not granted');
+      return;
+    }
+
+    await notificationsPlugin.show(
+      999, // Test notification ID
+      'Test Notification',
+      'This is a test notification from Dharmic Quotes',
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          quoteChannelId,
+          quoteChannelName,
+          channelDescription: quoteChannelDescription,
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+    );
+  }
+}

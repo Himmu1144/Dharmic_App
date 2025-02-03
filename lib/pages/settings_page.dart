@@ -1,6 +1,7 @@
 import 'package:dharmic/pages/settings_data.dart/about_page.dart';
 import 'package:dharmic/pages/settings_data.dart/privacy_policy_page.dart';
 import 'package:dharmic/pages/settings_data.dart/terms_page.dart';
+import 'package:dharmic/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dharmic/pages/amount_selection_page.dart';
@@ -292,6 +293,24 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            _buildSection(
+              heading: 'Test Notifications',
+              description: 'Send a test notification',
+              onTap: () async {
+                final notificationService =
+                    NotificationService(context: context);
+                await notificationService.initNotification();
+                await notificationService.showTestNotification();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Test notification sent'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              showTopDivider: false,
             ),
             _buildSection(
                 heading: 'Select Author',

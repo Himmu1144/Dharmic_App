@@ -4,7 +4,6 @@ import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/components/circle_button.dart';
 import 'package:dharmic/components/floating_buttons.dart';
 import 'package:provider/provider.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:dharmic/components/reveal_text.dart';
 
 class QuoteFullscreenPage extends StatefulWidget {

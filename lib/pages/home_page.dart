@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:dharmic/services/notification_service.dart'; // Add this import
 import '../components/circle_button.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,6 +33,10 @@ class _HomePageState extends State<HomePage>
   final Map<int, double> _authorOpacities = {};
   final Map<int, double> _quoteOpacities = {};
 
+  // Add new instance variables
+  late NotificationService notificationService;
+  Quote? notificationQuote;
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +45,46 @@ class _HomePageState extends State<HomePage>
     // Use IsarService's flutterTts instead of creating a new instance
     final isarService = Provider.of<IsarService>(context, listen: false);
     flutterTts = isarService.flutterTts;
+
+    // Initialize notification service with context
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      notificationService = NotificationService(context: context);
+      await notificationService.initNotification();
+      final hasPermission = await notificationService.requestPermissions();
+
+      if (hasPermission) {
+        await _scheduleQuoteNotifications();
+      } else {
+        if (mounted) {
+          // Show permission request dialog
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Notification Permission'),
+              content: const Text(
+                  'Please allow notifications to receive daily quotes'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    final granted =
+                        await notificationService.requestPermissions();
+                    if (granted && mounted) {
+                      await _scheduleQuoteNotifications();
+                    }
+                  },
+                  child: const Text('Allow'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    });
 
     _loadUnreadQuotes();
 
@@ -242,6 +287,26 @@ class _HomePageState extends State<HomePage>
         );
       },
     );
+  }
+
+  Future<void> _scheduleQuoteNotifications() async {
+    final isarService = Provider.of<IsarService>(context, listen: false);
+    final quote = await isarService.getRandomUnreadQuote();
+    if (quote != null) {
+      await notificationService.scheduleQuoteNotifications(quote);
+    }
+  }
+
+  void handleNotificationTap(Quote quote) async {
+    final isarService = Provider.of<IsarService>(context, listen: false);
+    final index = await isarService.findQuoteIndex(quote);
+    if (index != -1) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override

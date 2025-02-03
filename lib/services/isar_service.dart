@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dharmic/pages/author_page.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -338,6 +340,29 @@ class IsarService extends ChangeNotifier {
       });
       notifyListeners();
     }
+  }
+
+  Future<Quote?> getRandomUnreadQuote() async {
+    final isar = await db;
+    final unreadQuotes =
+        await isar.quotes.filter().isReadEqualTo(false).findAll();
+
+    if (unreadQuotes.isEmpty) {
+      // Reset all quotes to unread if none are available
+      await resetAllQuotesToUnread();
+      return getRandomUnreadQuote();
+    }
+
+    // Get a random quote
+    final random = Random();
+    return unreadQuotes[random.nextInt(unreadQuotes.length)];
+  }
+
+// Add this method to handle jumping to a specific quote
+  Future<int> findQuoteIndex(Quote quote) async {
+    final isar = await db;
+    final allQuotes = await isar.quotes.where().findAll();
+    return allQuotes.indexWhere((q) => q.id == quote.id);
   }
 
   @override
