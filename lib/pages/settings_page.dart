@@ -2,13 +2,15 @@ import 'package:dharmic/pages/settings_data.dart/about_page.dart';
 import 'package:dharmic/pages/settings_data.dart/privacy_policy_page.dart';
 import 'package:dharmic/pages/settings_data.dart/terms_page.dart';
 import 'package:dharmic/services/notification_service.dart';
+import 'package:dharmic/utils/permission_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dharmic/pages/amount_selection_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:dharmic/services/notification_service.dart';
-// import 'package:dharmic/services/isar_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:app_settings/app_settings.dart';
 
 class SwastikaPainter extends CustomPainter {
   final Color color;
@@ -49,8 +51,65 @@ class SwastikaPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  // Add this helper method to your SettingsPage class
+  Widget _buildTimeRow({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String time,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.grey[400], size: 22),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: GoogleFonts.roboto(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.grey[850],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    time,
+                    style: GoogleFonts.roboto(
+                      fontSize: 14,
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(Icons.arrow_forward_ios,
+                      color: Colors.grey[600], size: 14),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildSectionWithIcon(
     BuildContext context, {
@@ -198,6 +257,38 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
+  static const String MORNING_HOUR_KEY = 'morning_hour';
+  static const String MORNING_MINUTE_KEY = 'morning_minute';
+  static const String EVENING_HOUR_KEY = 'evening_hour';
+  static const String EVENING_MINUTE_KEY = 'evening_minute';
+
+  // Add this method to the _SettingsPageState class
+  Future<String> _getStoredTimeString(String key, String defaultTime) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key) ?? defaultTime;
+  }
+
+  Future<void> _saveTimeString(String key, String timeString) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, timeString);
+  }
+
+  Future<TimeOfDay> _getStoredTime(bool isMorning) async {
+    final prefs = await SharedPreferences.getInstance();
+    final hour =
+        prefs.getInt(isMorning ? MORNING_HOUR_KEY : EVENING_HOUR_KEY) ??
+            (isMorning ? 6 : 18);
+    final minute =
+        prefs.getInt(isMorning ? MORNING_MINUTE_KEY : EVENING_MINUTE_KEY) ?? 0;
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  // Add this method to check notification permission status
+  Future<bool> _checkNotificationPermissions() async {
+    final notificationService = NotificationService(context: context);
+    return await notificationService.requestPermissions();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -279,21 +370,173 @@ class SettingsPage extends StatelessWidget {
               url: 'https://www.instagram.com/himmu1144/',
               showBottomDivider: true,
             ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(20, 20, 25, 0),
+            //   child: Row(
+            //     children: [
+            //       Text(
+            //         'Quote',
+            //         style: GoogleFonts.roboto(
+            //           fontSize: 16,
+            //           fontWeight: FontWeight.normal,
+            //           color: const Color(0xFFfa5620),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            // Add this after other sections in the build method
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(20, 20, 25, 0),
+            //   child: Text(
+            //     'Notification',
+            //     style: GoogleFonts.roboto(
+            //       fontSize: 16,
+            //       fontWeight: FontWeight.normal,
+            //       color: const Color(0xFFfa5620),
+            //     ),
+            //   ),
+            // ),
+
+// In your build method, replace the existing Padding with:
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 25, 0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Quote',
+                    'Notifications',
                     style: GoogleFonts.roboto(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: const Color(0xFFfa5620),
                     ),
                   ),
+                  FutureBuilder<bool>(
+                    future: _checkNotificationPermissions(),
+                    builder: (context, snapshot) {
+                      final hasPermission = snapshot.data ?? false;
+                      return !hasPermission
+                          ? CupertinoSwitch(
+                              value: snapshot.data ?? false,
+                              activeColor: const Color(0xFFfa5620),
+                              onChanged: (bool value) async {
+                                if (value) {
+                                  // Request permission if turning on
+                                  final notificationService =
+                                      NotificationService(context: context);
+                                  await notificationService.initNotification();
+                                  final granted = await notificationService
+                                      .requestPermissions();
+                                  if (!granted && mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          const PermissionDialog(),
+                                    );
+                                  }
+                                } else {
+                                  // Cancel all notifications if turning off
+                                  final notificationService =
+                                      NotificationService(context: context);
+                                  await notificationService
+                                      .cancelAllNotifications();
+                                }
+                                setState(() {}); // Refresh UI
+                              },
+                            )
+                          : const SizedBox
+                              .shrink(); // Hide when permissions are true;
+                    },
+                  ),
                 ],
               ),
             ),
+
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  FutureBuilder<TimeOfDay>(
+                    future: _getStoredTime(
+                        true), // true for morning, false for evening
+                    builder: (context, snapshot) {
+                      final time =
+                          snapshot.data ?? TimeOfDay(hour: 6, minute: 0);
+                      return _buildTimeRow(
+                        context: context,
+                        icon: Icons.wb_sunny_outlined,
+                        label: 'Morning Quote',
+                        time: time.format(context),
+                        onTap: () async {
+                          TimeOfDay? selectedTime = await showTimePicker(
+                            context: context,
+                            initialTime: time,
+                          );
+
+                          if (selectedTime != null) {
+                            // Schedule notification with new time
+                            final notificationService =
+                                NotificationService(context: context);
+                            await notificationService.initNotification();
+                            await notificationService.scheduleQuoteNotification(
+                              time: selectedTime,
+                              enabled: true,
+                              isMorningTime: true,
+                            );
+
+                            setState(() {});
+                          }
+                        },
+                      );
+                    },
+                  ),
+                  Divider(color: Colors.grey[800], height: 1),
+                  // In the FutureBuilder for evening time
+                  FutureBuilder<TimeOfDay>(
+                    future: _getStoredTime(false), // false for evening
+                    builder: (context, snapshot) {
+                      final time =
+                          snapshot.data ?? TimeOfDay(hour: 18, minute: 0);
+                      return _buildTimeRow(
+                        context: context,
+                        icon: Icons.nights_stay_outlined,
+                        label: 'Evening Quote',
+                        time: time.format(context),
+                        onTap: () async {
+                          print("Evening time selection tapped"); // Debug print
+                          TimeOfDay? selectedTime = await showTimePicker(
+                            context: context,
+                            initialTime: time,
+                          );
+
+                          if (selectedTime != null) {
+                            print(
+                                "Evening time selected: ${selectedTime.format(context)}"); // Debug print
+                            final notificationService =
+                                NotificationService(context: context);
+                            await notificationService.initNotification();
+                            await notificationService.scheduleQuoteNotification(
+                              time: selectedTime,
+                              enabled: true,
+                              isMorningTime:
+                                  false, // Make sure this is false for evening
+                            );
+                            setState(() {});
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
             _buildSection(
               heading: 'Test Notifications',
               description: 'Send a test notification',

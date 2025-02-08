@@ -55,34 +55,35 @@ class _HomePageState extends State<HomePage>
       if (hasPermission) {
         await _scheduleQuoteNotifications();
       } else {
-        if (mounted) {
-          // Show permission request dialog
-          await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Notification Permission'),
-              content: const Text(
-                  'Please allow notifications to receive daily quotes'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    final granted =
-                        await notificationService.requestPermissions();
-                    if (granted && mounted) {
-                      await _scheduleQuoteNotifications();
-                    }
-                  },
-                  child: const Text('Allow'),
-                ),
-              ],
-            ),
-          );
-        }
+        // if (mounted) {
+        //   // Show permission request dialog
+        //   await showDialog(
+        //     context: context,
+        //     builder: (context) => AlertDialog(
+        //       title: const Text('Notification Permission'),
+        //       content: const Text(
+        //           'Please allow notifications to receive daily quotes'),
+        //       actions: [
+        //         TextButton(
+        //           onPressed: () => Navigator.pop(context),
+        //           child: const Text('Cancel'),
+        //         ),
+        //         TextButton(
+        //           onPressed: () async {
+        //             Navigator.pop(context);
+        //             final granted =
+        //                 await notificationService.requestPermissions();
+        //             if (granted && mounted) {
+        //               await _scheduleQuoteNotifications();
+        //             }
+        //           },
+        //           child: const Text('Allow'),
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // }
+        print('Notification permission not granted');
       }
     });
 

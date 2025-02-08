@@ -115,48 +115,39 @@ class NotificationService {
   Future<void> scheduleQuoteNotification({
     required TimeOfDay time,
     required bool enabled,
-    bool isMorningTime = true,
+    bool isMorningTime = true, // to distinguish between morning/evening
   }) async {
     if (!enabled) {
+      // Cancel notifications if disabled
       await cancelNotification(
           isMorningTime ? morningNotificationId : eveningNotificationId);
       return;
     }
 
-    print(
-        "Scheduling ${isMorningTime ? 'morning' : 'evening'} notification for ${context != null ? time.format(context!) : 'unknown time'}");
-
     final prefs = await SharedPreferences.getInstance();
 
-    // Save both hour and minute
+    // Save the time
     if (isMorningTime) {
       await prefs.setInt(MORNING_HOUR_KEY, time.hour);
       await prefs.setInt(MORNING_MINUTE_KEY, time.minute);
-      print("Saved morning time: ${time.hour}:${time.minute}");
     } else {
       await prefs.setInt(EVENING_HOUR_KEY, time.hour);
       await prefs.setInt(EVENING_MINUTE_KEY, time.minute);
-      print("Saved evening time: ${time.hour}:${time.minute}");
     }
 
-    // Schedule with new time
+    // Get a random quote and schedule
     if (context != null) {
       final isarService = Provider.of<IsarService>(context!, listen: false);
       final quote = await isarService.getRandomUnreadQuote();
       if (quote != null) {
-        try {
-          await scheduleNotification(
-            id: isMorningTime ? morningNotificationId : eveningNotificationId,
-            title: isMorningTime ? "Morning Wisdom" : "Evening Wisdom",
-            body: quote.quote,
-            payload: quote.id.toString(),
-            hour: time.hour,
-            minute: time.minute,
-          );
-          print("Successfully scheduled notification");
-        } catch (e) {
-          print("Error scheduling notification: $e");
-        }
+        await scheduleNotification(
+          id: isMorningTime ? 1 : 2,
+          title: isMorningTime ? "Morning Wisdom" : "Evening Reflection",
+          body: quote.quote,
+          payload: quote.id.toString(),
+          hour: time.hour,
+          minute: time.minute,
+        );
       }
     }
   }
@@ -164,17 +155,20 @@ class NotificationService {
   Future<void> scheduleQuoteNotifications(Quote quote,
       {int? morningHour, int? eveningHour}) async {
     final hasPermission = await requestPermissions();
-    if (!hasPermission) return;
+    if (!hasPermission) {
+      debugPrint('Notifications permission not granted');
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
 
-    // Get both hours and minutes
+    // Get saved hours and minutes
     final mHour = morningHour ?? prefs.getInt(MORNING_HOUR_KEY) ?? 6;
     final mMinute = prefs.getInt(MORNING_MINUTE_KEY) ?? 0;
     final eHour = eveningHour ?? prefs.getInt(EVENING_HOUR_KEY) ?? 18;
     final eMinute = prefs.getInt(EVENING_MINUTE_KEY) ?? 0;
 
-    // Schedule both notifications
+    // Schedule morning notification
     await scheduleNotification(
       id: morningNotificationId,
       title: "Morning Wisdom",
@@ -184,6 +178,7 @@ class NotificationService {
       minute: mMinute,
     );
 
+    // Schedule evening notification
     await scheduleNotification(
       id: eveningNotificationId,
       title: "Evening Reflection",
@@ -289,16 +284,7 @@ class NotificationService {
   // }
 
   Future<void> cancelAllNotifications() async {
-    final notificationService = NotificationService(context: context);
-    // Cancel all existing notifications
-    await notificationService.cancelAllNotifications();
-    // Open system settings to disable notifications
-    final androidImplementation = notificationService.notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-    if (androidImplementation != null) {
-      await androidImplementation.requestNotificationsPermission();
-    }
+    await notificationsPlugin.cancelAll();
   }
 
   Future<void> cancelNotification(int id) async {
