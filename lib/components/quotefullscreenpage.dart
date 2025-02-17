@@ -77,7 +77,7 @@ class _QuoteFullscreenPageState extends State<QuoteFullscreenPage> {
                   Provider.of<IsarService>(context, listen: false);
               final quote = widget.quotes[index];
               if (!quote.isRead) {
-                final isar = await isarService.isar;
+                final isar = isarService.isar;
                 quote.isRead = true;
                 await isar.writeTxn(() async {
                   await isar.quotes.put(quote);

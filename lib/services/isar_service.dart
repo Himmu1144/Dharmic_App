@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:dharmic/pages/author_page.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:convert';
@@ -311,21 +310,48 @@ class IsarService extends ChangeNotifier {
   }
 
   Future<bool> isFirstLaunch() async {
-    final settings = await isar.appSettings.where().findFirst();
-    return settings?.isFirstLaunch ?? true;
+    try {
+      final settings = await isar.appSettings.where().findFirst();
+      final result = settings?.isFirstLaunch ?? true;
+      print('isFirstLaunch check result: $result'); // Add logging
+      return result;
+    } catch (e) {
+      print('Error checking first launch: $e'); // Add error logging
+      return true; // Default to true on error
+    }
   }
 
-  Future<void> setFirstLaunchComplete(String language) async {
-    final settings = AppSettings(
-      isFirstLaunch: false,
-      selectedLanguage: language,
-    );
+  // Future<void> clearAllSettings() async {
+  //   await isar.writeTxn(() async {
+  //     await isar.appSettings.clear();
+  //   });
+  //   notifyListeners();
+  // }
 
-    await isar.writeTxn(() async {
-      await isar.appSettings.clear();
-      await isar.appSettings.put(settings);
-    });
-    notifyListeners();
+  Future<void> setFirstLaunchComplete(String language) async {
+    print('Starting setFirstLaunchComplete with language: $language');
+    try {
+      final settings = AppSettings(
+        isFirstLaunch: false,
+        selectedLanguage: language,
+      );
+
+      print('About to start write transaction');
+      await isar.writeTxn(() async {
+        print('Clearing existing settings...');
+        await isar.appSettings.clear();
+        print('Adding new settings...');
+        await isar.appSettings.put(settings);
+        print('Write transaction completed');
+      });
+
+      print('Notifying listeners');
+      notifyListeners();
+      print('Language setting complete: $language');
+    } catch (e) {
+      print('Error in setFirstLaunchComplete: $e');
+      throw e;
+    }
   }
 
   Future<String> getSelectedLanguage() async {

@@ -42,12 +42,13 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _pageController = PageController(initialPage: 0);
 
-    // Use IsarService's flutterTts instead of creating a new instance
-    final isarService = Provider.of<IsarService>(context, listen: false);
-    flutterTts = isarService.flutterTts;
-
-    // Initialize notification service with context
+    // Combine initialization in a single addPostFrameCallback
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Initialize IsarService and FlutterTts
+      final isarService = Provider.of<IsarService>(context, listen: false);
+      flutterTts = isarService.flutterTts;
+
+      // Initialize notification service
       notificationService = NotificationService(context: context);
       await notificationService.initNotification();
       final hasPermission = await notificationService.requestPermissions();
@@ -55,39 +56,12 @@ class _HomePageState extends State<HomePage>
       if (hasPermission) {
         await _scheduleQuoteNotifications();
       } else {
-        // if (mounted) {
-        //   // Show permission request dialog
-        //   await showDialog(
-        //     context: context,
-        //     builder: (context) => AlertDialog(
-        //       title: const Text('Notification Permission'),
-        //       content: const Text(
-        //           'Please allow notifications to receive daily quotes'),
-        //       actions: [
-        //         TextButton(
-        //           onPressed: () => Navigator.pop(context),
-        //           child: const Text('Cancel'),
-        //         ),
-        //         TextButton(
-        //           onPressed: () async {
-        //             Navigator.pop(context);
-        //             final granted =
-        //                 await notificationService.requestPermissions();
-        //             if (granted && mounted) {
-        //               await _scheduleQuoteNotifications();
-        //             }
-        //           },
-        //           child: const Text('Allow'),
-        //         ),
-        //       ],
-        //     ),
-        //   );
-        // }
         print('Notification permission not granted');
       }
-    });
 
-    _loadUnreadQuotes();
+      // Load quotes after initialization
+      _loadUnreadQuotes();
+    });
 
     Future.delayed(const Duration(milliseconds: 100), () {
       _resetOpacityForPage(0);

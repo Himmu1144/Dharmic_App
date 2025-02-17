@@ -467,7 +467,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         true), // true for morning, false for evening
                     builder: (context, snapshot) {
                       final time =
-                          snapshot.data ?? TimeOfDay(hour: 6, minute: 0);
+                          snapshot.data ?? const TimeOfDay(hour: 6, minute: 0);
                       return _buildTimeRow(
                         context: context,
                         icon: Icons.wb_sunny_outlined,
@@ -502,7 +502,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     future: _getStoredTime(false), // false for evening
                     builder: (context, snapshot) {
                       final time =
-                          snapshot.data ?? TimeOfDay(hour: 18, minute: 0);
+                          snapshot.data ?? const TimeOfDay(hour: 18, minute: 0);
                       return _buildTimeRow(
                         context: context,
                         icon: Icons.nights_stay_outlined,

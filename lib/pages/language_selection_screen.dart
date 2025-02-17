@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:rive/rive.dart';
+import 'package:provider/provider.dart';
+import '../services/isar_service.dart';
 import 'package:rive/rive.dart' as rive;
 
 class LanguageSelectionScreen extends StatefulWidget {
-  final Function(String) onLanguageSelected;
-
-  const LanguageSelectionScreen({Key? key, required this.onLanguageSelected})
-      : super(key: key);
+  const LanguageSelectionScreen({Key? key}) : super(key: key);
 
   @override
   State<LanguageSelectionScreen> createState() =>
@@ -16,6 +14,7 @@ class LanguageSelectionScreen extends StatefulWidget {
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   String? selectedLanguage;
+  bool _isSaving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -234,9 +233,25 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     );
   }
 
-  void _onNextPressed() {
-    if (selectedLanguage != null) {
-      widget.onLanguageSelected(selectedLanguage!);
+  Future<void> _onNextPressed() async {
+    if (selectedLanguage == null || _isSaving) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      final isarService = Provider.of<IsarService>(context, listen: false);
+      await isarService.setFirstLaunchComplete(selectedLanguage!);
+
+      if (!mounted) return;
+
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save language selection: $e')),
+      );
+      setState(() => _isSaving = false);
     }
   }
 }

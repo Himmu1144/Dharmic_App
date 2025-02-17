@@ -1,14 +1,14 @@
 // splash_screen.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../services/isar_service.dart';
 
 class SplashScreen extends StatefulWidget {
-  final VoidCallback onComplete;
-
-  const SplashScreen({Key? key, required this.onComplete}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
@@ -28,6 +28,11 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    _setupAnimations();
+    _handleNavigation();
+  }
+
+  void _setupAnimations() {
     _controller = AnimationController(
       duration: const Duration(seconds: 4), // Reduced total duration
       vsync: this,
@@ -38,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(
         parent: _controller,
         curve:
-            const Interval(0.2, 0.4, curve: Curves.easeOut), // Earlier fade out
+            const Interval(0.2, 0.3, curve: Curves.easeOut), // Earlier fade out
       ),
     );
 
@@ -63,9 +68,37 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(seconds: 1), widget.onComplete);
+        Future.delayed(const Duration(seconds: 1), () {});
       }
     });
+  }
+
+  Future<void> _handleNavigation() async {
+    // Wait for minimum splash display time
+    await Future.delayed(const Duration(seconds: 5));
+
+    if (!mounted) return;
+
+    try {
+      final isarService = Provider.of<IsarService>(context, listen: false);
+      final isFirstLaunch = await isarService.isFirstLaunch();
+
+      if (!mounted) return;
+
+      // Navigate based on first launch status
+      Navigator.pushReplacementNamed(
+        context,
+        isFirstLaunch ? '/language' : '/home',
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error checking app status: $e')),
+      );
+      // Default to language selection on error
+      Navigator.pushReplacementNamed(context, '/language');
+    }
   }
 
   void _cycleLoadingText() {
@@ -99,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen>
                 return Opacity(
                   opacity: _fadeOutLogo.value,
                   child: ClipOval(
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.6,
                       height: MediaQuery.of(context).size.width * 0.6,
                       child: Image.asset(
