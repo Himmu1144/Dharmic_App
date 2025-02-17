@@ -1,99 +1,242 @@
-// language_selection_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as rive;
 
-class LanguageSelectionScreen extends StatelessWidget {
+class LanguageSelectionScreen extends StatefulWidget {
   final Function(String) onLanguageSelected;
 
   const LanguageSelectionScreen({Key? key, required this.onLanguageSelected})
       : super(key: key);
 
   @override
+  State<LanguageSelectionScreen> createState() =>
+      _LanguageSelectionScreenState();
+}
+
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
+  String? selectedLanguage;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF282828),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Spacer(),
-              Text(
-                '"Wisdom comes from many sources"',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.orange.shade800,
-                  fontStyle: FontStyle.italic,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
-              Row(
-                children: [
-                  Expanded(
-                    child: _LanguageCard(
-                      language: 'Hinglish',
-                      onTap: () => onLanguageSelected('hi'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _LanguageCard(
-                      language: 'English',
-                      onTap: () => onLanguageSelected('en'),
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.grey[900]!,
+              Colors.black,
+              Colors.grey[900]!,
             ],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 20),
+                // Animation container
+                SizedBox(
+                  height: 200,
+                  child: rive.RiveAnimation.asset(
+                    'assets/cat_following_the_mouse.riv',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 40),
+
+                // Title
+                TweenAnimationBuilder(
+                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(begin: 0, end: 1),
+                  builder: (context, double value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Choose Your Language',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                      letterSpacing: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 60),
+
+                // Language Cards Row
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildLanguageCard(
+                          'English',
+                          'The mind is endless, a field of knowledge.',
+                          'en',
+                          'Lord Krishna',
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: _buildLanguageCard(
+                          'Hinglish',
+                          'Manushya ka dimag. Gyan ka kshetra.',
+                          'hi',
+                          'Lord Krishna',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+                // Next Button
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: selectedLanguage != null ? 1.0 : 0.5,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: selectedLanguage != null
+                            ? [Colors.white, Colors.white70]
+                            : [Colors.grey, Colors.grey.withOpacity(0.7)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: selectedLanguage != null
+                          ? () => _onNextPressed()
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Next',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-class _LanguageCard extends StatelessWidget {
-  final String language;
-  final VoidCallback onTap;
+  Widget _buildLanguageCard(
+    String language,
+    String quote,
+    String langCode,
+    String author,
+  ) {
+    final isSelected = selectedLanguage == langCode;
 
-  const _LanguageCard({
-    required this.language,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(24),
+      onTap: () {
+        setState(() {
+          selectedLanguage = langCode;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.orange.shade800),
+          color: isSelected
+              ? Colors.white.withOpacity(0.1)
+              : Colors.white.withOpacity(0.05),
+          border: Border.all(
+            color: isSelected
+                ? Colors.white.withOpacity(0.5)
+                : Colors.white.withOpacity(0.1),
+            width: isSelected ? 2 : 1,
+          ),
           borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.1),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  )
+                ]
+              : [],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            Row(
+              children: [
+                Text(
+                  language,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.white70,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const Spacer(),
+                if (isSelected)
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.white,
+                    size: 15,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
             Text(
-              language,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              quote,
+              style: TextStyle(
+                color: isSelected ? Colors.white70 : Colors.white38,
+                fontSize: 14,
+                height: 1.5,
+                fontStyle: FontStyle.italic,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Tap to select',
+              "* by $author",
               style: TextStyle(
-                color: Colors.orange.shade800,
-                fontSize: 14,
+                color: isSelected ? Colors.white60 : Colors.white30,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _onNextPressed() {
+    if (selectedLanguage != null) {
+      widget.onLanguageSelected(selectedLanguage!);
+    }
   }
 }

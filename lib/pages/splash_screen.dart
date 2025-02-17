@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
                       'The Sanatan',
                       style: GoogleFonts.niconne(
                         fontSize: 42,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w400,
                         color: Colors.white,
                         letterSpacing: 1.5,
                       ),
