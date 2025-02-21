@@ -27,18 +27,23 @@ const AuthorSchema = CollectionSchema(
       name: r'image',
       type: IsarType.string,
     ),
-    r'link': PropertySchema(
+    r'isSelected': PropertySchema(
       id: 2,
+      name: r'isSelected',
+      type: IsarType.bool,
+    ),
+    r'link': PropertySchema(
+      id: 3,
       name: r'link',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'title',
       type: IsarType.string,
     )
@@ -59,6 +64,19 @@ const AuthorSchema = CollectionSchema(
           name: r'name',
           type: IndexType.hash,
           caseSensitive: true,
+        )
+      ],
+    ),
+    r'isSelected': IndexSchema(
+      id: 5103110419848918687,
+      name: r'isSelected',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isSelected',
+          type: IndexType.value,
+          caseSensitive: false,
         )
       ],
     )
@@ -101,9 +119,10 @@ void _authorSerialize(
 ) {
   writer.writeString(offsets[0], object.description);
   writer.writeString(offsets[1], object.image);
-  writer.writeString(offsets[2], object.link);
-  writer.writeString(offsets[3], object.name);
-  writer.writeString(offsets[4], object.title);
+  writer.writeBool(offsets[2], object.isSelected);
+  writer.writeString(offsets[3], object.link);
+  writer.writeString(offsets[4], object.name);
+  writer.writeString(offsets[5], object.title);
 }
 
 Author _authorDeserialize(
@@ -116,9 +135,10 @@ Author _authorDeserialize(
   object.description = reader.readString(offsets[0]);
   object.id = id;
   object.image = reader.readString(offsets[1]);
-  object.link = reader.readString(offsets[2]);
-  object.name = reader.readString(offsets[3]);
-  object.title = reader.readString(offsets[4]);
+  object.isSelected = reader.readBool(offsets[2]);
+  object.link = reader.readString(offsets[3]);
+  object.name = reader.readString(offsets[4]);
+  object.title = reader.readString(offsets[5]);
   return object;
 }
 
@@ -134,10 +154,12 @@ P _authorDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -215,6 +237,14 @@ extension AuthorQueryWhereSort on QueryBuilder<Author, Author, QWhere> {
   QueryBuilder<Author, Author, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Author, Author, QAfterWhere> anyIsSelected() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isSelected'),
+      );
     });
   }
 }
@@ -322,6 +352,51 @@ extension AuthorQueryWhere on QueryBuilder<Author, Author, QWhereClause> {
               indexName: r'name',
               lower: [],
               upper: [name],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Author, Author, QAfterWhereClause> isSelectedEqualTo(
+      bool isSelected) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isSelected',
+        value: [isSelected],
+      ));
+    });
+  }
+
+  QueryBuilder<Author, Author, QAfterWhereClause> isSelectedNotEqualTo(
+      bool isSelected) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSelected',
+              lower: [],
+              upper: [isSelected],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSelected',
+              lower: [isSelected],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSelected',
+              lower: [isSelected],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSelected',
+              lower: [],
+              upper: [isSelected],
               includeUpper: false,
             ));
       }
@@ -638,6 +713,16 @@ extension AuthorQueryFilter on QueryBuilder<Author, Author, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'image',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Author, Author, QAfterFilterCondition> isSelectedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSelected',
+        value: value,
       ));
     });
   }
@@ -1116,6 +1201,18 @@ extension AuthorQuerySortBy on QueryBuilder<Author, Author, QSortBy> {
     });
   }
 
+  QueryBuilder<Author, Author, QAfterSortBy> sortByIsSelected() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSelected', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Author, Author, QAfterSortBy> sortByIsSelectedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSelected', Sort.desc);
+    });
+  }
+
   QueryBuilder<Author, Author, QAfterSortBy> sortByLink() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'link', Sort.asc);
@@ -1190,6 +1287,18 @@ extension AuthorQuerySortThenBy on QueryBuilder<Author, Author, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Author, Author, QAfterSortBy> thenByIsSelected() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSelected', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Author, Author, QAfterSortBy> thenByIsSelectedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSelected', Sort.desc);
+    });
+  }
+
   QueryBuilder<Author, Author, QAfterSortBy> thenByLink() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'link', Sort.asc);
@@ -1242,6 +1351,12 @@ extension AuthorQueryWhereDistinct on QueryBuilder<Author, Author, QDistinct> {
     });
   }
 
+  QueryBuilder<Author, Author, QDistinct> distinctByIsSelected() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSelected');
+    });
+  }
+
   QueryBuilder<Author, Author, QDistinct> distinctByLink(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1280,6 +1395,12 @@ extension AuthorQueryProperty on QueryBuilder<Author, Author, QQueryProperty> {
   QueryBuilder<Author, String, QQueryOperations> imageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'image');
+    });
+  }
+
+  QueryBuilder<Author, bool, QQueryOperations> isSelectedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSelected');
     });
   }
 

@@ -15,6 +15,9 @@ class Author {
   late String description;
   late String link;
 
+  @Index()
+  bool isSelected = true;
+
   // Update the backlink to reference the correct property
   @Backlink(to: 'author')
   final quotes = IsarLinks<Quote>();

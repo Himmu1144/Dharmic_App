@@ -1,3 +1,4 @@
+import 'package:dharmic/components/author_selection_dialog.dart';
 import 'package:dharmic/pages/settings_data.dart/about_page.dart';
 import 'package:dharmic/pages/settings_data.dart/privacy_policy_page.dart';
 import 'package:dharmic/pages/settings_data.dart/terms_page.dart';
@@ -555,13 +556,44 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               showTopDivider: false,
             ),
-            _buildSection(
-                heading: 'Select Author',
-                description:
-                    'Choose the author\'s whose quotes you want to see',
-                onTap: () {},
-                showTopDivider: false,
-                showBottomDivider: true),
+            // In settings_page.dart, update the Select Author section:
+            // _buildSection(
+            //   heading: 'Select Authors',
+            //   description: 'Choose the authors whose quotes you want to see',
+            //   onTap: () {
+            //     showDialog(
+            //       context: context,
+            //       builder: (context) => const AuthorSelectionDialog(),
+            //     ).then((selectedAuthors) {
+            //       if (selectedAuthors != null) {
+            //         // Handle the selected authors
+            //         print('Selected authors: $selectedAuthors');
+            //       }
+            //     });
+            //   },
+            //   showTopDivider: false,
+            //   showBottomDivider: true,
+            // ),
+
+            // _buildSection(
+            //   heading: 'Select Authors',
+            //   description: 'Choose the authors whose quotes you want to see',
+            //   onTap: () {
+            //     showDialog(
+            //       context: context,
+            //       builder: (context) => const AuthorSelectionDialog(),
+            //     ).then((selectedAuthors) {
+            //       if (selectedAuthors != null) {
+            //         // After saving, you may want to refresh the home page.
+            //         // This could be by triggering a reload on your IsarService or by using a callback.
+            //         print('Selected authors updated');
+            //       }
+            //     });
+            //   },
+            //   showTopDivider: false,
+            //   showBottomDivider: true,
+            // ),
+
             // _buildSection(
             //   heading: 'Daily Notifications',
             //   description: 'Set daily quote notification time',
