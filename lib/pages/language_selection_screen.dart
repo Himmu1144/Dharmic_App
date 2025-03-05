@@ -5,7 +5,7 @@ import '../services/isar_service.dart';
 import 'package:rive/rive.dart' as rive;
 
 class LanguageSelectionScreen extends StatefulWidget {
-  const LanguageSelectionScreen({Key? key}) : super(key: key);
+  const LanguageSelectionScreen({super.key});
 
   @override
   State<LanguageSelectionScreen> createState() =>
@@ -40,7 +40,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               children: [
                 const SizedBox(height: 20),
                 // Animation container
-                SizedBox(
+                const SizedBox(
                   height: 200,
                   child: rive.RiveAnimation.asset(
                     'assets/cat_following_the_mouse.riv',

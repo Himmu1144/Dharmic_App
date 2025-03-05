@@ -1,7 +1,8 @@
-import 'package:dharmic/components/author_selection_dialog.dart';
 import 'package:dharmic/pages/settings_data.dart/about_page.dart';
 import 'package:dharmic/pages/settings_data.dart/privacy_policy_page.dart';
+import 'package:provider/provider.dart';
 import 'package:dharmic/pages/settings_data.dart/terms_page.dart';
+import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/services/notification_service.dart';
 import 'package:dharmic/utils/permission_dialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -255,6 +256,100 @@ class _SettingsPageState extends State<SettingsPage> {
             height: 1.0,
           ),
       ],
+    );
+  }
+
+  Widget _buildLanguageRow() {
+    return FutureBuilder<String>(
+      future: Provider.of<IsarService>(context, listen: false)
+          .getSelectedLanguage(),
+      builder: (context, snapshot) {
+        final currentLang = snapshot.data ?? 'en';
+        final displayLang = currentLang == 'hi' ? 'Hinglish' : 'English';
+        return _buildSection(
+          heading: 'Preferred Language',
+          description: 'Currently: $displayLang. Tap to change.',
+          onTap: () async {
+            // Show a dialog to select language
+            final selectedLang = await showDialog<String>(
+              context: context,
+              builder: (context) {
+                // Use a temporary variable to track selection in the dialog.
+                String tempLang = currentLang;
+                return AlertDialog(
+                  backgroundColor: const Color(0xFF202020),
+                  title: Text(
+                    'Select Language',
+                    style: GoogleFonts.roboto(color: Colors.white),
+                  ),
+                  content: StatefulBuilder(
+                    builder: (context, setState) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RadioListTile<String>(
+                            title: Text(
+                              'English',
+                              style: GoogleFonts.roboto(color: Colors.white),
+                            ),
+                            value: 'en',
+                            groupValue: tempLang,
+                            onChanged: (value) {
+                              setState(() {
+                                tempLang = value!;
+                              });
+                            },
+                          ),
+                          RadioListTile<String>(
+                            title: Text(
+                              'Hinglish',
+                              style: GoogleFonts.roboto(color: Colors.white),
+                            ),
+                            value: 'hi',
+                            groupValue: tempLang,
+                            onChanged: (value) {
+                              setState(() {
+                                tempLang = value!;
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, null);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: GoogleFonts.roboto(color: Colors.grey[400]),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, tempLang);
+                      },
+                      child: Text(
+                        'Save',
+                        style:
+                            GoogleFonts.roboto(color: const Color(0xFFfa5620)),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+            // If the user selected a new language, update the setting.
+            if (selectedLang != null && selectedLang != currentLang) {
+              await Provider.of<IsarService>(context, listen: false)
+                  .updateLanguage(selectedLang);
+              setState(() {}); // Refresh the SettingsPage if needed.
+            }
+          },
+        );
+      },
     );
   }
 
@@ -556,6 +651,9 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               showTopDivider: false,
             ),
+
+            _buildLanguageRow(),
+
             // In settings_page.dart, update the Select Author section:
             // _buildSection(
             //   heading: 'Select Authors',

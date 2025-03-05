@@ -42,8 +42,13 @@ const QuoteSchema = CollectionSchema(
       name: r'isRead',
       type: IsarType.bool,
     ),
-    r'quote': PropertySchema(
+    r'language': PropertySchema(
       id: 5,
+      name: r'language',
+      type: IsarType.string,
+    ),
+    r'quote': PropertySchema(
+      id: 6,
       name: r'quote',
       type: IsarType.string,
     )
@@ -54,6 +59,19 @@ const QuoteSchema = CollectionSchema(
   deserializeProp: _quoteDeserializeProp,
   idName: r'id',
   indexes: {
+    r'language': IndexSchema(
+      id: -1161120539689460177,
+      name: r'language',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'language',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
     r'isBookmarked': IndexSchema(
       id: -5205273177397984230,
       name: r'isBookmarked',
@@ -104,6 +122,7 @@ int _quoteEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.authorImg.length * 3;
   bytesCount += 3 + object.authorName.length * 3;
+  bytesCount += 3 + object.language.length * 3;
   bytesCount += 3 + object.quote.length * 3;
   return bytesCount;
 }
@@ -119,7 +138,8 @@ void _quoteSerialize(
   writer.writeDateTime(offsets[2], object.bookmarkedAt);
   writer.writeBool(offsets[3], object.isBookmarked);
   writer.writeBool(offsets[4], object.isRead);
-  writer.writeString(offsets[5], object.quote);
+  writer.writeString(offsets[5], object.language);
+  writer.writeString(offsets[6], object.quote);
 }
 
 Quote _quoteDeserialize(
@@ -132,7 +152,8 @@ Quote _quoteDeserialize(
     bookmarkedAt: reader.readDateTimeOrNull(offsets[2]),
     isBookmarked: reader.readBoolOrNull(offsets[3]) ?? false,
     isRead: reader.readBoolOrNull(offsets[4]) ?? false,
-    quote: reader.readStringOrNull(offsets[5]) ?? '',
+    language: reader.readStringOrNull(offsets[5]) ?? '',
+    quote: reader.readStringOrNull(offsets[6]) ?? '',
   );
   object.id = id;
   return object;
@@ -156,6 +177,8 @@ P _quoteDeserializeProp<P>(
     case 4:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 5:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 6:
       return (reader.readStringOrNull(offset) ?? '') as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -262,6 +285,51 @@ extension QuoteQueryWhere on QueryBuilder<Quote, Quote, QWhereClause> {
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> languageEqualTo(
+      String language) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'language',
+        value: [language],
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterWhereClause> languageNotEqualTo(
+      String language) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'language',
+              lower: [],
+              upper: [language],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'language',
+              lower: [language],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'language',
+              lower: [language],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'language',
+              lower: [],
+              upper: [language],
+              includeUpper: false,
+            ));
+      }
     });
   }
 
@@ -822,6 +890,136 @@ extension QuoteQueryFilter on QueryBuilder<Quote, Quote, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'language',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'language',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'language',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'language',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'language',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'language',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'language',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'language',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'language',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterFilterCondition> languageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'language',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Quote, Quote, QAfterFilterCondition> quoteEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1029,6 +1227,18 @@ extension QuoteQuerySortBy on QueryBuilder<Quote, Quote, QSortBy> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QAfterSortBy> sortByLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'language', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> sortByLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'language', Sort.desc);
+    });
+  }
+
   QueryBuilder<Quote, Quote, QAfterSortBy> sortByQuote() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quote', Sort.asc);
@@ -1115,6 +1325,18 @@ extension QuoteQuerySortThenBy on QueryBuilder<Quote, Quote, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QAfterSortBy> thenByLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'language', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quote, Quote, QAfterSortBy> thenByLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'language', Sort.desc);
+    });
+  }
+
   QueryBuilder<Quote, Quote, QAfterSortBy> thenByQuote() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quote', Sort.asc);
@@ -1161,6 +1383,13 @@ extension QuoteQueryWhereDistinct on QueryBuilder<Quote, Quote, QDistinct> {
     });
   }
 
+  QueryBuilder<Quote, Quote, QDistinct> distinctByLanguage(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'language', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Quote, Quote, QDistinct> distinctByQuote(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1203,6 +1432,12 @@ extension QuoteQueryProperty on QueryBuilder<Quote, Quote, QQueryProperty> {
   QueryBuilder<Quote, bool, QQueryOperations> isReadProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isRead');
+    });
+  }
+
+  QueryBuilder<Quote, String, QQueryOperations> languageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'language');
     });
   }
 

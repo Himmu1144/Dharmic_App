@@ -14,6 +14,10 @@ import '../components/circle_button.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  // // Add this static helper to access the state.
+  // static _HomePageState? of(BuildContext context) =>
+  //     context.findAncestorStateOfType<_HomePageState>();
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -74,6 +78,20 @@ class _HomePageState extends State<HomePage>
     flutterTts.stop();
     super.dispose();
   }
+
+  // void refreshQuotes() {
+  //   _loadUnreadQuotes();
+  // }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final newLang = Provider.of<IsarService>(context).getSelectedLanguage();
+  //   newLang.then((lang) {
+  //     // If the language changed, re-fetch quotes.
+  //     _loadUnreadQuotes();
+  //   });
+  // }
 
   Future<void> _markAsRead(Quote quote) async {
     final isarService = Provider.of<IsarService>(context, listen: false);
@@ -239,8 +257,12 @@ class _HomePageState extends State<HomePage>
               CircleButton(
                 icon: isarService.speakIcon,
                 isActive: isarService.isSpeaking,
-                onPressed: () => isarService.handleSpeech(quote.quote),
+                onPressed: () =>
+                    isarService.handleSpeech(quote.quote, quote.language),
               ),
+              //   onPressed: () =>
+              //       isarService.handleSpeech(quote.quote, quote.language),
+              // ),
               CircleButton(
                 icon: Icons.language,
                 onPressed: () {

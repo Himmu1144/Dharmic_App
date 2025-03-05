@@ -34,7 +34,36 @@ class IsarService extends ChangeNotifier {
     });
   }
 
-  Future<void> handleSpeech(String quote) async {
+  // Future<void> handleSpeech(String quote) async {
+  //   if (isSpeaking && currentQuote == quote) {
+  //     await flutterTts.stop();
+  //     isSpeaking = false;
+  //     speakIcon = Icons.play_arrow;
+  //     currentQuote = null;
+  //   } else {
+  //     if (isSpeaking) {
+  //       await flutterTts.stop();
+  //     }
+
+  //     try {
+  //       await flutterTts.setLanguage("en-US");
+  //       await flutterTts.setPitch(1.0);
+  //       final result = await flutterTts.speak(quote);
+  //       if (result == 1) {
+  //         isSpeaking = true;
+  //         speakIcon = Icons.stop;
+  //         currentQuote = quote;
+  //       }
+  //     } catch (e) {
+  //       isSpeaking = false;
+  //       speakIcon = Icons.play_arrow;
+  //       currentQuote = null;
+  //     }
+  //   }
+  //   notifyListeners();
+  // }
+
+  Future<void> handleSpeech(String quote, String language) async {
     if (isSpeaking && currentQuote == quote) {
       await flutterTts.stop();
       isSpeaking = false;
@@ -44,9 +73,12 @@ class IsarService extends ChangeNotifier {
       if (isSpeaking) {
         await flutterTts.stop();
       }
-
       try {
-        await flutterTts.setLanguage("en-US");
+        if (language == "hi") {
+          await flutterTts.setLanguage("hi-IN");
+        } else {
+          await flutterTts.setLanguage("en-US");
+        }
         await flutterTts.setPitch(1.0);
         final result = await flutterTts.speak(quote);
         if (result == 1) {
@@ -86,6 +118,44 @@ class IsarService extends ChangeNotifier {
     });
   }
 
+  // Future<void> loadQuotesWithAuthors() async {
+  //   print('Authors count: ${await isar.authors.count()}');
+  //   print('Quotes count: ${await isar.quotes.count()}');
+
+  //   if (await isar.quotes.count() > 0) {
+  //     print('Quotes already exist, skipping import');
+  //     return;
+  //   }
+
+  //   final String jsonData = await rootBundle.loadString('assets/quotes.json');
+  //   final List<dynamic> quotesList = json.decode(jsonData);
+  //   print('Loaded ${quotesList.length} quotes from JSON');
+
+  //   await isar.writeTxn(() async {
+  //     for (var data in quotesList) {
+  //       print('Looking for author: ${data['author']}');
+
+  //       final author =
+  //           await isar.authors.where().nameEqualTo(data['author']).findFirst();
+
+  //       if (author != null) {
+  //         print('Found author: ${author.name}');
+
+  //         final quote = Quote()
+  //           ..quote = data['quote']
+  //           ..author.value = author
+  //           ..isRead = false
+  //           ..isBookmarked = false;
+
+  //         await isar.quotes.put(quote);
+  //         await quote.author.save();
+  //       } else {
+  //         print('Author not found: ${data['author']}');
+  //       }
+  //     }
+  //   });
+  // }
+
   Future<void> loadQuotesWithAuthors() async {
     print('Authors count: ${await isar.authors.count()}');
     print('Quotes count: ${await isar.quotes.count()}');
@@ -102,7 +172,6 @@ class IsarService extends ChangeNotifier {
     await isar.writeTxn(() async {
       for (var data in quotesList) {
         print('Looking for author: ${data['author']}');
-
         final author =
             await isar.authors.where().nameEqualTo(data['author']).findFirst();
 
@@ -111,6 +180,7 @@ class IsarService extends ChangeNotifier {
 
           final quote = Quote()
             ..quote = data['quote']
+            ..language = data['language'] // set language here
             ..author.value = author
             ..isRead = false
             ..isBookmarked = false;
@@ -227,20 +297,43 @@ class IsarService extends ChangeNotifier {
     return authors;
   }
 
+  // Future<List<Quote>> getUnreadQuotes() async {
+  //   final unreadQuotes =
+  //       await isar.quotes.filter().isReadEqualTo(false).findAll();
+
+  //   if (unreadQuotes.isEmpty) {
+  //     await isar.writeTxn(() async {
+  //       final allQuotes = await isar.quotes.where().findAll();
+  //       for (var quote in allQuotes) {
+  //         quote.isRead = false;
+  //       }
+  //       await isar.quotes.putAll(allQuotes);
+  //     });
+
+  //     return await isar.quotes.filter().isReadEqualTo(false).findAll();
+  //   }
+
+  //   return unreadQuotes;
+  // }
+
   Future<List<Quote>> getUnreadQuotes() async {
-    final unreadQuotes =
-        await isar.quotes.filter().isReadEqualTo(false).findAll();
+    final lang = await getSelectedLanguage();
+    final unreadQuotes = await isar.quotes
+        .filter()
+        .isReadEqualTo(false)
+        .languageEqualTo(lang) // filter by language
+        .findAll();
 
     if (unreadQuotes.isEmpty) {
-      await isar.writeTxn(() async {
-        final allQuotes = await isar.quotes.where().findAll();
-        for (var quote in allQuotes) {
-          quote.isRead = false;
-        }
-        await isar.quotes.putAll(allQuotes);
-      });
-
-      return await isar.quotes.filter().isReadEqualTo(false).findAll();
+      // Instead of resetting quotes in the DB, we can simply fetch all quotes for the language.
+      // (Alternatively, you could still perform the reset if you prefer.)
+      final allQuotes =
+          await isar.quotes.filter().languageEqualTo(lang).findAll();
+      // Optionally, you could reset in-memory flags here instead of writing to the DB.
+      for (var quote in allQuotes) {
+        quote.isRead = false;
+      }
+      return allQuotes;
     }
 
     return unreadQuotes;
@@ -256,19 +349,71 @@ class IsarService extends ChangeNotifier {
     });
   }
 
+  Future<void> updateLanguage(String newLang) async {
+    // This operation is asynchronous; ensure it doesn't block the UI.
+    final settings = await isar.appSettings.where().findFirst();
+    if (settings == null) {
+      final newSettings = AppSettings(
+        isFirstLaunch: false,
+        selectedLanguage: newLang,
+      );
+      await isar.writeTxn(() async {
+        await isar.appSettings.put(newSettings);
+      });
+    } else {
+      settings.selectedLanguage = newLang;
+      await isar.writeTxn(() async {
+        await isar.appSettings.put(settings);
+      });
+    }
+    notifyListeners();
+  }
+
+  // Future<List<Quote>> fetchQuotesByAuthor(Author author) async {
+  //   final quotes = await isar.quotes
+  //       .filter()
+  //       .author((q) => q.idEqualTo(author.id))
+  //       .findAll();
+  //   return quotes;
+  // }
+
   Future<List<Quote>> fetchQuotesByAuthor(Author author) async {
-    final quotes = await isar.quotes
+    final lang = await getSelectedLanguage();
+
+    // Try to fetch quotes in the selected language.
+    var quotes = await isar.quotes
         .filter()
         .author((q) => q.idEqualTo(author.id))
+        .languageEqualTo(lang)
         .findAll();
+
+    // If no quotes are found for that language, fetch all quotes for the author.
+    if (quotes.isEmpty) {
+      quotes = await isar.quotes
+          .filter()
+          .author((q) => q.idEqualTo(author.id))
+          .findAll();
+    }
+
     return quotes;
   }
 
   Future<void> loadNextQuotes(List<Quote> currentQuotes) async {
+    // final newQuotes = await isar.quotes
+    //     .filter()
+    //     .isReadEqualTo(false)
+    //     .and()
+    //     .not()
+    //     .group((q) =>
+    //         q.anyOf(currentQuotes.map((q) => q.id), (q, id) => q.idEqualTo(id)))
+    //     .limit(5)
+    //     .findAll();
+    final lang = await getSelectedLanguage();
     final newQuotes = await isar.quotes
         .filter()
         .isReadEqualTo(false)
-        .and()
+        .languageEqualTo(lang)
+        .and() // if needed, depending on how you chain other filters
         .not()
         .group((q) =>
             q.anyOf(currentQuotes.map((q) => q.id), (q, id) => q.idEqualTo(id)))
@@ -291,13 +436,34 @@ class IsarService extends ChangeNotifier {
     }
   }
 
+  // Future<Quote?> getRandomUnreadQuote() async {
+  //   final unreadQuotes =
+  //       await isar.quotes.filter().isReadEqualTo(false).findAll();
+
+  //   if (unreadQuotes.isEmpty) {
+  //     await resetAllQuotesToUnread();
+  //     return getRandomUnreadQuote();
+  //   }
+
+  //   final random = Random();
+  //   return unreadQuotes[random.nextInt(unreadQuotes.length)];
+  // }
+
   Future<Quote?> getRandomUnreadQuote() async {
-    final unreadQuotes =
-        await isar.quotes.filter().isReadEqualTo(false).findAll();
+    final lang = await getSelectedLanguage();
+    final unreadQuotes = await isar.quotes
+        .filter()
+        .isReadEqualTo(false)
+        .languageEqualTo(lang) // filter by language
+        .findAll();
 
     if (unreadQuotes.isEmpty) {
-      await resetAllQuotesToUnread();
-      return getRandomUnreadQuote();
+      // Instead of resetting the DB, fallback to fetching all quotes in the selected language.
+      final allQuotes =
+          await isar.quotes.filter().languageEqualTo(lang).findAll();
+      if (allQuotes.isEmpty) return null;
+      allQuotes.shuffle();
+      return allQuotes.first;
     }
 
     final random = Random();
@@ -350,7 +516,7 @@ class IsarService extends ChangeNotifier {
       print('Language setting complete: $language');
     } catch (e) {
       print('Error in setFirstLaunchComplete: $e');
-      throw e;
+      rethrow;
     }
   }
 

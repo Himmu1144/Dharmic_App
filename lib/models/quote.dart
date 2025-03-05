@@ -9,6 +9,9 @@ class Quote {
 
   late String quote;
 
+  @Index()
+  late String language; // 'en' or 'hi' for English/Hinglish
+
   // Keep the read tracking
   bool isRead = false;
 
@@ -29,6 +32,7 @@ class Quote {
   // Constructor
   Quote({
     this.quote = '',
+    this.language = '',
     this.isRead = false,
     this.isBookmarked = false,
     this.bookmarkedAt,

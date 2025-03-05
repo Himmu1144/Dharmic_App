@@ -1,0 +1,603 @@
+    # {
+    #     "quote": "You, yourself, as much as anybody in the entire universe, deserve your love and affection.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Health is the greatest gift, contentment the greatest wealth, faithfulness the best relationship.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Better than a thousand hollow words is one word that brings peace.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "To live a pure unselfish life, one must count nothing as one’s own in the midst of abundance.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "In separateness lies the world’s greatest misery; in compassion lies the world’s true strength.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Just as treasures are uncovered from the earth, so virtue appears from good deeds, and wisdom appears from a pure and peaceful mind.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "However many holy words you read, however many you speak, what good will they do if you do not act upon them?",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "All conditioned things are impermanent. When one sees this with wisdom, one turns away from suffering.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "The past is already gone, the future is not yet here. There’s only one moment for you to live.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "There is nothing more dreadful than the habit of doubt. Doubt separates people. It is a poison that disintegrates friendships and breaks up pleasant relations. It is a thorn that irritates and hurts; it is a sword that kills.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Everything that has a beginning has an ending. Make your peace with that and all will be well.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Pain is certain, suffering is optional.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "The root of suffering is attachment.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "When you realize how perfect everything is, you will tilt your head back and laugh at the sky.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "To conquer oneself is a greater task than conquering others.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Do not overrate what you have received, nor envy others. He who envies others does not obtain peace of mind.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Attachment leads to suffering, and detachment leads to freedom.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "By letting it go, it all gets done. The world is won by those who let it go. But when you try and try, the world is beyond winning.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "It is better to conquer yourself than to win a thousand battles. Then the victory is yours.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Meditate. Live purely. Be quiet. Do your work with mastery. Like the moon, come out from behind the clouds! Shine.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "You will not be punished for your anger, you will be punished by your anger.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Your worst enemy cannot harm you as much as your own unguarded thoughts.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "Even death is not to be feared by one who has lived wisely.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+    # {
+    #     "quote": "No one saves us but ourselves. No one can and no one may. We ourselves must walk the path.",
+    #     "author": "Buddha",
+    #     "author_img": "assets/images/buddha.png"
+    # },
+
+
+    # {
+    #     "quote": "Change is the law of the universe. You can be a millionaire or a pauper in an instant.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "A man is made by his belief. As he believes, so he becomes.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The mind is everything. If you control it, you control everything.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Perform your obligatory duty because action is indeed better than inaction.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "You have the right to perform your duties but are not entitled to the fruits of your actions.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Delusion arises from anger. The mind is bewildered by delusion. Reasoning is destroyed when the mind is bewildered. One falls down when reasoning is destroyed.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The soul is never born, nor does it die at any time. It is unborn, eternal, and primeval.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "When meditation is mastered, the mind is unwavering like the flame of a lamp in a windless place.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Those who see me in all things and all things in me are never lost to me, nor am I ever lost to them.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Set thy heart upon thy work but never on its reward.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am the beginning, middle, and end of all beings.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Neither in this world nor elsewhere is there any happiness in store for him who always doubts.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The wise unify their consciousness and abandon the fruits of action. The ignorant are driven by desire.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Whatever happened was good. Whatever is happening is good. Whatever will happen shall also be good.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "One who sees inaction in action, and action in inaction, is intelligent among men.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Among thousands of men, one strives for perfection; among those who strive for perfection, hardly one knows me in truth.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "When a man dwells on the objects of sense, he develops attachment to them. From attachment arises desire, from desire arises anger.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The self-controlled soul, who moves amongst sense objects, free from either attachment or repulsion, he wins eternal peace.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Pleasures that are born of contact with sense objects are only sources of pain. They have a beginning and an end.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am the taste of water, the light of the sun and the moon, the syllable Om in the Vedas.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am time, the destroyer of the world, and I have come to engage all people.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "A gift is pure when it is given from the heart to the right person at the right time and the right place.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "One who sees inaction in action and action in inaction has understanding among men.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Better is one’s own duty, though imperfectly performed, than the duty of another well performed.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am seated in the hearts of all living beings. I am the beginning, the middle, and the end of all beings.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The mind acts like an enemy for those who do not control it.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Hell has three gates: lust, anger, and greed.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The yogi is greater than the ascetic, greater than the empiricist, and greater than the fruitive worker.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The power of God is with you at all times; through the activities of mind, senses, breathing, and emotions.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The unsuccessful yogi, after many births, achieves union with the Divine.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Those who are motivated only by desire for the fruits of action are miserable, for they are constantly anxious about the results of what they do.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "As the blazing fire turns firewood to ashes, so does the fire of knowledge burn to ashes all reactions to material activities.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "He who is temperate in his habits of eating, sleeping, working, and recreation can mitigate all material pains by practicing the yoga system.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Fear not. What is not real never was and never will be. What is real always was and cannot be destroyed.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The ignorant work for their own profit, the wise work for the welfare of the world.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The senses have been conditioned by attraction to the pleasant and aversion to the unpleasant.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The key to happiness is the reduction of desires.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "When a person responds to the joys and sorrows of others as if they were his own, he has attained the highest spiritual union.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "He who has no attachments can love others truly, for his love is pure and divine.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Detached from all, yet united with all through his detached love and wisdom, such a one is ever fulfilled.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The nonpermanent appearance of happiness and distress, and their disappearance in due course, are like the appearance and disappearance of winter and summer seasons.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "There is neither this world, nor the world beyond, nor happiness for the one who doubts.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The peace of God is with them whose mind and soul are in harmony.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "That one I love who is incapable of ill will, who is friendly and compassionate.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "In battle, in the forest, at the precipice in the mountains, on the dark great sea, in the midst of javelins and arrows, I am your refuge.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The meaning of karma is in the intention. The intention behind action is what matters.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am the father of this universe, the mother, the support, and the grandsire.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Even a little effort toward spiritual awareness will protect you from the greatest fear.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "You came empty-handed, and you will leave empty-handed.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Those who worship me with devotion, meditating on my transcendental form—to them, I carry what they lack and preserve what they have.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+
+    # {
+    #     "quote": "Happiness is a state of mind, that has nothing to do with the external world.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "In this world, whatever paths you take, if they lead to Me, they are true paths.",
+    #     "author": "Lucius Annaeus Seneca",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Do not judge anyone. It is not your duty to judge. Leave the judgments to me.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "True wisdom is seeing all beings as yourself.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Be calm in the face of duality, whether it is joy and sorrow, gain and loss, or success and failure.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The key to happiness lies in detachment from the outcome of your actions.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The soul is neither born nor does it ever die. It is eternal and beyond destruction.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Perform your duty without being attached to its result; only then will you find peace.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Even the smallest of efforts done with love and faith for Me never go to waste.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am time, the great destroyer, who levels everything.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The one who performs their duty without expecting a reward attains true freedom.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "He who sees Me in everything and everything in Me is never lost to Me.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Be a warrior of truth and light, not a slave to your fears.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The mind is restless, but it can be controlled by constant practice and detachment.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "When doubts haunt you, focus your mind on Me, and I will guide you through the storm.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Love does not claim possession, but it sets the soul free.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The wise one is free from the dualities of life, seeing unity in all existence.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Your duty is to act, but never to its fruits.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Life is a battlefield; face your challenges with courage and devotion.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "I am in the heart of all beings, and from Me comes memory, knowledge, and forgetfulness.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Even if you are the worst of sinners, you will cross over all sin by the raft of knowledge.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Do everything you must do, but with love and devotion in your heart.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Seek refuge in My love, and I will liberate you from all sins.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The light within you is brighter than any darkness you may face.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "This body is just a vessel; the soul is the true self, eternal and divine.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "By selfless service, one attains the highest peace and freedom.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Anger leads to delusion, delusion leads to the loss of memory, and the loss of memory leads to the destruction of intelligence.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Those who love and worship Me with unwavering devotion are truly dear to Me.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "When you align with the Divine, all paths lead to Me.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Silence and stillness are the doors to wisdom.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "One who controls their mind is free, no matter where they are.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "God dwells in the hearts of all beings and guides them to their destiny.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Love is the essence of the universe; it connects the seen with the unseen.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Be as steady as a flame in the wind, unwavering in your faith.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Self-realization is the ultimate goal of life.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "All paths lead to Me, for I am the ultimate truth.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Do not be swayed by praise or criticism; remain focused on your path.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The wise one is satisfied with the self and seeks no external validation.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "The path to wisdom begins with questioning and ends with faith.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Detach from materialism, and you will find eternal happiness.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "A pure heart is the gateway to divine grace.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Every action done in devotion becomes an offering to the Supreme.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Live in the present moment; it is all you truly possess.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "He who surrenders to Me with love and trust will never be abandoned.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "Balance is the key to a harmonious life.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # },
+    # {
+    #     "quote": "In the stillness of meditation, you will find Me within. In the stillness of meditation, you will find Me within.In the stillness of meditation, you will find Me within.",
+    #     "author": "Lord Krishna",
+    #     "author_img": "assets/images/krishna.png"
+    # }

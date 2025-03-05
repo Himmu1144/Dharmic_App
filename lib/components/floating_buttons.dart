@@ -137,8 +137,10 @@ class _FloatingButtonsState extends State<FloatingButtons>
                             label: 'Speak',
                             icon: isarService.speakIcon,
                             offset: 140,
-                            onPressed: () =>
-                                isarService.handleSpeech(widget.quote.quote),
+                            onPressed: () => isarService.handleSpeech(
+                                widget.quote.quote, widget.quote.language),
+                            // onPressed: () => isarService.handleSpeech(
+                            //     widget.quote.quote, widget.quote.language),
                             index: 1,
                             isActive: isarService.isSpeaking &&
                                 isarService.currentQuote == widget.quote.quote,
