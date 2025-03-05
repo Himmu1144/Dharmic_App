@@ -26,17 +26,18 @@ class _AmountSelectionPageState extends State<AmountSelectionPage> {
       'icon': Icons.coffee_maker,
     },
     {
-      'title': 'Coffee & Snack',
+      'title': 'Help Us Reach 500+ Users',
       'subtitle':
-          'What\'s better than a coffee? A coffee with a bit of blinkit and instamart, i guess.',
+          'Help The Sanatan App to spread awarness about our beautiful religion to 500+ users.',
       'amount': 500.0,
-      'icon': Icons.lunch_dining,
+      'icon': Icons.people,
     },
     {
-      'title': 'A Full Meal',
-      'subtitle': 'If we are going all in, then why not swiggy and zomato.',
+      'title': 'Help Us Reach A 1000 Users',
+      'subtitle':
+          'Help The Sanatan App to spread awarness about our beautiful religion to 1000+ users.',
       'amount': 1000.0,
-      'icon': Icons.dinner_dining,
+      'icon': Icons.diversity_3,
     },
   ];
 

@@ -294,6 +294,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             value: 'en',
                             groupValue: tempLang,
+                            activeColor: const Color(0xFFfa5620),
                             onChanged: (value) {
                               setState(() {
                                 tempLang = value!;
@@ -307,6 +308,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             value: 'hi',
                             groupValue: tempLang,
+                            activeColor: const Color(0xFFfa5620),
                             onChanged: (value) {
                               setState(() {
                                 tempLang = value!;
@@ -343,8 +345,61 @@ class _SettingsPageState extends State<SettingsPage> {
             );
             // If the user selected a new language, update the setting.
             if (selectedLang != null && selectedLang != currentLang) {
-              await Provider.of<IsarService>(context, listen: false)
-                  .updateLanguage(selectedLang);
+              final isarService =
+                  Provider.of<IsarService>(context, listen: false);
+              await isarService.updateLanguage(selectedLang);
+
+              // Show a confirmation
+              // Show a confirmation
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 10, left: 5, right: 5),
+                          child: Text(
+                            "Your language preference has been updated to ${selectedLang == 'en' ? 'English' : 'Hinglish'}. Please restart the app to view quotes in your chosen language.",
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: -5,
+                          top: -5,
+                          child: GestureDetector(
+                            onTap: () {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF282828),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    duration: const Duration(seconds: 5),
+                    backgroundColor: const Color(0xFF1E1E1E),
+                    padding: const EdgeInsets.fromLTRB(20, 12, 12, 12),
+                    behavior: SnackBarBehavior.fixed,
+                  ),
+                );
+              }
+
               setState(() {}); // Refresh the SettingsPage if needed.
             }
           },

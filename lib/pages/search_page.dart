@@ -4,6 +4,7 @@ import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/quote.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart'; // Add this import
+import 'package:dharmic/components/quote_slider.dart';
 
 class SearchPage extends StatefulWidget {
   final bool searchBookmarksOnly;
@@ -172,9 +173,22 @@ class _SearchPageState extends State<SearchPage>
                               child: const Icon(Icons.bookmark_add,
                                   color: Colors.white),
                             ),
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  bottom: 8.0), // Reduced margin
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => QuoteSlider(
+                                      quotes: searchResults!,
+                                      initialIndex: index,
+                                      searchQuery:
+                                          _searchController.text.isNotEmpty
+                                              ? _searchController.text
+                                              : null,
+                                    ),
+                                  ),
+                                );
+                              },
                               child: Card(
                                 elevation: 4,
                                 shape: RoundedRectangleBorder(

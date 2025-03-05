@@ -44,7 +44,7 @@
 //   Future<UpiResponse> initiateTransaction(UpiApp app) {
 //     return _upiIndia.startTransaction(
 //       app: app,
-//       receiverUpiId: "9540722521@ybl", // Your UPI ID
+//       receiverUpiId: "himmu5056@okhdfcbank", // Your UPI ID
 //       receiverName: '(The Sanatan App Developer)',
 //       transactionRefId: 'TXN${DateTime.now().millisecondsSinceEpoch}',
 //       transactionNote: 'Support The Sanatan App',
@@ -256,7 +256,7 @@
 //                                               bottom: 8,
 //                                             ),
 //                                             child: Text(
-//                                               '9540722521@ybl',
+//                                               'himmu5056@okhdfcbank',
 //                                               style: GoogleFonts.roboto(
 //                                                 color: Colors.grey[300],
 //                                                 fontSize: 14,
@@ -271,7 +271,7 @@
 //                                           onPressed: () {
 //                                             Clipboard.setData(
 //                                               const ClipboardData(
-//                                                   text: '9540722521@ybl'),
+//                                                   text: 'himmu5056@okhdfcbank'),
 //                                             );
 //                                             ScaffoldMessenger.of(context)
 //                                                 .showSnackBar(

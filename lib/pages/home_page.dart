@@ -10,6 +10,9 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:dharmic/services/notification_service.dart'; // Add this import
 import '../components/circle_button.dart';
+import 'package:dharmic/models/author.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -70,6 +73,97 @@ class _HomePageState extends State<HomePage>
     Future.delayed(const Duration(milliseconds: 100), () {
       _resetOpacityForPage(0);
     });
+  }
+
+  void _showAuthorInfo(BuildContext context, Author author) {
+    showModalBottomSheet(
+      context: context,
+      // backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: const Color(0xFF202020),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar indicator
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        author.name,
+                        style: GoogleFonts.roboto(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        author.title,
+                        style: GoogleFonts.roboto(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: AssetImage(author.image),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Short Biography',
+              style: GoogleFonts.roboto(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Text(
+                  author.description,
+                  style: GoogleFonts.roboto(
+                    fontSize: 16,
+                    color: Colors.white70,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+    );
   }
 
   @override
@@ -159,55 +253,65 @@ class _HomePageState extends State<HomePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Author section
+          // Modify the AnimatedOpacity section in _buildQuoteCard method:
+
+// Author section
           AnimatedOpacity(
             duration: const Duration(milliseconds: 500), // Reduced duration
             opacity: _authorOpacities[index] ?? 0.0,
             curve: Curves.easeIn,
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(80.0),
-                  child: Image.asset(
-                    quote.author.value?.image ?? 'assets/images/buddha.png',
-                    width: 65,
-                    height: 65,
-                    fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () {
+                if (quote.author.value != null) {
+                  _showAuthorInfo(context, quote.author.value!);
+                }
+              },
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(80.0),
+                    child: Image.asset(
+                      quote.author.value?.image ?? 'assets/images/buddha.png',
+                      width: 65,
+                      height: 65,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      quote.author.value?.name ?? 'Unnown',
-                      style: GoogleFonts.notoSansJp(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.bold,
+                  const SizedBox(width: 16.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        quote.author.value?.name ?? 'Unnown',
+                        style: GoogleFonts.notoSansJp(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      quote.author.value?.title ?? 'Unnown',
-                      style: GoogleFonts.notoSansJp(
-                        fontSize: 13.0,
-                        color: Colors.grey.shade400,
+                      const SizedBox(height: 4.0),
+                      Text(
+                        quote.author.value?.title ?? 'Unnown',
+                        style: GoogleFonts.notoSansJp(
+                          fontSize: 13.0,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8.0), // Reduced spacing
-                    Container(
-                      constraints: const BoxConstraints(
-                        minHeight: 2.0,
+                      const SizedBox(height: 8.0), // Reduced spacing
+                      Container(
+                        constraints: const BoxConstraints(
+                          minHeight: 2.0,
+                        ),
+                        width: 200.0,
+                        child: Divider(
+                          color: Colors.grey.shade800,
+                          thickness: 2.0,
+                          height: 2.0,
+                        ),
                       ),
-                      width: 200.0,
-                      child: Divider(
-                        color: Colors.grey.shade800,
-                        thickness: 2.0,
-                        height: 2.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16.0),
@@ -263,10 +367,106 @@ class _HomePageState extends State<HomePage>
               //   onPressed: () =>
               //       isarService.handleSpeech(quote.quote, quote.language),
               // ),
+              // Replace the existing snackbar code with this:
+
               CircleButton(
-                icon: Icons.language,
+                icon: Icons.copy,
                 onPressed: () {
-                  // Website navigation implementation
+                  final formattedQuote =
+                      "${quote.quote}\n    ~ ${quote.author.value?.name ?? 'Unknown'}";
+                  Clipboard.setData(ClipboardData(text: formattedQuote));
+
+                  // Show an enhanced snackbar
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            height: 70,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3A3A3A),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 48),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Text(
+                                      //   'Success',
+                                      //   style: GoogleFonts.roboto(
+                                      //     fontSize: 16,
+                                      //     color: Colors.white,
+                                      //     fontWeight: FontWeight.bold,
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 4),
+                                      Text(
+                                        'Quote copied to clipboard',
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 14,
+                                          color: Colors.white70,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            left: -10,
+                            top: -10,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.green[600],
+                              radius: 18,
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: -5,
+                            top: -5,
+                            child: GestureDetector(
+                              onTap: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF282828),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      duration: const Duration(seconds: 1),
+                      backgroundColor: Colors.transparent,
+                      padding: const EdgeInsets.fromLTRB(20, 12, 12, 12),
+                      behavior: SnackBarBehavior.floating,
+                      elevation: 0,
+                    ),
+                  );
                 },
               ),
               CircleButton(

@@ -90,6 +90,7 @@ class _SplashScreenState extends State<SplashScreen>
         context,
         isFirstLaunch ? '/language' : '/home',
       );
+      // Navigator.pushReplacementNamed(context, '/language');
     } catch (e) {
       if (!mounted) return;
 

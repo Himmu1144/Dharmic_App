@@ -182,7 +182,7 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
                                             bottom: 8,
                                           ),
                                           child: Text(
-                                            '9540722521@ybl',
+                                            'himmu5056@okhdfcbank',
                                             style: GoogleFonts.roboto(
                                               color: Colors.grey[300],
                                               fontSize: 14,
@@ -196,7 +196,7 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
                                         onPressed: () {
                                           Clipboard.setData(
                                             const ClipboardData(
-                                                text: '9540722521@ybl'),
+                                                text: 'himmu5056@okhdfcbank'),
                                           );
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
