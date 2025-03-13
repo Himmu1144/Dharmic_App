@@ -1,5 +1,5 @@
 name: dharmic
-description: "A new Flutter project."
+description: "The Sanatana App"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -53,6 +53,7 @@ dependencies:
   flutter_svg: ^2.0.9
   rive: ^0.12.4
   image: ^4.0.17
+  logger: ^1.4.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -139,6 +140,15 @@ flutter:
 flutter_native_splash:
   color: "#000000"
   # image: assets/images/splash_logo.png  # Add your logo here
-  image: assets/images/buddha.png  # Add your logo here
+  image: assets/images/logo.png  # Add your logo here
   android: true
   ios: true
+
+  # Add this section to your pubspec.yaml
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#FFFFFF" # or any color
+  adaptive_icon_foreground: "assets/images/logo.png"
+  min_sdk_android: 21

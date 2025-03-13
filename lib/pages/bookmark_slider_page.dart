@@ -105,56 +105,56 @@ class _BookmarkSliderPageState extends State<BookmarkSliderPage>
     super.dispose();
   }
 
-  Future<void> _handleSpeech(String text) async {
-    if (isSpeaking) {
-      await flutterTts.stop();
-      setState(() {
-        isSpeaking = false;
-        speakIcon = Icons.play_arrow;
-      });
-    } else {
-      setState(() {
-        isSpeaking = true;
-        speakIcon = Icons.stop;
-      });
-      await flutterTts.speak(text);
-    }
-  }
+  // Future<void> _handleSpeech(String text) async {
+  //   if (isSpeaking) {
+  //     await flutterTts.stop();
+  //     setState(() {
+  //       isSpeaking = false;
+  //       speakIcon = Icons.play_arrow;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isSpeaking = true;
+  //       speakIcon = Icons.stop;
+  //     });
+  //     await flutterTts.speak(text);
+  //   }
+  // }
 
-  Future<void> _handleBookmarkToggle(Quote quote) async {
-    final isarService = Provider.of<IsarService>(context, listen: false);
-    await isarService.toggleBookmark(quote);
-    // Force rebuild to show updated bookmark state
-    setState(() {});
-  }
+  // Future<void> _handleBookmarkToggle(Quote quote) async {
+  //   final isarService = Provider.of<IsarService>(context, listen: false);
+  //   await isarService.toggleBookmark(quote);
+  //   // Force rebuild to show updated bookmark state
+  //   setState(() {});
+  // }
 
-  void _toggleMenu() {
-    setState(() => _isExpanded = !_isExpanded);
-    if (_isExpanded) {
-      _rotationController.forward();
-      // Forward animation - keep original timing
-      for (var i = 0; i < _buttonControllers.length; i++) {
-        Future.delayed(_buttonDelay * i, () {
-          if (mounted) {
-            _buttonControllers[i].forward();
-          }
-        });
-      }
-    } else {
-      _rotationController.reverse();
-      // Reverse animation - faster timing
-      const fastReverseDelay =
-          Duration(milliseconds: 50); // Faster reverse delay
-      for (var i = _buttonControllers.length - 1; i >= 0; i--) {
-        Future.delayed(fastReverseDelay * (_buttonControllers.length - 1 - i),
-            () {
-          if (mounted) {
-            _buttonControllers[i].reverse(from: 1.0);
-          }
-        });
-      }
-    }
-  }
+  // void _toggleMenu() {
+  //   setState(() => _isExpanded = !_isExpanded);
+  //   if (_isExpanded) {
+  //     _rotationController.forward();
+  //     // Forward animation - keep original timing
+  //     for (var i = 0; i < _buttonControllers.length; i++) {
+  //       Future.delayed(_buttonDelay * i, () {
+  //         if (mounted) {
+  //           _buttonControllers[i].forward();
+  //         }
+  //       });
+  //     }
+  //   } else {
+  //     _rotationController.reverse();
+  //     // Reverse animation - faster timing
+  //     const fastReverseDelay =
+  //         Duration(milliseconds: 50); // Faster reverse delay
+  //     for (var i = _buttonControllers.length - 1; i >= 0; i--) {
+  //       Future.delayed(fastReverseDelay * (_buttonControllers.length - 1 - i),
+  //           () {
+  //         if (mounted) {
+  //           _buttonControllers[i].reverse(from: 1.0);
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

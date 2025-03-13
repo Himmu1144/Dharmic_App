@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/quote.dart';
+import 'package:dharmic/components/SafeImage.dart';
 // Update import
 
 class BookmarkSlide extends StatefulWidget {
@@ -53,21 +54,21 @@ class _BookmarkSlideState extends State<BookmarkSlide>
     super.dispose();
   }
 
-  Future<void> _handleSpeech(String text) async {
-    if (isSpeaking) {
-      await flutterTts.stop();
-      setState(() {
-        isSpeaking = false;
-        speakIcon = Icons.play_arrow;
-      });
-    } else {
-      setState(() {
-        isSpeaking = true;
-        speakIcon = Icons.stop;
-      });
-      await flutterTts.speak(text);
-    }
-  }
+  // Future<void> _handleSpeech(String text) async {
+  //   if (isSpeaking) {
+  //     await flutterTts.stop();
+  //     setState(() {
+  //       isSpeaking = false;
+  //       speakIcon = Icons.play_arrow;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isSpeaking = true;
+  //       speakIcon = Icons.stop;
+  //     });
+  //     await flutterTts.speak(text);
+  //   }
+  // }
 
   void _resetOpacityForPage(int pageIndex) {
     setState(() {
@@ -121,14 +122,12 @@ class _BookmarkSlideState extends State<BookmarkSlide>
             curve: Curves.easeIn,
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(80.0),
-                  child: Image.asset(
-                    quote.author.value?.image ?? 'assets/images/buddha.png',
-                    width: 65,
-                    height: 65,
-                    fit: BoxFit.cover,
-                  ),
+                SafeImage(
+                  imagePath:
+                      quote.author.value?.image ?? 'assets/images/buddha.png',
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
                 ),
                 const SizedBox(width: 16.0),
                 Column(

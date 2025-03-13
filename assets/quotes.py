@@ -601,3 +601,789 @@
     #     "author": "Lord Krishna",
     #     "author_img": "assets/images/krishna.png"
     # }
+
+
+
+# [
+#     {
+#         "quote": "Truth is one; the wise call it by different names.",
+#         "language": "en",
+#         "author": "Rigveda",
+#         "author_img": "assets/images/rigveda.png"
+#     },
+#     {
+#         "quote": "Let noble thoughts come to us from every side.",
+#         "language": "en",
+#         "author": "Rigveda",
+#         "author_img": "assets/images/rigveda.png"
+#     },]
+
+
+# author names - 
+
+# 1. A.C. Bhaktivedanta Swami Prabhupada
+# 2. Adhyatma Upanishad
+# 3. Adi Shankaracharya
+# 4. Amrita-Bindu Upanishad
+# 5. Amrita-bindu Upanishad
+# 6. Amritanandamayi Devi
+# 7. Ancient Sanskrit
+# 8. Annapurna Upanishad
+# 9. Atharva Veda
+# 10. Atharvaveda AV 1-31-4
+# 11. Atharvaveda AV 10-2-24
+# 12. Atharvaveda AV 10-2-25
+# 13. Atharvaveda AV 10-7-12
+# 14. Atharvaveda AV 10-7-35
+# 15. Atharvaveda AV 10-8-1
+# 16. Atharvaveda AV 10-8-38
+# 17. Atharvaveda AV 10-8-6
+# 18. Atharvaveda AV 13-4-14-5
+# 19. Atharvaveda AV 13-4-16/18
+# 20. Atharvaveda AV 13-4-19/21
+# 21. Atharvaveda AV 13-4-3
+# 22. Atharvaveda AV 19-15-1
+# 23. Atharvaveda AV 19-15-5
+# 24. Atharvaveda AV 19-15-6
+# 25. Atharvaveda AV 19-60-1
+# 26. Atharvaveda AV 19-60-2
+# 27. Atharvaveda AV 19-62-1
+# 28. Atharvaveda AV 19-67
+# 29. Atharvaveda AV 19-8-1
+# 30. Atharvaveda AV 19-9-1
+# 31. Atharvaveda AV 19-9-14
+# 32. Atharvaveda AV 19-9-2
+# 33. Atharvaveda AV 19-9-5
+# 34. Atharvaveda AV 2-2-2
+# 35. Atharvaveda AV 3-30-1
+# 36. Atharvaveda AV 3-30-2
+# 37. Atharvaveda AV 3-30-3
+# 38. Atharvaveda AV 3-30-4
+# 39. Atharvaveda AV 3-30-5
+# 40. Atharvaveda AV 3-30-6
+# 41. Atharvaveda AV 3-30-7
+# 42. Atharvaveda AV 4/16/2
+# 43. Atharvaveda AV 4/16/3
+# 44. Atharvaveda AV 4/16/4
+# 45. Atharvaveda AV 6-18-1
+# 46. Atharvaveda AV 6-18-2
+# 47. Atharvaveda AV 6-18-3
+# 48. Atharvaveda AV 7-115-3
+# 49. Bhagavad Gita
+# 50. Bhaktisiddhanta Sarasvati
+# 51. Bhaktivedanta Swami Prabhupada
+# 52. Brhadaranyaka Upanishad
+# 53. Brihad-Aranyaka Upanishad
+# 54. Brihadaranyaka Upanishad
+# 55. Chandogya Upanishad
+# 56. Dohra
+# 57. Dr. Robert Svoboda
+# 58. Dr. S Radhakrishnan
+# 59. Guru Gobind Singh Ji
+# 60. Guru Nanak Dev Ji
+# 61. Guru Tegh Bahadur Ji
+# 62. Guru Tegh Bahadur Ji � Salok Mahalla 9 verse 1
+# 63. Guru Tegh Bahadur Ji � Salok Mahalla 9 verse 52
+# 64. Guru Tegh Bahadur Ji � Salok Mahalla 9 verse 7
+# 65. Guru Tegh Bahadur Sahib Ji
+# 66. Isa Upanishad
+# 67. Isavasya Upanishad
+# 68. Isha Upanishad
+# 69. Ishavasya Upanishad
+# 70. Ishawashya Upanishad
+# 71. Kaivalyopanishad
+# 72. Katha Upanishad
+# 73. Kena Upanishad
+# 74. Lawrence A. Babb
+# 75. Lokacharya Pillai
+# 76. Lord Shiva
+# 77. Madhvacharya
+# 78. Mahatma Gandhi
+# 79. Mahavira
+# 80. Maitri Upanishad
+# 81. Manoj Jain
+# 82. Mundaka Upanishad
+# 83. Niralamba Upanishad
+# 84. Pramukh Swami
+# 85. Prashna Upanishad
+# 86. Rabindranath Tagore
+# 87. Ramana Maharishi
+# 88. Ramanujacharya
+# 89. Rig Veda
+# 90. Rigveda
+# 91. Rupa Goswami
+# 92. Sage Yajnavalkya
+# 93. Sam Harris
+# 94. Satya Sai Baba
+# 95. Shiva Yogaswami
+# 96. Shivaya Subramaniyaswami
+# 97. Shri Aurobindo
+# 98. Shri Nirmila Devi
+# 99. Shri Ram
+# 100. Shri Ramakrishna
+# 101. Shri Yukteshwar
+# 102. Shvetashvatara Upanishad
+# 103. Siddhartha Gautama (Buddha)
+# 104. Svarajyasiddhi
+# 105. Swami Muktananda
+# 106. Swami Sahajanand
+# 107. Swami Satchidananda
+# 108. Swami Shivananda
+# 109. Swami Vivekananda
+# 110. Tejo-Bindu Upanishad
+# 111. Tejo-bindu Upanishad
+# 112. Tulsidas
+# 113. Varaha Upanishad
+# 114. Vijnanananka
+# 115. Vinoba Bhave
+# 116. Virchand Raghavji Gandhi
+# 117. Vivekachudamani
+# 118. Yajur Veda
+
+
+# hey in the author page i dont want to show all the authors instead i only wanna show those authors that are in the author_tags.json as tags
+
+# and when i click on author name to open the slider to quotes from that author there i not only wanna show qyotes from that author/tag instead i also wanna show quotes from all authors under that tag so please analayze the code and tell me how to implement this functionality
+
+[
+  {
+    "author": "A.C. Bhaktivedanta Swami Prabhupada",
+    "author_img": "assets/images/A.C. Bhaktivedanta Swami Prabhupada.png",
+    "author_title": "Founder of ISKCON",
+    "author_description": "A.C. Bhaktivedanta Swami Prabhupada was a Hindu spiritual teacher and the founder of the International Society for Krishna Consciousness (ISKCON).",
+    "author_link": "https://en.wikipedia.org/wiki/A.C._Bhaktivedanta_Swami_Prabhupada"
+  },
+  {
+    "author": "Adhyatma Upanishad",
+    "author_img": "assets/images/Adhyatma Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Adi Shankaracharya",
+    "author_img": "assets/images/Adi Shankaracharya.png",
+    "author_title": "Hindu Philosopher and Theologian",
+    "author_description": "Adi Shankaracharya was an early 8th‐century Indian philosopher and theologian who consolidated the doctrine of Advaita Vedanta.",
+    "author_link": "https://en.wikipedia.org/wiki/Adi_Shankara"
+  },
+  {
+    "author": "Amrita-Bindu Upanishad",
+    "author_img": "assets/images/Amrita-Bindu Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Amritanandamayi Devi",
+    "author_img": "assets/images/Amritanandamayi Devi.png",
+    "author_title": "Indian Spiritual Leader and Humanitarian",
+    "author_description": "Amritanandamayi Devi, also known as Amma, is a renowned Indian spiritual leader and humanitarian known for her charitable work and teachings on love and compassion.",
+    "author_link": "https://en.wikipedia.org/wiki/Amritanandamayi"
+  },
+  {
+    "author": "Ancient Sanskrit",
+    "author_img": "assets/images/Ancient Sanskrit.png",
+    "author_title": "Ancient Indo‐Aryan Language",
+    "author_description": "Ancient Sanskrit is an ancient Indo‐Aryan language in which many foundational texts of Hinduism and classical Indian literature are composed.",
+    "author_link": "https://en.wikipedia.org/wiki/Sanskrit"
+  },
+  {
+    "author": "Annapurna Upanishad",
+    "author_img": "assets/images/Annapurna Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Atharva Veda",
+    "author_img": "assets/images/Atharva Veda.png",
+    "author_title": "Ancient Vedic Scripture",
+    "author_description": "The Atharva Veda is one of the four Vedas, comprising hymns, spells, and incantations integral to early Hindu rituals.",
+    "author_link": "https://en.wikipedia.org/wiki/Atharva_Veda"
+  },
+  {
+    "author": "Bhagavad Gita",
+    "author_img": "assets/images/Bhagavad Gita.png",
+    "author_title": "Sacred Hindu Scripture",
+    "author_description": "The Bhagavad Gita is a 700‐verse dialogue from the Indian epic Mahabharata that offers profound spiritual guidance and philosophical insights.",
+    "author_link": "https://en.wikipedia.org/wiki/Bhagavad_Gita"
+  },
+  {
+    "author": "Bhaktisiddhanta Sarasvati",
+    "author_img": "assets/images/Bhaktisiddhanta Sarasvati.png",
+    "author_title": "Hindu Monk and Gaudiya Vaishnava Guru",
+    "author_description": "Bhaktisiddhanta Sarasvati was a prominent Gaudiya Vaishnava leader known for revitalizing and spreading the teachings of Lord Krishna.",
+    "author_link": "https://en.wikipedia.org/wiki/Bhaktisiddhanta_Sarasvati"
+  },
+  {
+    "author": "Brihadaranyaka Upanishad",
+    "author_img": "assets/images/Brihadaranyaka Upanishad.png",
+    "author_title": "Principal Upanishad",
+    "author_description": "The Brihadaranyaka Upanishad is one of the oldest and most important Upanishads, exploring profound philosophical concepts and the nature of ultimate reality.",
+    "author_link": "https://en.wikipedia.org/wiki/Brihadaranyaka_Upanishad"
+  },
+  {
+    "author": "Chandogya Upanishad",
+    "author_img": "assets/images/Chandogya Upanishad.png",
+    "author_title": "Ancient Hindu Scripture",
+    "author_description": "The Chandogya Upanishad is one of the major Upanishads, known for its discussions on the nature of reality and the ultimate truth.",
+    "author_link": "https://en.wikipedia.org/wiki/Chandogya_Upanishad"
+  },
+  {
+    "author": "Dohra",
+    "author_img": "assets/images/Dohra.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Dr. Robert Svoboda",
+    "author_img": "assets/images/Dr. Robert Svoboda.png",
+    "author_title": "Spiritual Author and Teacher",
+    "author_description": "Dr. Robert Svoboda is known for his works on spirituality, Ayurveda, and Vedic literature.",
+    "author_link": "https://en.wikipedia.org/wiki/Robert_Svoboda"
+  },
+  {
+    "author": "Dr. S Radhakrishnan",
+    "author_img": "assets/images/Dr. S Radhakrishnan.png",
+    "author_title": "Philosopher and Statesman",
+    "author_description": "Dr. Sarvepalli Radhakrishnan was an Indian philosopher and statesman who served as the President of India and made significant contributions to philosophy and education.",
+    "author_link": "https://en.wikipedia.org/wiki/Sarvepalli_Radhakrishnan"
+  },
+  {
+    "author": "Guru Gobind Singh Ji",
+    "author_img": "assets/images/Guru Gobind Singh Ji.png",
+    "author_title": "Tenth Sikh Guru and Warrior Saint",
+    "author_description": "Guru Gobind Singh Ji was the tenth Sikh Guru, known for founding the Khalsa and his inspirational leadership.",
+    "author_link": "https://en.wikipedia.org/wiki/Guru_Gobind_Singh"
+  },
+  {
+    "author": "Guru Nanak Dev Ji",
+    "author_img": "assets/images/Guru Nanak Dev Ji.png",
+    "author_title": "Founder of Sikhism",
+    "author_description": "Guru Nanak Dev Ji was the founder of Sikhism, emphasizing the oneness of God, social equality, and community service.",
+    "author_link": "https://en.wikipedia.org/wiki/Guru_Nanak"
+  },
+  {
+    "author": "Guru Tegh Bahadur Ji",
+    "author_img": "assets/images/Guru Tegh Bahadur Ji.png",
+    "author_title": "Ninth Sikh Guru and Martyr",
+    "author_description": "Guru Tegh Bahadur Ji was the ninth Sikh Guru, revered for his sacrifice and his defense of religious freedom.",
+    "author_link": "https://en.wikipedia.org/wiki/Guru_Tegh_Bahadur"
+  },
+  {
+    "author": "Isa Upanishad",
+    "author_img": "assets/images/Isa Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Isha Upanishad",
+    "author_img": "assets/images/Isha Upanishad.png",
+    "author_title": "Ancient Hindu Scripture",
+    "author_description": "The Isha Upanishad is one of the principal Upanishads, presenting a philosophy of the all‐pervading nature of the divine.",
+    "author_link": "https://en.wikipedia.org/wiki/Isha_Upanishad"
+  },
+  {
+    "author": "Kaivalyopanishad",
+    "author_img": "assets/images/Kaivalyopanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Katha Upanishad",
+    "author_img": "assets/images/Katha Upanishad.png",
+    "author_title": "Philosophical Upanishad",
+    "author_description": "The Katha Upanishad explores the nature of life, death, and the path to spiritual knowledge through a dialogue between a seeker and a teacher.",
+    "author_link": "https://en.wikipedia.org/wiki/Katha_Upanishad"
+  },
+  {
+    "author": "Kena Upanishad",
+    "author_img": "assets/images/Kena Upanishad.png",
+    "author_title": "Upanishadic Discourse on Knowledge",
+    "author_description": "The Kena Upanishad delves into the nature of knowledge and the ultimate reality beyond sensory perception.",
+    "author_link": "https://en.wikipedia.org/wiki/Kena_Upanishad"
+  },
+  {
+    "author": "Lawrence A. Babb",
+    "author_img": "assets/images/Lawrence A. Babb.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Lokacharya Pillai",
+    "author_img": "assets/images/Lokacharya Pillai.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Lord Shiva",
+    "author_img": "assets/images/Lord Shiva.png",
+    "author_title": "Hindu God of Destruction and Transformation",
+    "author_description": "Lord Shiva is one of the principal deities of Hinduism, revered for his role as the destroyer and transformer, embodying both asceticism and creative energy.",
+    "author_link": "https://en.wikipedia.org/wiki/Shiva"
+  },
+  {
+    "author": "Madhvacharya",
+    "author_img": "assets/images/Madhvacharya.png",
+    "author_title": "Indian Philosopher and Proponent of Dvaita Vedanta",
+    "author_description": "Madhvacharya was a Hindu philosopher who founded the Dvaita school of Vedanta, emphasizing a clear distinction between the individual soul and the Supreme Being.",
+    "author_link": "https://en.wikipedia.org/wiki/Madhvacharya"
+  },
+  {
+    "author": "Mahatma Gandhi",
+    "author_img": "assets/images/Mahatma Gandhi.png",
+    "author_title": "Leader of Indian Independence Movement",
+    "author_description": "Mahatma Gandhi was a pivotal leader in India's struggle for independence, renowned for his philosophy of non-violence and civil disobedience.",
+    "author_link": "https://en.wikipedia.org/wiki/Mahatma_Gandhi"
+  },
+  {
+    "author": "Mahavira",
+    "author_img": "assets/images/Mahavira.png",
+    "author_title": "Jain Tirthankara",
+    "author_description": "Mahavira was the 24th Tirthankara of Jainism, whose teachings on non-violence, truth, and asceticism have profoundly influenced Jain philosophy.",
+    "author_link": "https://en.wikipedia.org/wiki/Mahavira"
+  },
+  {
+    "author": "Maitri Upanishad",
+    "author_img": "assets/images/Maitri Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Manoj Jain",
+    "author_img": "assets/images/Manoj Jain.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Mundaka Upanishad",
+    "author_img": "assets/images/Mundaka Upanishad.png",
+    "author_title": "Upanishadic Text on Higher and Lower Knowledge",
+    "author_description": "The Mundaka Upanishad distinguishes between higher spiritual knowledge and lower worldly knowledge.",
+    "author_link": "https://en.wikipedia.org/wiki/Mundaka_Upanishad"
+  },
+  {
+    "author": "Niralamba Upanishad",
+    "author_img": "assets/images/Niralamba Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Pramukh Swami",
+    "author_img": "assets/images/Pramukh Swami.png",
+    "author_title": "Hindu Spiritual Leader",
+    "author_description": "Pramukh Swami Maharaj was a revered spiritual leader of the Bochasanwasi Akshar Purushottam Swaminarayan Sanstha (BAPS).",
+    "author_link": "https://en.wikipedia.org/wiki/Pramukh_Swami_Maharaj"
+  },
+  {
+    "author": "Prashna Upanishad",
+    "author_img": "assets/images/Prashna Upanishad.png",
+    "author_title": "Upanishadic Inquiry",
+    "author_description": "The Prashna Upanishad presents a series of profound questions and answers on the nature of existence and the ultimate truth.",
+    "author_link": "https://en.wikipedia.org/wiki/Prashna_Upanishad"
+  },
+  {
+    "author": "Rabindranath Tagore",
+    "author_img": "assets/images/Rabindranath Tagore.png",
+    "author_title": "Nobel Laureate Poet and Philosopher",
+    "author_description": "Rabindranath Tagore was an Indian polymath, poet, and philosopher whose works have left a lasting impact on literature and Indian culture.",
+    "author_link": "https://en.wikipedia.org/wiki/Rabindranath_Tagore"
+  },
+  {
+    "author": "Ramana Maharishi",
+    "author_img": "assets/images/Ramana Maharishi.png",
+    "author_title": "Indian Sage and Spiritual Teacher",
+    "author_description": "Ramana Maharishi was an influential Indian sage known for his teachings on self-inquiry and the path to spiritual enlightenment.",
+    "author_link": "https://en.wikipedia.org/wiki/Ramana_Maharshi"
+  },
+  {
+    "author": "Ramanujacharya",
+    "author_img": "assets/images/Ramanujacharya.png",
+    "author_title": "Theologian and Philosopher of Vishishtadvaita Vedanta",
+    "author_description": "Ramanujacharya was a prominent theologian who laid the foundation of the Vishishtadvaita school of Vedanta, emphasizing qualified non-dualism.",
+    "author_link": "https://en.wikipedia.org/wiki/Ramanujacharya"
+  },
+  {
+    "author": "Rig Veda",
+    "author_img": "assets/images/Rig Veda.png",
+    "author_title": "Ancient Vedic Scripture",
+    "author_description": "The Rig Veda is one of the oldest sacred texts of Hinduism, composed of hymns that praise various deities and form the foundation of Vedic knowledge.",
+    "author_link": "https://en.wikipedia.org/wiki/Rig_Veda"
+  },
+  {
+    "author": "Rupa Goswami",
+    "author_img": "assets/images/Rupa Goswami.png",
+    "author_title": "Devotional Theologian and Mystic",
+    "author_description": "Rupa Goswami was a key figure in Gaudiya Vaishnavism, known for his devotional writings and philosophical contributions.",
+    "author_link": "https://en.wikipedia.org/wiki/Rupa_Goswami"
+  },
+  {
+    "author": "Sage Yajnavalkya",
+    "author_img": "assets/images/Sage Yajnavalkya.png",
+    "author_title": "Ancient Sage and Philosopher",
+    "author_description": "Sage Yajnavalkya is a revered Vedic sage known for his profound contributions to Upanishadic philosophy and the understanding of ultimate reality.",
+    "author_link": "https://en.wikipedia.org/wiki/Yajnavalkya"
+  },
+  {
+    "author": "Sam Harris",
+    "author_img": "assets/images/Sam Harris.png",
+    "author_title": "American Author and Philosopher",
+    "author_description": "Sam Harris is an American author, philosopher, and neuroscientist known for his writings on religion, ethics, and rationality.",
+    "author_link": "https://en.wikipedia.org/wiki/Sam_Harris"
+  },
+  {
+    "author": "Satya Sai Baba",
+    "author_img": "assets/images/Satya Sai Baba.png",
+    "author_title": "Indian Spiritual Leader",
+    "author_description": "Satya Sai Baba was an Indian guru and philanthropist, revered for his teachings on love, compassion, and selfless service.",
+    "author_link": "https://en.wikipedia.org/wiki/Satya_Sai_Baba"
+  },
+  {
+    "author": "Shiva Yogaswami",
+    "author_img": "assets/images/Shiva Yogaswami.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Shivaya Subramaniyaswami",
+    "author_img": "assets/images/Shivaya Subramaniyaswami.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Shri Aurobindo",
+    "author_img": "assets/images/Shri Aurobindo.png",
+    "author_title": "Indian Philosopher, Poet and Spiritual Leader",
+    "author_description": "Sri Aurobindo was an Indian philosopher, yogi, and poet who developed the spiritual practice known as Integral Yoga.",
+    "author_link": "https://en.wikipedia.org/wiki/Sri_Aurobindo"
+  },
+  {
+    "author": "Shri Nirmila Devi",
+    "author_img": "assets/images/Shri Nirmila Devi.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Shri Ram",
+    "author_img": "assets/images/Shri Ram.png",
+    "author_title": "Hindu Deity and Epic Hero",
+    "author_description": "Shri Ram, also known as Lord Rama, is revered as an ideal king and the hero of the Ramayana.",
+    "author_link": "https://en.wikipedia.org/wiki/Rama"
+  },
+  {
+    "author": "Shri Ramakrishna",
+    "author_img": "assets/images/Shri Ramakrishna.png",
+    "author_title": "Indian Mystic and Saint",
+    "author_description": "Sri Ramakrishna was a 19th-century mystic whose teachings and life significantly influenced modern Hindu thought.",
+    "author_link": "https://en.wikipedia.org/wiki/Ramakrishna"
+  },
+  {
+    "author": "Shri Yukteshwar",
+    "author_img": "assets/images/Shri Yukteshwar.png",
+    "author_title": "Indian Yogi and Guru",
+    "author_description": "Shri Yukteshwar was a renowned Indian yogi and guru, known for his spiritual teachings and as the teacher of Paramahansa Yogananda.",
+    "author_link": "https://en.wikipedia.org/wiki/Yukteswar"
+  },
+  {
+    "author": "Shvetashvatara Upanishad",
+    "author_img": "assets/images/Shvetashvatara Upanishad.png",
+    "author_title": "Mystical Upanishad",
+    "author_description": "The Shvetashvatara Upanishad is a significant text among the Upanishads, addressing the nature of the ultimate reality and the means to attain spiritual insight.",
+    "author_link": "https://en.wikipedia.org/wiki/Shvetashvatara_Upanishad"
+  },
+  {
+    "author": "Siddhartha Gautama (Buddha)",
+    "author_img": "assets/images/Siddhartha Gautama (Buddha).png",
+    "author_title": "Founder of Buddhism",
+    "author_description": "Siddhartha Gautama, known as the Buddha, was a spiritual teacher whose insights laid the foundation for Buddhism and its philosophy of enlightenment.",
+    "author_link": "https://en.wikipedia.org/wiki/Buddha"
+  },
+  {
+    "author": "Svarajyasiddhi",
+    "author_img": "assets/images/Svarajyasiddhi.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Swami Muktananda",
+    "author_img": "assets/images/Swami Muktananda.png",
+    "author_title": "Indian Spiritual Leader and Guru",
+    "author_description": "Swami Muktananda was an Indian guru known for popularizing Siddha Yoga in the West through his charismatic teachings.",
+    "author_link": "https://en.wikipedia.org/wiki/Muktananda"
+  },
+  {
+    "author": "Swami Sahajanand",
+    "author_img": "assets/images/Swami Sahajanand.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Swami Satchidananda",
+    "author_img": "assets/images/Swami Satchidananda.png",
+    "author_title": "Indian Yoga Guru and Spiritual Teacher",
+    "author_description": "Swami Satchidananda was an influential yoga teacher and spiritual leader who founded the Integral Yoga Institute and promoted holistic yoga practices.",
+    "author_link": "https://en.wikipedia.org/wiki/Satchidananda"
+  },
+  {
+    "author": "Swami Shivananda",
+    "author_img": "assets/images/Swami Shivananda.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Swami Vivekananda",
+    "author_img": "assets/images/Swami Vivekananda.png",
+    "author_title": "Indian Hindu Monk and Philosopher",
+    "author_description": "Swami Vivekananda was a key figure in introducing Indian philosophies of Vedanta and Yoga to the Western world.",
+    "author_link": "https://en.wikipedia.org/wiki/Vivekananda"
+  },
+  {
+    "author": "Tejo-Bindu Upanishad",
+    "author_img": "assets/images/Tejo-Bindu Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Tulsidas",
+    "author_img": "assets/images/Tulsidas.png",
+    "author_title": "Indian Poet and Saint",
+    "author_description": "Tulsidas was a revered poet-saint best known for his epic poem 'Ramcharitmanas', which recounts the story of Lord Rama.",
+    "author_link": "https://en.wikipedia.org/wiki/Tulsidas"
+  },
+  {
+    "author": "Varaha Upanishad",
+    "author_img": "assets/images/Varaha Upanishad.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Vijnanananka",
+    "author_img": "assets/images/Vijnanananka.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Vinoba Bhave",
+    "author_img": "assets/images/Vinoba Bhave.png",
+    "author_title": "Indian Social Reformer and Spiritual Leader",
+    "author_description": "Vinoba Bhave was an Indian advocate of nonviolence and human rights, best known for his Bhoodan movement aimed at voluntary land redistribution.",
+    "author_link": "https://en.wikipedia.org/wiki/Vinoba_Bhave"
+  },
+  {
+    "author": "Virchand Raghavji Gandhi",
+    "author_img": "assets/images/Virchand Raghavji Gandhi.png",
+    "author_title": "",
+    "author_description": "",
+    "author_link": ""
+  },
+  {
+    "author": "Vivekachudamani",
+    "author_img": "assets/images/Vivekachudamani.png",
+    "author_title": "Philosophical Text Attributed to Adi Shankaracharya",
+    "author_description": "Vivekachudamani is a classic treatise on Advaita Vedanta attributed to Adi Shankaracharya, exploring the nature of reality and the path to liberation.",
+    "author_link": "https://en.wikipedia.org/wiki/Vivekachudamani"
+  },
+  {
+    "author": "Yajur Veda",
+    "author_img": "assets/images/Yajur Veda.png",
+    "author_title": "Ancient Vedic Scripture",
+    "author_description": "The Yajur Veda is one of the four Vedas, containing prose mantras and sacrificial formulas integral to ancient Hindu rituals and ceremonies.",
+    "author_link": "https://en.wikipedia.org/wiki/Yajur_Veda"
+  }
+]
+
+
+
+# [
+#   {
+#     "Tag": "ISCON",
+#     "authors": [
+#       "A.C. Bhaktivedanta Swami Prabhupada"
+#     ]
+#   },
+#   {
+#     "Tag": "Upanishads",
+#     "authors": [
+#       "Adhyatma Upanishad",
+#       "Amrita-Bindu Upanishad",
+#       "Amrita-bindu Upanishad",
+#       "Annapurna Upanishad",
+#       "Brhadaranyaka Upanishad",
+#       "Brihad-Aranyaka Upanishad",
+#       "Brihadaranyaka Upanishad",
+#       "Chandogya Upanishad"
+#     ]
+#   },
+#   {
+#     "Tag": "Atharva Veda",
+#     "authors": [
+#       "Atharva Veda",
+#       "Atharvaveda AV 1-31-4",
+#       "Atharvaveda AV 10-2-24",
+#       "Atharvaveda AV 10-2-25",
+#       "Atharvaveda AV 10-7-12",
+#       "Atharvaveda AV 10-7-35",
+#       "Atharvaveda AV 10-8-1",
+#       "Atharvaveda AV 10-8-38",
+#       "Atharvaveda AV 10-8-6",
+#       "Atharvaveda AV 13-4-14-5",
+#       "Atharvaveda AV 13-4-16/18",
+#       "Atharvaveda AV 13-4-19/21",
+#       "Atharvaveda AV 13-4-3",
+#       "Atharvaveda AV 19-15-1",
+#       "Atharvaveda AV 19-15-5",
+#       "Atharvaveda AV 19-15-6",
+#       "Atharvaveda AV 19-60-1",
+#       "Atharvaveda AV 19-60-2",
+#       "Atharvaveda AV 19-62-1",
+#       "Atharvaveda AV 19-67",
+#       "Atharvaveda AV 19-8-1",
+#       "Atharvaveda AV 19-9-1",
+#       "Atharvaveda AV 19-9-14",
+#       "Atharvaveda AV 19-9-2",
+#       "Atharvaveda AV 19-9-5",
+#       "Atharvaveda AV 2-2-2",
+#       "Atharvaveda AV 3-30-1",
+#       "Atharvaveda AV 3-30-2",
+#       "Atharvaveda AV 3-30-3",
+#       "Atharvaveda AV 3-30-4",
+#       "Atharvaveda AV 3-30-5",
+#       "Atharvaveda AV 3-30-6",
+#       "Atharvaveda AV 3-30-7",
+#       "Atharvaveda AV 4/16/2",
+#       "Atharvaveda AV 4/16/3",
+#       "Atharvaveda AV 4/16/4",
+#       "Atharvaveda AV 6-18-1",
+#       "Atharvaveda AV 6-18-2",
+#       "Atharvaveda AV 6-18-3",
+#       "Atharvaveda AV 7-115-3"
+#     ]
+#   },
+#   {
+#     "Tag": "Bhagavad Gita",
+#     "authors": [
+#       "Bhagavad Gita"
+#     ]
+#   },
+#   {
+#     "Tag": "Shri Ram",
+#     "authors": [
+#       "Shri Ram"
+#     ]
+#   },
+#   {
+#     "Tag": "Lord Shiva",
+#     "authors": [
+#       "Lord Shiva"
+#     ]
+#   },
+#   {
+#     "Tag": "Hinduism",
+#     "authors": [
+#       "Adi Shankaracharya",
+#       "Amritanandamayi Devi",
+#       "Bhaktisiddhanta Sarasvati",
+#       "Bhaktivedanta Swami Prabhupada",
+#       "Dohra",
+#       "Dr. Robert Svoboda",
+#       "Dr. S Radhakrishnan",
+#       "Lawrence A. Babb",
+#       "Lokacharya Pillai",
+#       "Madhvacharya",
+#       "Mahatma Gandhi",
+#       "Pramukh Swami",
+#       "Rabindranath Tagore",
+#       "Ramana Maharishi",
+#       "Ramanujacharya",
+#       "Rupa Goswami",
+#       "Sage Yajnavalkya",
+#       "Sam Harris",
+#       "Satya Sai Baba",
+#       "Shiva Yogaswami",
+#       "Shivaya Subramaniyaswami",
+#       "Shri Aurobindo",
+#       "Shri Nirmila Devi",
+#       "Shri Ramakrishna",
+#       "Shri Yukteshwar",
+#       "Svarajyasiddhi",
+#       "Swami Muktananda",
+#       "Swami Sahajanand",
+#       "Swami Satchidananda",
+#       "Swami Shivananda",
+#       "Swami Vivekananda",
+#       "Tulsidas",
+#       "Vijnanananka",
+#       "Vinoba Bhave",
+#       "Virchand Raghavji Gandhi"
+#     ]
+#   },
+#   {
+#     "Tag": "Sikhism",
+#     "authors": [
+#       "Guru Gobind Singh Ji",
+#       "Guru Nanak Dev Ji",
+#       "Guru Tegh Bahadur Ji",
+#       "Guru Tegh Bahadur Ji – Salok Mahalla 9 verse 1",
+#       "Guru Tegh Bahadur Ji – Salok Mahalla 9 verse 52",
+#       "Guru Tegh Bahadur Ji – Salok Mahalla 9 verse 7",
+#       "Guru Tegh Bahadur Sahib Ji"
+#     ]
+#   },
+#   {
+#     "Tag": "Buddhism",
+#     "authors": [
+#       "Siddhartha Gautama (Buddha)"
+#     ]
+#   },
+#   {
+#     "Tag": "Jainism",
+#     "authors": [
+#       "Mahavira",
+#       "Manoj Jain"
+#     ]
+#   },
+#   {
+#     "Tag": "Vedic/Upanishadic",
+#     "authors": [
+#       "Ancient Sanskrit",
+#       "Isa Upanishad",
+#       "Isavasya Upanishad",
+#       "Isha Upanishad",
+#       "Ishavasya Upanishad",
+#       "Ishawashya Upanishad",
+#       "Kaivalyopanishad",
+#       "Katha Upanishad",
+#       "Kena Upanishad",
+#       "Maitri Upanishad",
+#       "Mundaka Upanishad",
+#       "Niralamba Upanishad",
+#       "Prashna Upanishad",
+#       "Rig Veda",
+#       "Rigveda",
+#       "Shvetashvatara Upanishad",
+#       "Tejo-Bindu Upanishad",
+#       "Tejo-bindu Upanishad",
+#       "Varaha Upanishad",
+#       "Vivekachudamani",
+#       "Yajur Veda"
+#     ]
+#   }
+# ]

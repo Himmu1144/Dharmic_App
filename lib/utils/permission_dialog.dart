@@ -30,7 +30,6 @@ class PermissionDialog extends StatelessWidget {
         await intent.launch();
       } else if (Platform.isIOS) {
         // iOS specific implementation
-        final packageInfo = await PackageInfo.fromPlatform();
         if (await canLaunchUrl(Uri.parse('app-settings:'))) {
           await launchUrl(
             Uri.parse('app-settings:'),
@@ -41,7 +40,7 @@ class PermissionDialog extends StatelessWidget {
     } catch (e) {
       // Show detailed error in debug, simple message in production
       if (_isDebugging) {
-        print('Debug Error opening settings: $e');
+        // print('Debug Error opening settings: $e');
       }
 
       if (context.mounted) {

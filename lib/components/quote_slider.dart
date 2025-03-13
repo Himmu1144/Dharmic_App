@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/quote.dart';
 import 'package:provider/provider.dart';
 import '../services/isar_service.dart';
+import 'package:dharmic/components/SafeImage.dart';
 // Update import
 
 class QuoteSlider extends StatefulWidget {
@@ -162,14 +163,12 @@ class _QuoteSliderState extends State<QuoteSlider>
             curve: Curves.easeIn,
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(80.0),
-                  child: Image.asset(
-                    quote.author.value?.image ?? 'assets/images/buddha.png',
-                    width: 65,
-                    height: 65,
-                    fit: BoxFit.cover,
-                  ),
+                SafeImage(
+                  imagePath:
+                      quote.author.value?.image ?? 'assets/images/buddha.png',
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
                 ),
                 const SizedBox(width: 16.0),
                 Column(

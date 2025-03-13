@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../services/isar_service.dart';
+import '../components/SafeImage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -133,14 +134,21 @@ class _SplashScreenState extends State<SplashScreen>
                 return Opacity(
                   opacity: _fadeOutLogo.value,
                   child: ClipOval(
+                    // ...existing code...
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.6,
                       height: MediaQuery.of(context).size.width * 0.6,
-                      child: Image.asset(
-                        'assets/images/buddha.png',
+                      child: SafeImage(
+                        imagePath: 'assets/images/logo.png',
+                        fallbackImagePath: 'assets/images/buddha.png',
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: MediaQuery.of(context).size.width * 0.6,
                         fit: BoxFit.cover,
+                        borderRadius: BorderRadius.circular(
+                            MediaQuery.of(context).size.width * 0.3),
                       ),
                     ),
+// ...existing code...
                   ),
                 );
               },

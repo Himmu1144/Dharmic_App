@@ -1,44 +1,115 @@
 [
     {
-        "author": "Rigveda",
-        "author_img": "assets/images/rigveda.png", 
-        "author_title": "Ancient Hindu Scripture",
-        "author_description": "The Rigveda is an ancient Indian collection of Vedic Sanskrit hymns. It is one of the four sacred canonical texts of Hinduism known as the Vedas.",
-        "author_link": "https://en.wikipedia.org/wiki/Rigveda"
+      "author": "ISCON",
+      "author_img": "assets/images/ISCON.png",
+      "author_title": "International Society for Krishna Consciousness",
+      "author_description": "The International Society for Krishna Consciousness (ISKCON), popularly known as the Hare Krishna movement, is a Gaudiya Vaishnava Hindu religious organization founded in 1966, dedicated to spreading the teachings of Lord Krishna.",
+      "author_link": "https://en.wikipedia.org/wiki/International_Society_for_Krishna_Consciousness"
     },
     {
-        "author": "Yajurveda", 
-        "author_img": "assets/images/yajurveda.png",
-        "author_title": "Vedic Liturgical Text",
-        "author_description": "The Yajurveda is one of the four main texts of Hinduism's Vedic period, containing prose mantras for worship rituals.",
-        "author_link": "https://en.wikipedia.org/wiki/Yajurveda"
+      "author": "Upanishads",
+      "author_img": "assets/images/Upanishads.png",
+      "author_title": "Ancient Hindu Philosophical Texts",
+      "author_description": "The Upanishads are ancient Indian texts that form the philosophical basis of Hinduism. They explore the nature of reality, the self, and the ultimate truth beyond ritualistic practices.",
+      "author_link": "https://en.wikipedia.org/wiki/Upanishads"
     },
     {
-        "author": "Atharvaveda",
-        "author_img": "assets/images/atharvaveda.png",
-        "author_title": "Sacred Knowledge Text",
-        "author_description": "The Atharvaveda is the fourth Veda, focusing on everyday life, healing practices and metaphysical knowledge.",
-        "author_link": "https://en.wikipedia.org/wiki/Atharvaveda"
+      "author": "Atharva Veda",
+      "author_img": "assets/images/Atharva Veda.png",
+      "author_title": "Ancient Vedic Scripture",
+      "author_description": "The Atharva Veda is one of the four Vedas, comprising hymns, spells, and incantations integral to early Hindu rituals and spiritual practices.",
+      "author_link": "https://en.wikipedia.org/wiki/Atharva_Veda"
     },
     {
-        "author": "Buddha",
-        "author_img": "assets/images/buddha.png",
-        "author_title": "The Enlightened One",
-        "author_description": "Siddhartha Gautama, known as the Buddha, was a spiritual teacher who founded Buddhism. His journey to enlightenment began in ancient India, around the 5th century BCE. Born into a royal family, Siddhartha lived a life of luxury until he encountered the harsh realities of life outside the palace. These encounters with old age, sickness, and death deeply troubled him and set him on a quest for understanding and inner peace. At the age of 29, Siddhartha renounced his royal privileges and embarked on a spiritual journey. He practiced severe asceticism, seeking spiritual awakening through extreme self-denial. However, he eventually realized that neither the indulgent life of the palace nor the severe ascetic practices were the path to enlightenment. Instead, he discovered the Middle Way—a path of moderation and balance.",
-        "author_link": "https://en.wikipedia.org/wiki/buddha.png"
+      "author": "Bhagavad Gita",
+      "author_img": "assets/images/Bhagavad Gita.png",
+      "author_title": "Sacred Hindu Scripture",
+      "author_description": "The Bhagavad Gita is a 700-verse dialogue from the Indian epic Mahabharata. It offers spiritual guidance and profound philosophical insights on duty, righteousness, and the path to liberation.",
+      "author_link": "https://en.wikipedia.org/wiki/Bhagavad_Gita"
     },
     {
-        "author": "Lord Krishna",
-        "author_img": "assets/images/krishna.png", 
-        "author_title": "Supreme Being",
-        "author_description": "Krishna is a major deity in Hinduism and the speaker of the Bhagavad Gita.",
-        "author_link": "https://en.wikipedia.org/wiki/Krishna"
+      "author": "Shri Ram",
+      "author_img": "assets/images/Shri Ram.png",
+      "author_title": "Hindu Deity and Epic Hero",
+      "author_description": "Shri Ram, also known as Lord Rama, is revered as an ideal king and the hero of the Ramayana. His life exemplifies the values of virtue, honor, and duty.",
+      "author_link": "https://en.wikipedia.org/wiki/Rama"
     },
     {
-        "author": "Lucius Annaeus Seneca",
-        "author_img": "assets/images/marcus_aurelius.jpeg",
-        "author_title": "Roman Stoic Philosopher",
-        "author_description": "Seneca was a Roman Stoic philosopher, statesman, and dramatist. He was a tutor and advisor to emperor Nero, known for his writings on ethics and natural phenomena.",
-        "author_link": "https://en.wikipedia.org/wiki/Seneca_the_Younger"
+      "author": "Lord Shiva",
+      "author_img": "assets/images/Lord Shiva.png",
+      "author_title": "Hindu God of Destruction and Transformation",
+      "author_description": "Lord Shiva is one of the principal deities of Hinduism, known for his role as the destroyer and transformer. He embodies both asceticism and creative energy, and is central to many spiritual traditions.",
+      "author_link": "https://en.wikipedia.org/wiki/Shiva"
+    },
+    {
+      "author": "Hinduism",
+      "author_img": "assets/images/Hinduism.png",
+      "author_title": "Ancient Indian Religion",
+      "author_description": "Hinduism is one of the world’s oldest religions, characterized by a diverse range of beliefs, rituals, and cultural practices that have evolved over thousands of years on the Indian subcontinent.",
+      "author_link": "https://en.wikipedia.org/wiki/Hinduism"
+    },
+    {
+      "author": "Sikhism",
+      "author_img": "assets/images/Sikhism.png",
+      "author_title": "Monotheistic Religion of the Punjab",
+      "author_description": "Sikhism is a monotheistic religion founded in the Punjab region by Guru Nanak Dev Ji. It emphasizes the oneness of God, equality of all human beings, and the importance of social justice.",
+      "author_link": "https://en.wikipedia.org/wiki/Sikhism"
+    },
+    {
+      "author": "Buddhism",
+      "author_img": "assets/images/Buddhism.png",
+      "author_title": "Spiritual Tradition Based on Buddha's Teachings",
+      "author_description": "Buddhism is a spiritual tradition founded on the teachings of Siddhartha Gautama (the Buddha). It focuses on personal spiritual development and the pursuit of enlightenment through practices like meditation and mindfulness.",
+      "author_link": "https://en.wikipedia.org/wiki/Buddhism"
+    },
+    {
+      "author": "Jainism",
+      "author_img": "assets/images/Jainism.png",
+      "author_title": "Ancient Religion of Non-Violence",
+      "author_description": "Jainism is an ancient Indian religion that advocates non-violence, truth, and asceticism. It teaches that liberation is achieved through self-discipline and harmlessness toward all living beings.",
+      "author_link": "https://en.wikipedia.org/wiki/Jainism"
+    },
+    {
+      "author": "Vedic Upanishadic",
+      "author_img": "assets/images/Vedic Upanishadic.png",
+      "author_title": "Ancient Vedic and Upanishadic Texts",
+      "author_description": "Vedic Upanishadic refers to the rich heritage of ancient Indian scriptures that merge the ritualistic knowledge of the Vedas with the philosophical insights of the Upanishads, forming the foundation of Hindu thought.",
+      "author_link": "https://en.wikipedia.org/wiki/Vedas"
+    },
+    {
+      "author": "Mahavira",
+      "author_img": "assets/images/Mahavira.png",
+      "author_title": "Jain Tirthankara",
+      "author_description": "Mahavira was the 24th Tirthankara of Jainism, whose teachings on non-violence, truth, and asceticism have profoundly influenced Jain philosophy and practice.",
+      "author_link": "https://en.wikipedia.org/wiki/Mahavira"
+    },
+    {
+      "author": "Guru Gobind Singh Ji",
+      "author_img": "assets/images/Guru Gobind Singh Ji.png",
+      "author_title": "Sikh Guru and Warrior Saint",
+      "author_description": "Guru Gobind Singh Ji was the tenth Sikh Guru, known for founding the Khalsa and for his lasting contributions to Sikh theology, martial traditions, and spiritual philosophy.",
+      "author_link": "https://en.wikipedia.org/wiki/Guru_Gobind_Singh"
+    },
+    {
+      "author": "Guru Nanak Dev Ji",
+      "author_img": "assets/images/Guru Nanak Dev Ji.png",
+      "author_title": "Founder of Sikhism",
+      "author_description": "Guru Nanak Dev Ji was the first Sikh Guru and the founder of Sikhism. His teachings emphasize universal brotherhood, equality, and devotion to one God.",
+      "author_link": "https://en.wikipedia.org/wiki/Guru_Nanak"
+    },
+    {
+      "author": "Guru Tegh Bahadur Ji",
+      "author_img": "assets/images/Guru Tegh Bahadur Ji.png",
+      "author_title": "Sikh Guru and Martyr",
+      "author_description": "Guru Tegh Bahadur Ji, the ninth Sikh Guru, is revered for his sacrifice and his firm stand in defense of religious freedom and human rights.",
+      "author_link": "https://en.wikipedia.org/wiki/Guru_Tegh_Bahadur"
+    },
+    {
+      "author": "Yajur Veda",
+      "author_img": "assets/images/Yajur Veda.png",
+      "author_title": "Ancient Vedic Scripture",
+      "author_description": "The Yajur Veda is one of the four Vedas, containing prose mantras and sacrificial formulas that form an essential part of ancient Hindu rituals and ceremonies.",
+      "author_link": "https://en.wikipedia.org/wiki/Yajur_Veda"
     }
-]
+  ]
+  

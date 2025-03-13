@@ -159,6 +159,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                     throw Exception('Could not launch email');
                   }
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Could not open email client'),

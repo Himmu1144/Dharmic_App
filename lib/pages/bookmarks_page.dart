@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:dharmic/components/circle_button.dart';
 import 'package:dharmic/pages/search_page.dart';
+import 'package:dharmic/components/SafeImage.dart';
 
 class BookmarksPage extends StatefulWidget {
   const BookmarksPage({super.key});
@@ -335,6 +336,7 @@ class _BookmarksPageState extends State<BookmarksPage>
                               0),
                           child: GestureDetector(
                             onTap: () {
+                              // In BookmarksPage, when navigating to the slider:
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -343,7 +345,10 @@ class _BookmarksPageState extends State<BookmarksPage>
                                     initialIndex: index,
                                   ),
                                 ),
-                              );
+                              ).then((_) {
+                                // Refresh bookmarks when returning from slider
+                                _loadBookmarkedQuotes();
+                              });
                             },
                             child: Container(
                               margin: const EdgeInsets.symmetric(
@@ -363,14 +368,13 @@ class _BookmarksPageState extends State<BookmarksPage>
                                 children: [
                                   ListTile(
                                     contentPadding: const EdgeInsets.all(16),
-                                    leading: ClipRRect(
+                                    leading: SafeImage(
+                                      imagePath: quote.author.value?.image ??
+                                          "assets/images/buddha.png",
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
                                       borderRadius: BorderRadius.circular(25),
-                                      child: Image.asset(
-                                        quote.author.value?.image ?? "",
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                      ),
                                     ),
                                     title: Text(
                                       quote.author.value?.name ?? "",

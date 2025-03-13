@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/quote.dart';
 import 'action_buttons.dart';
+import 'package:dharmic/components/SafeImage.dart';
 
 class QuoteCard extends StatelessWidget {
   final Quote quote;
@@ -27,11 +28,14 @@ class QuoteCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(80.0),
-            child: Image.asset(
-              quote.author.value?.image ?? 'assets/images/buddha.png',
+            child: SafeImage(
+              imagePath:
+                  quote.author.value?.image ?? 'assets/images/buddha.png',
               width: 80,
               height: 80,
               fit: BoxFit.cover,
+              borderRadius:
+                  BorderRadius.zero, // Since we're already using ClipRRect
             ),
           ),
           const SizedBox(height: 16.0),

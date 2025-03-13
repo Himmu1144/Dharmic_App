@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/components/custom_page_indicator.dart';
 import 'package:dharmic/components/floating_buttons.dart';
+import 'package:dharmic/components/SafeImage.dart';
 
 class AuthorQuoteSlider extends StatefulWidget {
   final List<Quote> quotes;
@@ -65,6 +66,19 @@ class _AuthorQuoteSliderState extends State<AuthorQuoteSlider> {
 
   @override
   Widget build(BuildContext context) {
+    // CRITICAL: Immediately exit if quotes are empty
+    if (widget.quotes.isEmpty) {
+      // Return to previous screen safely
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pop();
+      });
+      // Show empty placeholder while navigating back
+      return const Scaffold(
+        backgroundColor: Color(0xFF282828),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF282828),
@@ -160,14 +174,13 @@ class _AuthorQuoteSliderState extends State<AuthorQuoteSlider> {
             curve: Curves.easeIn,
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(80.0),
-                  child: Image.asset(
-                    quote.author.value?.image ?? 'assets/images/buddha.png',
-                    width: 65,
-                    height: 65,
-                    fit: BoxFit.cover,
-                  ),
+                SafeImage(
+                  imagePath:
+                      quote.author.value?.image ?? 'assets/images/buddha.png',
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
+                  // The SafeImage already includes ClipRRect functionality
                 ),
                 const SizedBox(width: 16.0),
                 Column(

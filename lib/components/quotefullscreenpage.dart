@@ -82,7 +82,7 @@ class _QuoteFullscreenPageState extends State<QuoteFullscreenPage> {
                 await isar.writeTxn(() async {
                   await isar.quotes.put(quote);
                 });
-                print("Marking quote as read in fullscreen: ${quote.id}");
+                // print("Marking quote as read in fullscreen: ${quote.id}");
               }
 
               await _loadMoreQuotes(index);

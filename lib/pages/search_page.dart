@@ -5,6 +5,7 @@ import 'package:dharmic/models/quote.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart'; // Add this import
 import 'package:dharmic/components/quote_slider.dart';
+import 'package:dharmic/components/SafeImage.dart';
 
 class SearchPage extends StatefulWidget {
   final bool searchBookmarksOnly;
@@ -214,10 +215,15 @@ class _SearchPageState extends State<SearchPage>
                                       children: [
                                         Row(
                                           children: [
-                                            CircleAvatar(
-                                              radius: 25,
-                                              backgroundImage:
-                                                  AssetImage(quote.authorImg),
+                                            ClipOval(
+                                              child: SafeImage(
+                                                imagePath: quote.authorImg,
+                                                width: 50,
+                                                height: 50,
+                                                fit: BoxFit.cover,
+                                                borderRadius: BorderRadius
+                                                    .zero, // ClipOval handles the rounding
+                                              ),
                                             ),
                                             const SizedBox(width: 12.0),
                                             Text(
@@ -339,7 +345,7 @@ class _SearchPageState extends State<SearchPage>
         isLoading = false;
       });
     } catch (e) {
-      print('Search error: $e');
+      // print('Search error: $e');
       setState(() => isLoading = false);
     }
   }

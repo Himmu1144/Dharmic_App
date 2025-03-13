@@ -660,7 +660,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         label: 'Evening Quote',
                         time: time.format(context),
                         onTap: () async {
-                          print("Evening time selection tapped"); // Debug print
+                          // print("Evening time selection tapped"); // Debug print
                           TimeOfDay? selectedTime = await showTimePicker(
                             context: context,
                             initialTime: time,

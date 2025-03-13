@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:dharmic/components/SafeImage.dart';
+import 'package:dharmic/components/error_boundary_widget.dart';
 import 'package:dharmic/components/my_drawer.dart';
 import 'package:dharmic/components/quotefullscreenpage.dart';
 import 'package:dharmic/models/quote.dart';
@@ -5,6 +9,7 @@ import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -75,6 +80,30 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  // Add this method to HomePage
+  void navigateToQuoteIndex(Quote quote) async {
+    // Find index without database transaction
+    final index = viewedQuotes.indexWhere((q) => q.id == quote.id);
+    if (index != -1) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      // Quote not in viewed quotes, add it
+      setState(() {
+        viewedQuotes.add(quote);
+        currentIndex = viewedQuotes.length - 1;
+      });
+      _pageController.animateToPage(
+        viewedQuotes.length - 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   void _showAuthorInfo(BuildContext context, Author author) {
     showModalBottomSheet(
       context: context,
@@ -128,9 +157,11 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 const SizedBox(width: 16),
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage(author.image),
+                SafeImage(
+                  imagePath: author.image,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
                 ),
               ],
             ),
@@ -190,7 +221,7 @@ class _HomePageState extends State<HomePage>
   Future<void> _markAsRead(Quote quote) async {
     final isarService = Provider.of<IsarService>(context, listen: false);
     await isarService.markQuoteAsRead(quote);
-    print("Marking quote as read: ${quote.id}");
+    // print("Marking quote as read: ${quote.id}");
   }
 
   Future<void> _loadUnreadQuotes() async {
@@ -205,15 +236,19 @@ class _HomePageState extends State<HomePage>
         setState(() {
           unreadQuotes = quotes..shuffle();
           if (quotes.isNotEmpty) {
-            _loadNextQuote();
+            // Add initial quote to viewedQuotes
+            viewedQuotes.add(unreadQuotes.removeAt(0));
+            currentIndex = 0;
           }
           isLoading = false;
         });
+        _resetOpacityForPage(0);
       }
-      _resetOpacityForPage(0);
     } catch (e) {
-      print("Error loading unread quotes: $e");
-      setState(() => isLoading = false);
+      // print("Error loading unread quotes: $e");
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -247,7 +282,13 @@ class _HomePageState extends State<HomePage>
     _authorOpacities.putIfAbsent(index, () => 0.0);
     _quoteOpacities.putIfAbsent(index, () => 0.0);
 
-    return Padding(
+    // Safe text and author handling
+    final displayText =
+        quote.quote.isNotEmpty ? quote.quote : "No quote available";
+
+    // Wrap the main content in an error boundary
+    return ErrorBoundaryWidget(
+        child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,35 +309,56 @@ class _HomePageState extends State<HomePage>
               },
               child: Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(80.0),
-                    child: Image.asset(
-                      quote.author.value?.image ?? 'assets/images/buddha.png',
-                      width: 65,
-                      height: 65,
-                      fit: BoxFit.cover,
-                    ),
+                  // ClipRRect(
+                  //   borderRadius: BorderRadius.circular(80.0),
+                  //   child: Image.asset(
+                  //     quote.author.value?.image ?? 'assets/images/buddha.png',
+                  //     width: 65,
+                  //     height: 65,
+                  //     fit: BoxFit.cover,
+                  //   ),
+                  // ),
+
+                  // After:
+                  SafeImage(
+                    imagePath:
+                        quote.author.value?.image ?? 'assets/images/buddha.png',
+                    fallbackImagePath: 'assets/images/buddha.png',
+                    width: 65,
+                    height: 65,
                   ),
                   const SizedBox(width: 16.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        quote.author.value?.name ?? 'Unnown',
-                        style: GoogleFonts.notoSansJp(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: MediaQuery.of(context).size.width *
+                            0.6, // Constrain width
+                        child: Text(
+                          quote.author.value?.name ?? 'Unknown',
+                          style: GoogleFonts.notoSansJp(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2, // Allow up to 2 lines before ellipsis
                         ),
                       ),
                       const SizedBox(height: 4.0),
-                      Text(
-                        quote.author.value?.title ?? 'Unnown',
-                        style: GoogleFonts.notoSansJp(
-                          fontSize: 13.0,
-                          color: Colors.grey.shade400,
+                      Container(
+                        width: MediaQuery.of(context).size.width *
+                            0.6, // Same width constraint
+                        child: Text(
+                          quote.author.value?.title ?? 'Unknown',
+                          style: GoogleFonts.notoSansJp(
+                            fontSize: 13.0,
+                            color: Colors.grey.shade400,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2, // Allow up to 2 lines before ellipsis
                         ),
                       ),
-                      const SizedBox(height: 8.0), // Reduced spacing
+                      const SizedBox(height: 8.0),
                       Container(
                         constraints: const BoxConstraints(
                           minHeight: 2.0,
@@ -325,7 +387,7 @@ class _HomePageState extends State<HomePage>
                 padding: const EdgeInsets.only(right: 25.0, left: 25, top: 10),
                 child: SingleChildScrollView(
                   child: Text(
-                    "\u201C${quote.quote}\u201D",
+                    "\u201C$displayText\u201D",
                     style: GoogleFonts.notoSerif(
                         color: const Color.fromARGB(225, 255, 255, 255),
                         fontSize: 20.0,
@@ -342,7 +404,7 @@ class _HomePageState extends State<HomePage>
           _buildActionButtons(quote),
         ],
       ),
-    );
+    ));
   }
 
   void _shareQuote(Quote quote) {
@@ -488,9 +550,12 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _scheduleQuoteNotifications() async {
     final isarService = Provider.of<IsarService>(context, listen: false);
-    final quote = await isarService.getRandomUnreadQuote();
+    final quote = await isarService.getRandomUnreadQuoteNotif();
     if (quote != null) {
       await notificationService.scheduleQuoteNotifications(quote);
+      await isarService.markQuoteAsRead(quote);
+    } else {
+      print('No quotes available for notifications');
     }
   }
 

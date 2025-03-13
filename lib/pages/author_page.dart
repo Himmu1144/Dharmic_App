@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:dharmic/services/isar_service.dart';
 import 'package:dharmic/models/author.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dharmic/components/SafeImage.dart';
 
 enum AuthorSort { alphabetical, quote_count, default_order }
 
@@ -137,9 +138,14 @@ class _AuthorPageState extends State<AuthorPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage(author.image),
+                // Replace the CircleAvatar with:
+                ClipOval(
+                  child: SafeImage(
+                    imagePath: author.image,
+                    width: 80,
+                    height: 80,
+                    borderRadius: BorderRadius.zero,
+                  ),
                 ),
               ],
             ),
@@ -250,10 +256,12 @@ class _AuthorPageState extends State<AuthorPage> {
                             flex: 2,
                             child: GestureDetector(
                               onTap: () => _showAuthorInfo(context, author),
-                              child: Image.asset(
-                                author.image,
-                                fit: BoxFit.cover,
+                              child: SafeImage(
+                                imagePath: author.image,
                                 width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                                borderRadius: BorderRadius.zero,
                               ),
                             ),
                           ),

@@ -41,7 +41,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -78,7 +78,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                               ),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             'Choose Your Language',
                             style: TextStyle(
                               fontSize: 26,
@@ -145,7 +145,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
   Widget _buildLanguageSelectionTabs() {
     return Container(
       height: 56,
-      padding: EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(30),
@@ -217,12 +217,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
     final quote = selectedLanguage == 'en'
         ? 'Knowledge is the eternal wealth that none can steal.'
         : 'Karm karo, phal ki chinta mat karo.';
-    final author = 'Lord Krishna';
+    const author = 'Lord Krishna';
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -240,7 +240,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
             color: Colors.black.withOpacity(0.3),
             blurRadius: 20,
             spreadRadius: 0,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -316,7 +316,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -327,10 +327,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6E56F7).withOpacity(0.3),
+            color: const Color(0xFF6E56F7).withOpacity(0.3),
             blurRadius: 15,
             spreadRadius: 0,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -346,7 +346,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
           ),
         ),
         child: _isSaving
-            ? Center(
+            ? const Center(
                 child: SizedBox(
                   width: 24,
                   height: 24,
@@ -356,7 +356,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                   ),
                 ),
               )
-            : Row(
+            : const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -367,7 +367,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                       letterSpacing: 1.5,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Icon(Icons.arrow_forward, size: 18),
                 ],
               ),
