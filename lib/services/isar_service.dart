@@ -365,23 +365,51 @@ class IsarService extends ChangeNotifier {
 
   Future<List<Author>> fetchAllAuthors(
       {AuthorSort sort = AuthorSort.default_order}) async {
-    List<Author> authors;
+    // First, load your tags data
+    final String tagsJsonData =
+        await rootBundle.loadString('assets/author_tags.json');
+    final List<dynamic> tagsData = json.decode(tagsJsonData);
 
+    // Create a set of tag names to filter by
+    Set<String> validTagNames = {};
+    Set<String> excludedTags = {'Hinduism', 'Sikhism', 'Jainism'};
+
+    // Extract tag names from author_tags.json
+    for (var tagEntry in tagsData) {
+      String tagName = tagEntry['Tag'];
+
+      // Skip the excluded tags
+      if (!excludedTags.contains(tagName)) {
+        validTagNames.add(tagName);
+      }
+    }
+
+    // Get all authors
+    List<Author> allAuthors = await isar.authors.where().findAll();
+
+    // Filter authors to include only those that are tags and not in the excluded list
+    List<Author> filteredAuthors = allAuthors
+        .where((author) => validTagNames.contains(author.name))
+        .toList();
+
+    // Apply sorting
     switch (sort) {
       case AuthorSort.alphabetical:
-        authors = await isar.authors.where().sortByName().findAll();
+        filteredAuthors.sort((a, b) => a.name.compareTo(b.name));
         break;
       case AuthorSort.quote_count:
-        authors = await isar.authors.where().findAll();
-        for (var author in authors) {
+        for (var author in filteredAuthors) {
           author.quotes.load();
         }
-        authors.sort((a, b) => b.quotes.length.compareTo(a.quotes.length));
+        filteredAuthors
+            .sort((a, b) => b.quotes.length.compareTo(a.quotes.length));
         break;
       default:
-        authors = await isar.authors.where().findAll();
+        // Keep the default order
+        break;
     }
-    return authors;
+
+    return filteredAuthors;
   }
 
   // Future<List<Quote>> getUnreadQuotes() async {
@@ -470,26 +498,189 @@ class IsarService extends ChangeNotifier {
   //       .findAll();
   //   return quotes;
   // }
-
   Future<List<Quote>> fetchQuotesByAuthor(Author author) async {
+    print("Fetching quotes for author: ${author.name}"); // Debug logging
+
+    // Load the selected language
     final lang = await getSelectedLanguage();
 
-    // Try to fetch quotes in the selected language.
-    var quotes = await isar.quotes
-        .filter()
-        .author((q) => q.idEqualTo(author.id))
-        .languageEqualTo(lang)
-        .findAll();
+    // Load tags data
+    final String tagsJsonData =
+        await rootBundle.loadString('assets/author_tags.json');
+    final List<dynamic> tagsData = json.decode(tagsJsonData);
 
-    // If no quotes are found for that language, fetch all quotes for the author.
-    if (quotes.isEmpty) {
-      quotes = await isar.quotes
-          .filter()
-          .author((q) => q.idEqualTo(author.id))
-          .findAll();
+    List<Quote> allQuotes = [];
+    bool foundTag = false;
+
+    // Case-insensitive author name for comparison
+    String authorNameLower = author.name.toLowerCase();
+
+    // First approach: Check if the author is a tag and get all authors under that tag
+    for (var tagEntry in tagsData) {
+      String tagName = tagEntry['Tag'];
+      print(
+          "Comparing tag: $tagName with author: ${author.name}"); // Debug logging
+
+      // Use case-insensitive comparison
+      if (tagName.toLowerCase() == authorNameLower) {
+        print("Found matching tag: $tagName"); // Debug logging
+        foundTag = true;
+        List<String> authorsUnderTag = List<String>.from(tagEntry['authors']);
+        print("Authors under this tag: $authorsUnderTag"); // Debug logging
+
+        // Handle special cases for problematic tags
+        if (author.name == "Upanishads" ||
+            author.name.toLowerCase() == "upanishads") {
+          // Find all upanishad authors
+          print("Special handling for Upanishads");
+          final upanishadAuthors = await isar.authors
+              .filter()
+              .nameContains("Upanishad", caseSensitive: false)
+              .findAll();
+
+          for (var upanishadAuthor in upanishadAuthors) {
+            var quotes = await isar.quotes
+                .filter()
+                .author((q) => q.idEqualTo(upanishadAuthor.id))
+                .languageEqualTo(lang)
+                .findAll();
+
+            allQuotes.addAll(quotes);
+            print("Added ${quotes.length} quotes from ${upanishadAuthor.name}");
+          }
+        } else if (author.name == "ISCON" ||
+            author.name.toLowerCase() == "iscon") {
+          print("Special handling for ISCON");
+          // Try both ISCON and ISKCON spellings
+          var bhaktivedanta = await isar.authors
+              .filter()
+              .nameContains("Bhaktivedanta", caseSensitive: false)
+              .or()
+              .nameContains("ISCON", caseSensitive: false)
+              .findAll();
+
+          for (var iskconAuthor in bhaktivedanta) {
+            var quotes = await isar.quotes
+                .filter()
+                .author((q) => q.idEqualTo(iskconAuthor.id))
+                .languageEqualTo(lang)
+                .findAll();
+
+            allQuotes.addAll(quotes);
+            print("Added ${quotes.length} quotes from ${iskconAuthor.name}");
+          }
+        } else if (author.name == "Buddhism" ||
+            author.name.toLowerCase() == "buddhism") {
+          print("Special handling for Buddhism");
+          // Look for Buddha or Buddhism related authors
+          // Modified search to handle the name format "Siddhartha Gautama (Buddha)"
+          var buddhistAuthors = await isar.authors
+              .filter()
+              .group((q) => q
+                  .nameContains("Buddha", caseSensitive: false)
+                  .or()
+                  .nameContains("buddhism", caseSensitive: false)
+                  .or()
+                  .nameContains("buddha", caseSensitive: false)
+                  .or()
+                  .nameContains("Gautama", caseSensitive: false)
+                  .or()
+                  .nameContains("Buddhism", caseSensitive: false)
+                  .or()
+                  .nameEqualTo("Siddhartha Gautama (Buddha)"))
+              .findAll();
+
+          for (var buddhistAuthor in buddhistAuthors) {
+            var quotes = await isar.quotes
+                .filter()
+                .author((q) => q.idEqualTo(buddhistAuthor.id))
+                .languageEqualTo(lang)
+                .findAll();
+
+            allQuotes.addAll(quotes);
+            print("Added ${quotes.length} quotes from ${buddhistAuthor.name}");
+          }
+        } else {
+          // Standard case - fetch quotes from each author under this tag
+          for (String authorName in authorsUnderTag) {
+            final authorObj =
+                await isar.authors.filter().nameEqualTo(authorName).findFirst();
+
+            if (authorObj != null) {
+              var quotes = await isar.quotes
+                  .filter()
+                  .author((q) => q.idEqualTo(authorObj.id))
+                  .languageEqualTo(lang)
+                  .findAll();
+
+              if (quotes.isEmpty) {
+                quotes = await isar.quotes
+                    .filter()
+                    .author((q) => q.idEqualTo(authorObj.id))
+                    .findAll();
+              }
+
+              allQuotes.addAll(quotes);
+              print("Added ${quotes.length} quotes from $authorName");
+            } else {
+              print("Author not found: $authorName");
+            }
+          }
+        }
+        break;
+      }
     }
 
-    return quotes;
+    // Second approach: If author is not a tag, check if author belongs to any tag
+    if (!foundTag) {
+      print("Not found as a tag, checking if author belongs to any tag");
+      bool foundAsAuthorUnderTag = false;
+
+      // Check each tag to see if this author is listed under it
+      for (var tagEntry in tagsData) {
+        List<String> authorsUnderTag = List<String>.from(tagEntry['authors']);
+
+        // Case-insensitive search
+        if (authorsUnderTag
+            .any((name) => name.toLowerCase() == authorNameLower)) {
+          foundAsAuthorUnderTag = true;
+          String tagName = tagEntry['Tag'];
+          print("Author found under tag: $tagName");
+
+          // Get the tag author
+          final tagAuthor =
+              await isar.authors.filter().nameEqualTo(tagName).findFirst();
+
+          if (tagAuthor != null) {
+            // Recursively call this method with the tag author to get all quotes
+            return fetchQuotesByAuthor(tagAuthor);
+          }
+        }
+      }
+
+      // If author is neither a tag nor under any tag, just get their quotes directly
+      if (!foundAsAuthorUnderTag) {
+        print("Author not found in any tag, fetching direct quotes");
+        var quotes = await isar.quotes
+            .filter()
+            .author((q) => q.idEqualTo(author.id))
+            .languageEqualTo(lang)
+            .findAll();
+
+        if (quotes.isEmpty) {
+          quotes = await isar.quotes
+              .filter()
+              .author((q) => q.idEqualTo(author.id))
+              .findAll();
+        }
+
+        allQuotes.addAll(quotes);
+        print("Added ${quotes.length} direct quotes from ${author.name}");
+      }
+    }
+
+    print("Total quotes found for ${author.name}: ${allQuotes.length}");
+    return allQuotes;
   }
 
   Future<void> loadNextQuotes(List<Quote> currentQuotes) async {
