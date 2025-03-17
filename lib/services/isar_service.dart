@@ -363,54 +363,108 @@ class IsarService extends ChangeNotifier {
         .toList();
   }
 
+  // Future<List<Author>> fetchAllAuthors(
+  //     {AuthorSort sort = AuthorSort.default_order}) async {
+  //   // First, load your tags data
+  //   final String tagsJsonData =
+  //       await rootBundle.loadString('assets/author_tags.json');
+  //   final List<dynamic> tagsData = json.decode(tagsJsonData);
+
+  //   // Create a set of tag names to filter by
+  //   Set<String> validTagNames = {};
+  //   Set<String> excludedTags = {'Hinduism', 'Sikhism', 'Jainism'};
+
+  //   // Extract tag names from author_tags.json
+  //   for (var tagEntry in tagsData) {
+  //     String tagName = tagEntry['Tag'];
+
+  //     // Skip the excluded tags
+  //     if (!excludedTags.contains(tagName)) {
+  //       validTagNames.add(tagName);
+  //     }
+  //   }
+
+  //   print("Valid tag names: $validTagNames");
+
+  //   // Get all authors
+  //   List<Author> allAuthors = await isar.authors.where().findAll();
+  //   print("Total authors in database: ${allAuthors.length}");
+
+  //   // Print all author names for debugging
+  //   print("All author names: ${allAuthors.map((a) => a.name).toList()}");
+
+  //   // Filter authors to include only those that are tags and not in the excluded list
+  //   List<Author> filteredAuthors = allAuthors
+  //       .where((author) => validTagNames.contains(author.name))
+  //       .toList();
+
+  //   print("Filtered authors count: ${filteredAuthors.length}");
+  //   print(
+  //       "Filtered author names: ${filteredAuthors.map((a) => a.name).toList()}");
+
+  //   // Apply sorting
+  //   switch (sort) {
+  //     case AuthorSort.alphabetical:
+  //       filteredAuthors.sort((a, b) => a.name.compareTo(b.name));
+  //       break;
+  //     case AuthorSort.quote_count:
+  //       for (var author in filteredAuthors) {
+  //         author.quotes.load();
+  //       }
+  //       filteredAuthors
+  //           .sort((a, b) => b.quotes.length.compareTo(a.quotes.length));
+  //       break;
+  //     default:
+  //       // Keep the default order
+  //       break;
+  //   }
+
+  // new fetchall
+
   Future<List<Author>> fetchAllAuthors(
       {AuthorSort sort = AuthorSort.default_order}) async {
-    // First, load your tags data
-    final String tagsJsonData =
-        await rootBundle.loadString('assets/author_tags.json');
-    final List<dynamic> tagsData = json.decode(tagsJsonData);
+    try {
+      // Set of tags to exclude
+      Set<String> excludedTags = {'Hinduism', 'Sikhism', 'Jainism'};
 
-    // Create a set of tag names to filter by
-    Set<String> validTagNames = {};
-    Set<String> excludedTags = {'Hinduism', 'Sikhism', 'Jainism'};
+      // Get all authors from database
+      List<Author> allAuthors = await isar.authors.where().findAll();
+      print("Total authors in database: ${allAuthors.length}");
 
-    // Extract tag names from author_tags.json
-    for (var tagEntry in tagsData) {
-      String tagName = tagEntry['Tag'];
+      // Filter out the excluded tags
+      List<Author> filteredAuthors = allAuthors
+          .where((author) => !excludedTags.contains(author.name))
+          .toList();
 
-      // Skip the excluded tags
-      if (!excludedTags.contains(tagName)) {
-        validTagNames.add(tagName);
+      print("Authors after excluding religions: ${filteredAuthors.length}");
+
+      // Apply sorting to filtered authors
+      switch (sort) {
+        case AuthorSort.alphabetical:
+          filteredAuthors.sort((a, b) => a.name.compareTo(b.name));
+          break;
+        case AuthorSort.quote_count:
+          for (var author in filteredAuthors) {
+            author.quotes.load();
+          }
+          filteredAuthors
+              .sort((a, b) => b.quotes.length.compareTo(a.quotes.length));
+          break;
+        default:
+          // Keep the default order
+          break;
       }
+
+      return filteredAuthors; // Return filtered authors
+    } catch (e, stackTrace) {
+      print("Error in fetchAllAuthors: $e");
+      print(stackTrace);
+      return []; // Return empty list on error
     }
-
-    // Get all authors
-    List<Author> allAuthors = await isar.authors.where().findAll();
-
-    // Filter authors to include only those that are tags and not in the excluded list
-    List<Author> filteredAuthors = allAuthors
-        .where((author) => validTagNames.contains(author.name))
-        .toList();
-
-    // Apply sorting
-    switch (sort) {
-      case AuthorSort.alphabetical:
-        filteredAuthors.sort((a, b) => a.name.compareTo(b.name));
-        break;
-      case AuthorSort.quote_count:
-        for (var author in filteredAuthors) {
-          author.quotes.load();
-        }
-        filteredAuthors
-            .sort((a, b) => b.quotes.length.compareTo(a.quotes.length));
-        break;
-      default:
-        // Keep the default order
-        break;
-    }
-
-    return filteredAuthors;
   }
+
+  //   return filteredAuthors;
+  // }
 
   // Future<List<Quote>> getUnreadQuotes() async {
   //   final unreadQuotes =
@@ -498,6 +552,8 @@ class IsarService extends ChangeNotifier {
   //       .findAll();
   //   return quotes;
   // }
+
+  // this fetchquotesbyauthor is not working as intended but i think it'll do for now will change it later.
   Future<List<Quote>> fetchQuotesByAuthor(Author author) async {
     print("Fetching quotes for author: ${author.name}"); // Debug logging
 
@@ -602,29 +658,39 @@ class IsarService extends ChangeNotifier {
           }
         } else {
           // Standard case - fetch quotes from each author under this tag
-          for (String authorName in authorsUnderTag) {
-            final authorObj =
-                await isar.authors.filter().nameEqualTo(authorName).findFirst();
 
-            if (authorObj != null) {
-              var quotes = await isar.quotes
+          // Standard case - fetch quotes from each author under this tag
+// Use a more flexible search approach for the tag itself
+          var tagAuthors = await isar.authors
+              .filter()
+              .nameContains(tagName, caseSensitive: false)
+              .findAll();
+
+          print(
+              "Found ${tagAuthors.length} authors matching tag: ${author.name}");
+
+// Process all matching tag authors
+          for (var matchedAuthor in tagAuthors) {
+            var quotes = await isar.quotes
+                .filter()
+                .author((q) => q.idEqualTo(matchedAuthor.id))
+                .languageEqualTo(lang)
+                .findAll();
+
+            if (quotes.isEmpty) {
+              quotes = await isar.quotes
                   .filter()
-                  .author((q) => q.idEqualTo(authorObj.id))
-                  .languageEqualTo(lang)
+                  .author((q) => q.idEqualTo(matchedAuthor.id))
                   .findAll();
-
-              if (quotes.isEmpty) {
-                quotes = await isar.quotes
-                    .filter()
-                    .author((q) => q.idEqualTo(authorObj.id))
-                    .findAll();
-              }
-
-              allQuotes.addAll(quotes);
-              print("Added ${quotes.length} quotes from $authorName");
-            } else {
-              print("Author not found: $authorName");
             }
+
+            allQuotes.addAll(quotes);
+            print("Added ${quotes.length} quotes from ${matchedAuthor.name}");
+          }
+
+// If no authors were found with the flexible search or no quotes were found
+          if (allQuotes.isEmpty) {
+            print("No authors or quotes found for tag: ${author.name}");
           }
         }
         break;

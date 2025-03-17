@@ -107,6 +107,7 @@ flutter:
   assets:
     - assets/images/
     - assets/author.json
+    - assets/author_tags.json
     - assets/quotes.json
     - assets/images/upi/upi.jpg
     - assets/cat_following_the_mouse.riv

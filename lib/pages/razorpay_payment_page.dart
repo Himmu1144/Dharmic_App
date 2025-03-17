@@ -26,7 +26,7 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
     Map<String, dynamic> options = {
       'key': 'rzp_test_fkqY6PGR2AqU7z',
       'amount': widget.amount * 100,
-      'name': 'The Sanatan App',
+      'name': 'The Sanatana App',
       'description': 'Support Development',
       'prefill': {'contact': '', 'email': ''},
       'readonly': {'contact': true, 'email': true},
@@ -144,7 +144,7 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
                             const SizedBox(height: 4),
                             Center(
                               child: Text(
-                                '(The Sanatan App Developer)',
+                                '(The Sanatana App Developer)',
                                 style: GoogleFonts.roboto(
                                   fontSize: 11,
                                   color: Colors.grey[400],

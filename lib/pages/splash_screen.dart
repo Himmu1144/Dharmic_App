@@ -165,7 +165,7 @@ class _SplashScreenState extends State<SplashScreen>
                   child: FadeTransition(
                     opacity: _fadeInTitle,
                     child: Text(
-                      'The Sanatan',
+                      'The Sanatana',
                       style: GoogleFonts.niconne(
                         fontSize: 42,
                         fontWeight: FontWeight.w400,

@@ -28,14 +28,14 @@ class _AmountSelectionPageState extends State<AmountSelectionPage> {
     {
       'title': 'Help Us Reach 500+ Users',
       'subtitle':
-          'Help The Sanatan App to spread awarness about our beautiful religion to 500+ users.',
+          'Help The Sanatana App to spread awarness about our beautiful religion to 500+ users.',
       'amount': 500.0,
       'icon': Icons.people,
     },
     {
       'title': 'Help Us Reach A 1000 Users',
       'subtitle':
-          'Help The Sanatan App to spread awarness about our beautiful religion to 1000+ users.',
+          'Help The Sanatana App to spread awarness about our beautiful religion to 1000+ users.',
       'amount': 1000.0,
       'icon': Icons.diversity_3,
     },

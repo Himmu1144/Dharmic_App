@@ -125,7 +125,7 @@ class AboutPage extends StatelessWidget {
             version: '1.0.0',
             date: 'January 1, 2024',
             initialPoints: [
-              'Initial release of Sanatan App',
+              'Initial release of Sanatana App',
               'Basic quote browsing functionality'
             ],
             expandedPoints: [

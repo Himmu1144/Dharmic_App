@@ -467,7 +467,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'Sanatan Dharma',
+                    'Sanatana Dharma',
                     style: GoogleFonts.roboto(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
@@ -480,7 +480,7 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildSection(
                 heading: 'Support Development',
                 description:
-                    'If you really like The Sanatan App, you can support me by buying me a coffee ☕. It will really help me to spread awarness about our beautiful Sanatan Dharma.',
+                    'If you really like The Sanatana App, you can support me by buying me a coffee ☕. It will really help me to spread awarness about our beautiful Sanatan Dharma.',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -688,24 +688,24 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
 
-            _buildSection(
-              heading: 'Test Notifications',
-              description: 'Send a test notification',
-              onTap: () async {
-                final notificationService =
-                    NotificationService(context: context);
-                await notificationService.initNotification();
-                await notificationService.showTestNotification();
+            // _buildSection(
+            //   heading: 'Test Notifications',
+            //   description: 'Send a test notification',
+            //   onTap: () async {
+            //     final notificationService =
+            //         NotificationService(context: context);
+            //     await notificationService.initNotification();
+            //     await notificationService.showTestNotification();
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Test notification sent'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
-              showTopDivider: false,
-            ),
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       const SnackBar(
+            //         content: Text('Test notification sent'),
+            //         duration: Duration(seconds: 2),
+            //       ),
+            //     );
+            //   },
+            //   showTopDivider: false,
+            // ),
 
             _buildLanguageRow(),
 
@@ -781,7 +781,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 final Uri emailLaunchUri = Uri(
                     scheme: 'mailto',
                     path: 'Himmu5056@gmail.com',
-                    query: 'subject=Bug/Feature Report - The Sanatan App');
+                    query: 'subject=Bug/Feature Report - The Sanatana App');
 
                 try {
                   if (!await launchUrl(emailLaunchUri)) {

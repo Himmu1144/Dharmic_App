@@ -18,7 +18,7 @@ class MyDrawer extends StatelessWidget {
 
           // Notes tile
           DrawerTile(
-              title: 'Stoic',
+              title: 'Home',
               leading: Icon(
                 Icons.book_rounded,
                 color: Theme.of(context).colorScheme.inversePrimary,
