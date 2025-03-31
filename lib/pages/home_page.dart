@@ -349,7 +349,7 @@ class _HomePageState extends State<HomePage>
                         width: MediaQuery.of(context).size.width *
                             0.6, // Same width constraint
                         child: Text(
-                          quote.author.value?.title ?? 'Unknown',
+                          quote.author.value?.title ?? 'Spiritual Leader',
                           style: GoogleFonts.notoSansJp(
                             fontSize: 13.0,
                             color: Colors.grey.shade400,
@@ -392,7 +392,7 @@ class _HomePageState extends State<HomePage>
                         color: const Color.fromARGB(225, 255, 255, 255),
                         fontSize: 20.0,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: FontWeight.w400,
                         height: 1.6),
                     textAlign: TextAlign.center,
                   ),

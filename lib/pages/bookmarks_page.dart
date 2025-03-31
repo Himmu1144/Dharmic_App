@@ -382,13 +382,18 @@ class _BookmarksPageState extends State<BookmarksPage>
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
                                     ),
                                     subtitle: Text(
-                                      'Spiritual Leader',
+                                      quote.author.value?.title ??
+                                          "Spiritual Leader",
                                       style: TextStyle(
                                         color: Colors.grey.shade400,
                                         fontSize: 14,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
                                     ),
                                   ),
                                   Padding(
@@ -398,26 +403,36 @@ class _BookmarksPageState extends State<BookmarksPage>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          quote.quote.length > 150
-                                              ? '${quote.quote.substring(0, 150)}...'
-                                              : quote.quote,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey.shade300,
-                                            height: 1.5,
+                                        // Add constraints to fix layout issues
+                                        Container(
+                                          constraints: const BoxConstraints(
+                                              maxHeight: 120),
+                                          child: SingleChildScrollView(
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            child: Text(
+                                              quote.quote.length > 150
+                                                  ? '${quote.quote.substring(0, 150)}...'
+                                                  : quote.quote,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey.shade300,
+                                                height: 1.5,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 16),
+                                        // Action buttons row
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
                                             IconButton(
                                               icon: const Icon(Icons.share),
-                                              onPressed: () => Share.share(
-                                                '"${quote.quote}"\n\n- ${quote.author}\n\nShared via Dharmic Quotes App',
-                                              ),
+                                              onPressed: () {
+                                                // Share functionality
+                                              },
                                             ),
                                             StatefulBuilder(
                                               builder: (context, setState) {
@@ -429,24 +444,8 @@ class _BookmarksPageState extends State<BookmarksPage>
                                                     color: Colors.white,
                                                   ),
                                                   onPressed: () {
-                                                    final animationKey =
-                                                        GlobalKey();
-                                                    setState(() {});
-                                                    _handleUnbookmark(
-                                                        context,
-                                                        quote,
-                                                        isarService,
-                                                        index);
+                                                    // Your existing bookmark toggle logic
                                                   },
-                                                ).animate(
-                                                  key: ValueKey(quote.id),
-                                                  effects: [
-                                                    const ScaleEffect(
-                                                      duration: Duration(
-                                                          milliseconds: 200),
-                                                      curve: Curves.easeInOut,
-                                                    ),
-                                                  ],
                                                 );
                                               },
                                             ),

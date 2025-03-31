@@ -1,4 +1,4 @@
-package com.example.dharmic
+package com.thesanatanapp.quotes
 
 import io.flutter.embedding.android.FlutterActivity
 

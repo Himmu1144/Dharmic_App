@@ -232,33 +232,33 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
             ),
             const SizedBox(height: 24),
             // Razorpay Payment Button
-            ElevatedButton(
-              onPressed: _startPayment,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size(double.infinity, 54),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 4,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.check_circle_outline_rounded, size: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Pay Securely with Razorpay',
-                    style: GoogleFonts.roboto(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // ElevatedButton(
+            //   onPressed: _startPayment,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: const Color(0xFF4CAF50),
+            //     foregroundColor: Colors.white,
+            //     padding: const EdgeInsets.symmetric(vertical: 16),
+            //     minimumSize: const Size(double.infinity, 54),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(16),
+            //     ),
+            //     elevation: 4,
+            //   ),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       const Icon(Icons.check_circle_outline_rounded, size: 24),
+            //       const SizedBox(width: 8),
+            //       Text(
+            //         'Pay Securely with Razorpay',
+            //         style: GoogleFonts.roboto(
+            //           fontSize: 16,
+            //           fontWeight: FontWeight.w500,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

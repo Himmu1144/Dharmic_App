@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dharmic/main.dart';
 import 'package:dharmic/pages/home_page.dart';
 import 'package:dharmic/services/isar_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,6 +20,8 @@ import 'package:image/image.dart' as img;
 import 'dart:math';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as path;
+import 'package:app_settings/app_settings.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 // Add at the top of the file before the class definition
 NotificationService? _instance;
@@ -387,55 +390,215 @@ class NotificationService {
     }, 'cleanupTemporaryFiles');
   }
 
-  Future<void> scheduleQuoteNotifications(Quote quote,
+  Future<bool> scheduleQuoteNotifications(Quote quote,
       {int? morningHour, int? eveningHour}) async {
-    await _executeNotificationOperation(() async {
-      final hasPermission = await requestPermissions();
-      if (!hasPermission) return;
+    bool success = false;
+    String errorMessage = 'Failed to schedule notifications';
 
-      final prefs = await SharedPreferences.getInstance();
-      final authorName = quote.author.value?.name ?? 'Unknown';
+    final result = await _executeNotificationOperation(() async {
+      try {
+        // Check permissions first
+        final hasPermission = await requestPermissions();
+        if (!hasPermission) {
+          errorMessage = 'Notification permissions not granted';
+          return false;
+        }
 
-      // Get both hours and minutes
-      final mHour = morningHour ?? prefs.getInt(MORNING_HOUR_KEY) ?? 6;
-      final mMinute = prefs.getInt(MORNING_MINUTE_KEY) ?? 0;
-      final eHour = eveningHour ?? prefs.getInt(EVENING_HOUR_KEY) ?? 18;
-      final eMinute = prefs.getInt(EVENING_MINUTE_KEY) ?? 0;
+        final prefs = await SharedPreferences.getInstance();
+        final authorName = quote.author.value?.name ?? 'Unknown';
 
-      // Schedule both notifications
-      await scheduleNotification(
-        id: morningNotificationId,
-        title: "Morning Wisdom",
-        body: quote.quote,
-        authorName: authorName,
-        payload: quote.id.toString(),
-        hour: mHour,
-        minute: mMinute,
-      );
+        // Get both hours and minutes
+        final mHour = morningHour ?? prefs.getInt(MORNING_HOUR_KEY) ?? 6;
+        final mMinute = prefs.getInt(MORNING_MINUTE_KEY) ?? 0;
+        final eHour = eveningHour ?? prefs.getInt(EVENING_HOUR_KEY) ?? 18;
+        final eMinute = prefs.getInt(EVENING_MINUTE_KEY) ?? 0;
 
-      await scheduleNotification(
-        id: eveningNotificationId,
-        title: "Evening Reflection",
-        body: quote.quote,
-        authorName: authorName,
-        payload: quote.id.toString(),
-        hour: eHour,
-        minute: eMinute,
-      );
-    }, 'scheduleQuoteNotifications');
+        // Schedule both notifications with individual try-catch blocks
+        try {
+          await scheduleNotification(
+            id: morningNotificationId,
+            title: "Morning Wisdom",
+            body: quote.quote,
+            authorName: authorName,
+            payload: quote.id.toString(),
+            hour: mHour,
+            minute: mMinute,
+          );
+        } catch (e) {
+          debugPrint('Failed to schedule morning notification: $e');
+          // Continue to try scheduling evening notification
+        }
+
+        try {
+          await scheduleNotification(
+            id: eveningNotificationId,
+            title: "Evening Reflection",
+            body: quote.quote,
+            authorName: authorName,
+            payload: quote.id.toString(),
+            hour: eHour,
+            minute: eMinute,
+          );
+        } catch (e) {
+          debugPrint('Failed to schedule evening notification: $e');
+        }
+
+        return true;
+      } catch (e, stackTrace) {
+        errorMessage = 'Error: ${e.toString().split('\n')[0]}';
+        debugPrint('Error in scheduleQuoteNotifications: $e');
+        debugPrint(stackTrace.toString());
+        return false;
+      }
+    }, 'scheduleQuoteNotifications', defaultValue: false);
+
+    // Show error if the operation failed and context is available
+    success = result ?? false;
+    if (!success && context != null && context!.mounted) {
+      // Use a post-frame callback to ensure we're not in the middle of a build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context!).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      });
+    }
+
+    return success;
   }
+
+  // Future<void> scheduleQuoteNotifications(Quote quote,
+  //     {int? morningHour, int? eveningHour}) async {
+
+  //   await _executeNotificationOperation(() async {
+  //     final hasPermission = await requestPermissions();
+  //     if (!hasPermission) return;
+
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final authorName = quote.author.value?.name ?? 'Unknown';
+
+  //     // Get both hours and minutes
+  //     final mHour = morningHour ?? prefs.getInt(MORNING_HOUR_KEY) ?? 6;
+  //     final mMinute = prefs.getInt(MORNING_MINUTE_KEY) ?? 0;
+  //     final eHour = eveningHour ?? prefs.getInt(EVENING_HOUR_KEY) ?? 18;
+  //     final eMinute = prefs.getInt(EVENING_MINUTE_KEY) ?? 0;
+
+  //     // Schedule both notifications
+  //     await scheduleNotification(
+  //       id: morningNotificationId,
+  //       title: "Morning Wisdom",
+  //       body: quote.quote,
+  //       authorName: authorName,
+  //       payload: quote.id.toString(),
+  //       hour: mHour,
+  //       minute: mMinute,
+  //     );
+
+  //     await scheduleNotification(
+  //       id: eveningNotificationId,
+  //       title: "Evening Reflection",
+  //       body: quote.quote,
+  //       authorName: authorName,
+  //       payload: quote.id.toString(),
+  //       hour: eHour,
+  //       minute: eMinute,
+  //     );
+  //   }, 'scheduleQuoteNotifications');
+  // }
+
+  // Future<void> scheduleNotification({
+  //   required int id,
+  //   required String title,
+  //   required String body,
+  //   required String payload,
+  //   required int hour,
+  //   required int minute,
+  //   String? authorName,
+  //   String? authorImagePath,
+  // }) async {
+  //   await _executeNotificationOperation(() async {
+  //     final now = DateTime.now();
+  //     var scheduledDate = DateTime(
+  //       now.year,
+  //       now.month,
+  //       now.day,
+  //       hour,
+  //       minute,
+  //     );
+
+  //     if (scheduledDate.isBefore(now)) {
+  //       scheduledDate = scheduledDate.add(const Duration(days: 1));
+  //     }
+
+  //     final String fullBody = authorName != null
+  //         ? "$body\n\n~ $authorName" // Add author name below quote with a dash
+  //         : body;
+
+  //     final androidDetails = authorImagePath != null
+  //         ? AndroidNotificationDetails(
+  //             quoteChannelId,
+  //             quoteChannelName,
+  //             channelDescription: quoteChannelDescription,
+  //             importance: Importance.max,
+  //             priority: Priority.high,
+  //             largeIcon: FilePathAndroidBitmap(authorImagePath),
+  //             styleInformation: BigTextStyleInformation(
+  //               fullBody,
+  //               contentTitle: title,
+  //             ),
+  //           )
+  //         : const AndroidNotificationDetails(
+  //             quoteChannelId,
+  //             quoteChannelName,
+  //             channelDescription: quoteChannelDescription,
+  //             importance: Importance.max,
+  //             priority: Priority.high,
+  //           );
+
+  //     await notificationsPlugin.zonedSchedule(
+  //       id,
+  //       title,
+  //       fullBody,
+  //       tz.TZDateTime.from(scheduledDate, tz.local),
+  //       NotificationDetails(
+  //         android: androidDetails,
+  //         iOS: const DarwinNotificationDetails(
+  //           presentAlert: true,
+  //           presentBadge: true,
+  //           presentSound: true,
+  //         ),
+  //       ),
+  //       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+  //       uiLocalNotificationDateInterpretation:
+  //           UILocalNotificationDateInterpretation.absoluteTime,
+  //       matchDateTimeComponents: DateTimeComponents.time,
+  //       payload: payload,
+  //     );
+  //   }, 'scheduleNotification');
+  // }
 
   Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
-    required String payload,
+    required String authorName,
+    String? payload,
     required int hour,
     required int minute,
-    String? authorName,
     String? authorImagePath,
   }) async {
-    await _executeNotificationOperation(() async {
+    try {
+      // Check for exact alarm permission
+      final hasPermission = await _checkAndRequestExactAlarmPermission();
+      if (!hasPermission) {
+        debugPrint('Exact alarm permission not granted');
+        return;
+      }
+
+      // Schedule with a simpler approach for release builds
       final now = DateTime.now();
       var scheduledDate = DateTime(
         now.year,
@@ -449,43 +612,24 @@ class NotificationService {
         scheduledDate = scheduledDate.add(const Duration(days: 1));
       }
 
-      final String fullBody = authorName != null
-          ? "$body\n\n~ $authorName" // Add author name below quote with a dash
-          : body;
-
-      final androidDetails = authorImagePath != null
-          ? AndroidNotificationDetails(
-              quoteChannelId,
-              quoteChannelName,
-              channelDescription: quoteChannelDescription,
-              importance: Importance.max,
-              priority: Priority.high,
-              largeIcon: FilePathAndroidBitmap(authorImagePath),
-              styleInformation: BigTextStyleInformation(
-                fullBody,
-                contentTitle: title,
-              ),
-            )
-          : const AndroidNotificationDetails(
-              quoteChannelId,
-              quoteChannelName,
-              channelDescription: quoteChannelDescription,
-              importance: Importance.max,
-              priority: Priority.high,
-            );
+      final androidDetails = AndroidNotificationDetails(
+        quoteChannelId,
+        quoteChannelName,
+        channelDescription: quoteChannelDescription,
+        importance: Importance.max,
+        priority: Priority.high,
+        // Use simple icon approach instead of complex image processing
+        icon: 'app_icon',
+      );
 
       await notificationsPlugin.zonedSchedule(
         id,
         title,
-        fullBody,
+        body,
         tz.TZDateTime.from(scheduledDate, tz.local),
         NotificationDetails(
           android: androidDetails,
-          iOS: const DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: true,
-          ),
+          iOS: const DarwinNotificationDetails(),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
@@ -493,7 +637,13 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.time,
         payload: payload,
       );
-    }, 'scheduleNotification');
+
+      debugPrint('Notification scheduled for $hour:$minute');
+    } catch (e, stackTrace) {
+      debugPrint('Error scheduling notification: $e');
+      debugPrint(stackTrace.toString());
+      rethrow; // Allow calling method to handle the error
+    }
   }
 
   // Future<void> _scheduleInexactNotification(
@@ -605,6 +755,99 @@ class NotificationService {
     } catch (e) {
       debugPrint('Error showing test notification: $e');
       // Fallback notification code...
+    }
+  }
+
+  Future<bool> _checkAndRequestExactAlarmPermission() async {
+    if (Platform.isAndroid) {
+      try {
+        // Get Android implementation
+        final androidImplementation =
+            notificationsPlugin.resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>();
+
+        if (androidImplementation == null) return false;
+
+        // Check if we can schedule exact notifications
+        final canScheduleExact =
+            await androidImplementation.canScheduleExactNotifications() ??
+                false;
+
+        if (canScheduleExact) return true;
+
+        // For Android 12+ we should redirect users to settings
+        final deviceInfo = await DeviceInfoPlugin().androidInfo;
+        if (deviceInfo.version.sdkInt >= 31) {
+          // Android 12+
+          if (context != null && context!.mounted) {
+            final bool? result = await showDialog<bool>(
+              context: context!,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Permissions Required'),
+                content: const Text(
+                    'Scheduled notifications require "Exact Alarm" permission. Please enable it in settings.'),
+                actions: [
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(context, false),
+                  ),
+                  TextButton(
+                    child: const Text('Open Settings'),
+                    onPressed: () {
+                      // Use appropriate method based on the app_settings package version
+                      AppSettings.openAppSettings(
+                        type: AppSettingsType.alarm,
+                      );
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                ],
+              ),
+            );
+            return result ?? false;
+          }
+        }
+        return false;
+      } catch (e) {
+        debugPrint('Error checking exact alarm permission: $e');
+        return false;
+      }
+    }
+    return true; // Not Android, so no need for this permission
+  }
+
+  Future<void> showSimpleTestNotification() async {
+    try {
+      final hasPermission = await requestPermissions();
+      if (!hasPermission) {
+        debugPrint('Notifications permission not granted');
+        return;
+      }
+
+      await notificationsPlugin.show(
+        999,
+        'Simple Test Notification',
+        'This is a plain test notification without images',
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            quoteChannelId,
+            quoteChannelName,
+            channelDescription: quoteChannelDescription,
+          ),
+          iOS: DarwinNotificationDetails(),
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error showing simple test notification: $e');
+      // Show error to user if context is available
+      if (context != null && context!.mounted) {
+        ScaffoldMessenger.of(context!).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString().split('\n')[0]}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }

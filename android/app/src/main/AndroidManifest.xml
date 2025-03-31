@@ -26,7 +26,8 @@
     <application
         android:label="The Sanatana"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon"
+        android:directBootAware="true">
 
         <meta-data
             android:name="com.razorpay.ApiKey"

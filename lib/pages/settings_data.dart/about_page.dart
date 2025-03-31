@@ -123,7 +123,7 @@ class AboutPage extends StatelessWidget {
           // ),
           _buildVersionTile(
             version: '1.0.0',
-            date: 'January 1, 2024',
+            date: 'March 25, 2025',
             initialPoints: [
               'Initial release of Sanatana App',
               'Basic quote browsing functionality'

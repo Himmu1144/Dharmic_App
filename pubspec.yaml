@@ -55,6 +55,10 @@ dependencies:
   rive: ^0.12.4
   image: ^4.0.17
   logger: ^1.4.0
+  # flutter_local_notifications: ^latest_version
+  # timezone: ^latest_version
+  # device_info_plus: ^latest_version
+  # app_settings: ^latest_version
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -66,7 +70,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: ^0.13.1
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -155,7 +159,7 @@ flutter_native_splash:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo.png"
+  image_path: "assets/images/logo_main.png"
   adaptive_icon_background: "#FFFFFF" # or any color
-  adaptive_icon_foreground: "assets/images/logo.png"
+  adaptive_icon_foreground: "assets/images/logo_main.png"
   min_sdk_android: 21

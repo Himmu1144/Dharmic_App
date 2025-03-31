@@ -77,7 +77,7 @@ class PrivacyPolicyPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Last updated: January 25, 2025',
+              'Last updated: March 25, 2025',
               style: GoogleFonts.roboto(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -85,16 +85,16 @@ class PrivacyPolicyPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             _buildParagraph(
-              'Himanshu Sharma built the The Sanatana App, as a Free app. This SERVICE is provided by Himanshu Sharma at no cost and is intended for use as is.',
+              'Infinity Labs 42 built the The Sanatana App, as a Free app. This SERVICE is provided by Infinity Labs 42 at no cost and is intended for use as is.',
             ),
             _buildParagraph(
               'This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.',
             ),
             _buildParagraph(
-              'If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy.',
+              'If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy (https://sites.google.com/view/thesanatana/privacy-policy).',
             ),
             _buildParagraph(
-              'The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which is accessible at The Sanatana App unless otherwise defined in this Privacy Policy.',
+              'The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions (https://sites.google.com/view/thesanatana/terms-conditions), which is accessible at The Sanatana App and this link https://sites.google.com/view/thesanatana/terms-conditions unless otherwise defined in this Privacy Policy (https://sites.google.com/view/thesanatana/privacy-policy).',
             ),
             _buildHeading('Information Collection and Use'),
             _buildParagraph(
@@ -143,13 +143,14 @@ class PrivacyPolicyPage extends StatelessWidget {
             _buildParagraph(
               'These Services do not address anyone under the age of 13. I do not knowingly collect personally identifiable information from children under 13 years of age. In the case I discover that a child under 13 has provided me with personal information, I immediately delete this from our servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact me so that I will be able to do necessary actions.',
             ),
-            _buildHeading('Changes to This Privacy Policy'),
+            _buildHeading(
+                'Changes to This Privacy Policy (https://sites.google.com/view/thesanatana/privacy-policy)'),
             _buildParagraph(
-              'I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.',
+              'I may update our Privacy Policy (https://sites.google.com/view/thesanatana/privacy-policy) from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy (https://sites.google.com/view/thesanatana/privacy-policy) on this page.',
             ),
             _buildHeading('Contact Us'),
             _buildParagraph(
-              'If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at:',
+              'If you have any questions or suggestions about my Privacy Policy (https://sites.google.com/view/thesanatana/privacy-policy), do not hesitate to contact me at:',
             ),
             TextButton(
               onPressed: () async {

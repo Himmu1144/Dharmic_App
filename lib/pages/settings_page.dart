@@ -707,6 +707,42 @@ class _SettingsPageState extends State<SettingsPage> {
             //   showTopDivider: false,
             // ),
 
+            // _buildSection(
+            //   heading: 'Test Notifications',
+            //   description: 'Send a simple test notification',
+            //   onTap: () async {
+            //     try {
+            //       final notificationService =
+            //           NotificationService(context: context);
+            //       await notificationService.initNotification();
+
+            //       // First try a simple notification without images
+            //       await notificationService.showSimpleTestNotification();
+
+            //       ScaffoldMessenger.of(context).showSnackBar(
+            //         const SnackBar(
+            //           content: Text(
+            //               'Simple test notification sent. Check your notification tray.'),
+            //           duration: Duration(seconds: 3),
+            //         ),
+            //       );
+
+            //       // After a short delay, try the more complex notification with image
+            //       await Future.delayed(const Duration(seconds: 2));
+            //       await notificationService.showTestNotification();
+            //     } catch (e) {
+            //       ScaffoldMessenger.of(context).showSnackBar(
+            //         SnackBar(
+            //           content: Text('Error: ${e.toString().split('\n')[0]}'),
+            //           backgroundColor: Colors.red,
+            //           duration: Duration(seconds: 4),
+            //         ),
+            //       );
+            //     }
+            //   },
+            //   showTopDivider: false,
+            // ),
+
             _buildLanguageRow(),
 
             // In settings_page.dart, update the Select Author section:

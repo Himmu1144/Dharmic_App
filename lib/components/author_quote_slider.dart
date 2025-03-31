@@ -183,37 +183,41 @@ class _AuthorQuoteSliderState extends State<AuthorQuoteSlider> {
                   // The SafeImage already includes ClipRRect functionality
                 ),
                 const SizedBox(width: 16.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      quote.author.value?.name ?? 'Unknown',
-                      style: GoogleFonts.notoSansJp(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        quote.author.value?.name ?? 'Unknown',
+                        style: GoogleFonts.notoSansJp(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      'Spiritual Leader',
-                      style: GoogleFonts.notoSansJp(
-                        fontSize: 13.0,
-                        color: Colors.grey.shade400,
+                      const SizedBox(height: 4.0),
+                      Text(
+                        quote.author.value?.title ?? "Spiritual Leader",
+                        style: GoogleFonts.notoSansJp(
+                          fontSize: 13.0,
+                          color: Colors.grey.shade400,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Container(
-                      constraints: const BoxConstraints(
-                        minHeight: 2.0,
+                      const SizedBox(height: 8.0),
+                      Container(
+                        constraints: const BoxConstraints(
+                          minHeight: 2.0,
+                        ),
+                        width: 200.0,
+                        child: Divider(
+                          color: Colors.grey.shade800,
+                          thickness: 2.0,
+                          height: 2.0,
+                        ),
                       ),
-                      width: 200.0,
-                      child: Divider(
-                        color: Colors.grey.shade800,
-                        thickness: 2.0,
-                        height: 2.0,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
