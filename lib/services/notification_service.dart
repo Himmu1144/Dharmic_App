@@ -145,28 +145,12 @@ class NotificationService {
                   await androidImplementation.requestNotificationsPermission();
               if (granted != true) return false;
 
-              if (await _requiresExactAlarmPermission()) {
-                await androidImplementation.requestExactAlarmsPermission();
-                final bool? canSchedule =
-                    await androidImplementation.canScheduleExactNotifications();
-                return canSchedule ?? false;
-              }
-              return true;
+              return granted ?? false;
             }
           }
           return false;
         }, 'requestPermissions', defaultValue: false) ??
         false;
-  }
-
-  Future<bool> _requiresExactAlarmPermission() async {
-    if (context == null ||
-        Theme.of(context!).platform != TargetPlatform.android) {
-      return false;
-    }
-
-    final androidInfo = await DeviceInfoPlugin().androidInfo;
-    return androidInfo.version.sdkInt >= 31; // Android 12 or higher
   }
 
   Future<void> initNotification() async {
@@ -509,98 +493,20 @@ class NotificationService {
   //   }, 'scheduleQuoteNotifications');
   // }
 
-  // Future<void> scheduleNotification({
-  //   required int id,
-  //   required String title,
-  //   required String body,
-  //   required String payload,
-  //   required int hour,
-  //   required int minute,
-  //   String? authorName,
-  //   String? authorImagePath,
-  // }) async {
-  //   await _executeNotificationOperation(() async {
-  //     final now = DateTime.now();
-  //     var scheduledDate = DateTime(
-  //       now.year,
-  //       now.month,
-  //       now.day,
-  //       hour,
-  //       minute,
-  //     );
-
-  //     if (scheduledDate.isBefore(now)) {
-  //       scheduledDate = scheduledDate.add(const Duration(days: 1));
-  //     }
-
-  //     final String fullBody = authorName != null
-  //         ? "$body\n\n~ $authorName" // Add author name below quote with a dash
-  //         : body;
-
-  //     final androidDetails = authorImagePath != null
-  //         ? AndroidNotificationDetails(
-  //             quoteChannelId,
-  //             quoteChannelName,
-  //             channelDescription: quoteChannelDescription,
-  //             importance: Importance.max,
-  //             priority: Priority.high,
-  //             largeIcon: FilePathAndroidBitmap(authorImagePath),
-  //             styleInformation: BigTextStyleInformation(
-  //               fullBody,
-  //               contentTitle: title,
-  //             ),
-  //           )
-  //         : const AndroidNotificationDetails(
-  //             quoteChannelId,
-  //             quoteChannelName,
-  //             channelDescription: quoteChannelDescription,
-  //             importance: Importance.max,
-  //             priority: Priority.high,
-  //           );
-
-  //     await notificationsPlugin.zonedSchedule(
-  //       id,
-  //       title,
-  //       fullBody,
-  //       tz.TZDateTime.from(scheduledDate, tz.local),
-  //       NotificationDetails(
-  //         android: androidDetails,
-  //         iOS: const DarwinNotificationDetails(
-  //           presentAlert: true,
-  //           presentBadge: true,
-  //           presentSound: true,
-  //         ),
-  //       ),
-  //       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-  //       uiLocalNotificationDateInterpretation:
-  //           UILocalNotificationDateInterpretation.absoluteTime,
-  //       matchDateTimeComponents: DateTimeComponents.time,
-  //       payload: payload,
-  //     );
-  //   }, 'scheduleNotification');
-  // }
-
   Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
-    required String authorName,
-    String? payload,
     required int hour,
     required int minute,
     String? authorImagePath,
+    String? payload,
+    String? authorName,
   }) async {
     try {
-      // Check for exact alarm permission
-      final hasPermission = await _checkAndRequestExactAlarmPermission();
-      if (!hasPermission) {
-        debugPrint('Exact alarm permission not granted');
-        return;
-      }
-
-      // Schedule with a simpler approach for release builds
+      // Create notification time (for tomorrow to ensure it triggers)
       final now = DateTime.now();
-      var scheduledDate = DateTime(
+      final scheduledDate = DateTime(
         now.year,
         now.month,
         now.day,
@@ -608,41 +514,42 @@ class NotificationService {
         minute,
       );
 
-      if (scheduledDate.isBefore(now)) {
-        scheduledDate = scheduledDate.add(const Duration(days: 1));
-      }
+      // If time has passed today, schedule for tomorrow
+      final effectiveDate = scheduledDate.isBefore(now)
+          ? scheduledDate.add(const Duration(days: 1))
+          : scheduledDate;
 
-      final androidDetails = AndroidNotificationDetails(
-        quoteChannelId,
-        quoteChannelName,
-        channelDescription: quoteChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        // Use simple icon approach instead of complex image processing
-        icon: 'app_icon',
-      );
-
+      // Use androidScheduleMode.inexactAllowWhileIdle instead of exact
       await notificationsPlugin.zonedSchedule(
         id,
         title,
         body,
-        tz.TZDateTime.from(scheduledDate, tz.local),
+        tz.TZDateTime.from(effectiveDate, tz.local),
         NotificationDetails(
-          android: androidDetails,
-          iOS: const DarwinNotificationDetails(),
+          android: AndroidNotificationDetails(
+            quoteChannelId,
+            quoteChannelName,
+            channelDescription: quoteChannelDescription,
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+          iOS: const DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        // Use inexact instead of exact
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
         payload: payload,
       );
 
-      debugPrint('Notification scheduled for $hour:$minute');
+      debugPrint('Notification scheduled for ${hour}:${minute} (inexact mode)');
     } catch (e, stackTrace) {
-      debugPrint('Error scheduling notification: $e');
-      debugPrint(stackTrace.toString());
-      rethrow; // Allow calling method to handle the error
+      debugPrint('Error scheduling notification: $e\n$stackTrace');
     }
   }
 
@@ -758,63 +665,63 @@ class NotificationService {
     }
   }
 
-  Future<bool> _checkAndRequestExactAlarmPermission() async {
-    if (Platform.isAndroid) {
-      try {
-        // Get Android implementation
-        final androidImplementation =
-            notificationsPlugin.resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>();
+  // Future<bool> _checkAndRequestExactAlarmPermission() async {
+  //   if (Platform.isAndroid) {
+  //     try {
+  //       // Get Android implementation
+  //       final androidImplementation =
+  //           notificationsPlugin.resolvePlatformSpecificImplementation<
+  //               AndroidFlutterLocalNotificationsPlugin>();
 
-        if (androidImplementation == null) return false;
+  //       if (androidImplementation == null) return false;
 
-        // Check if we can schedule exact notifications
-        final canScheduleExact =
-            await androidImplementation.canScheduleExactNotifications() ??
-                false;
+  //       // Check if we can schedule exact notifications
+  //       final canScheduleExact =
+  //           await androidImplementation.canScheduleExactNotifications() ??
+  //               false;
 
-        if (canScheduleExact) return true;
+  //       if (canScheduleExact) return true;
 
-        // For Android 12+ we should redirect users to settings
-        final deviceInfo = await DeviceInfoPlugin().androidInfo;
-        if (deviceInfo.version.sdkInt >= 31) {
-          // Android 12+
-          if (context != null && context!.mounted) {
-            final bool? result = await showDialog<bool>(
-              context: context!,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text('Permissions Required'),
-                content: const Text(
-                    'Scheduled notifications require "Exact Alarm" permission. Please enable it in settings.'),
-                actions: [
-                  TextButton(
-                    child: const Text('Cancel'),
-                    onPressed: () => Navigator.pop(context, false),
-                  ),
-                  TextButton(
-                    child: const Text('Open Settings'),
-                    onPressed: () {
-                      // Use appropriate method based on the app_settings package version
-                      AppSettings.openAppSettings(
-                        type: AppSettingsType.alarm,
-                      );
-                      Navigator.pop(context, true);
-                    },
-                  ),
-                ],
-              ),
-            );
-            return result ?? false;
-          }
-        }
-        return false;
-      } catch (e) {
-        debugPrint('Error checking exact alarm permission: $e');
-        return false;
-      }
-    }
-    return true; // Not Android, so no need for this permission
-  }
+  //       // For Android 12+ we should redirect users to settings
+  //       final deviceInfo = await DeviceInfoPlugin().androidInfo;
+  //       if (deviceInfo.version.sdkInt >= 31) {
+  //         // Android 12+
+  //         if (context != null && context!.mounted) {
+  //           final bool? result = await showDialog<bool>(
+  //             context: context!,
+  //             builder: (BuildContext context) => AlertDialog(
+  //               title: const Text('Permissions Required'),
+  //               content: const Text(
+  //                   'Scheduled notifications require "Exact Alarm" permission. Please enable it in settings.'),
+  //               actions: [
+  //                 TextButton(
+  //                   child: const Text('Cancel'),
+  //                   onPressed: () => Navigator.pop(context, false),
+  //                 ),
+  //                 TextButton(
+  //                   child: const Text('Open Settings'),
+  //                   onPressed: () {
+  //                     // Use appropriate method based on the app_settings package version
+  //                     AppSettings.openAppSettings(
+  //                       type: AppSettingsType.alarm,
+  //                     );
+  //                     Navigator.pop(context, true);
+  //                   },
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //           return result ?? false;
+  //         }
+  //       }
+  //       return false;
+  //     } catch (e) {
+  //       debugPrint('Error checking exact alarm permission: $e');
+  //       return false;
+  //     }
+  //   }
+  //   return true; // Not Android, so no need for this permission
+  // }
 
   Future<void> showSimpleTestNotification() async {
     try {

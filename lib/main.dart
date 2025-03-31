@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+// import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:dharmic/models/author.dart';
 import 'package:dharmic/models/quote.dart';
 import 'package:dharmic/pages/author_page.dart';
@@ -82,12 +82,6 @@ void main() {
       final isarService = IsarService(isar);
       await isarService.loadAuthorsFromJson();
       await isarService.loadQuotesWithAuthors();
-
-      try {
-        await AndroidAlarmManager.initialize();
-      } catch (e) {
-        debugPrint('Warning: Failed to initialize Android Alarm Manager: $e');
-      }
 
       runApp(
         MultiProvider(
